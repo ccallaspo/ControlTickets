@@ -31,7 +31,7 @@ class NoteObserver
     public function updated(Note $note): void
     {
         //
-        //
+        
     }
 
     /**

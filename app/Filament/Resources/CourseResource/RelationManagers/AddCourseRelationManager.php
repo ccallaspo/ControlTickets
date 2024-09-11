@@ -20,7 +20,7 @@ class AddCourseRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\TextInput::make('title')
-                ->label('Título')
+                ->label('Módulo')
                     ->required()
                     ->maxLength(255),
               
@@ -36,7 +36,7 @@ class AddCourseRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('title')
             ->columns([
-                Tables\Columns\TextColumn::make('title')->label('Título'),
+                Tables\Columns\TextColumn::make('title')->label('Módulo'),
                 Tables\Columns\TextColumn::make('description')->label('Descripción')->html(),
             ])
             ->filters([
@@ -44,7 +44,8 @@ class AddCourseRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                ->label('Crear Módulo'),
+                ->label('Crear Módulo')
+                ->modalHeading('Nuevo Módulo'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
