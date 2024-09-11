@@ -240,6 +240,9 @@
                         @endif
                         <th>Total Horas</th>
                         <th>Total Participantes</th>
+                        @if($hasGrup)
+                        <th>Valor Franquiciable</th>
+                        @endif
                         <th>Valor Unitario</th>
                         <th>Costo Total</th>
                     </tr>
@@ -252,6 +255,9 @@
                         @endif
                         <td>{{ $cost['thour'] }}</td>
                         <td>{{ $cost['tpart'] }}</td>
+                        @if($hasGrup && !is_null($cost['vfranq']))
+                        <td>{{ formatNumber($cost['vfranq']) }}</td>
+                        @endif
                         <td>{{ formatNumber($cost['vunit']) }}</td>
                         <td>{{ formatNumber($cost['costs']) }}</td>
                     </tr>
