@@ -51,10 +51,13 @@ class TaskResource extends Resource
         ->recordTitleAttribute('name')
         ->columns([
             Tables\Columns\TextColumn::make('name')
+            ->searchable()
             ->label('Proceso'),
             Tables\Columns\TextColumn::make('description')
+            ->searchable()
             ->label('Descripción'),
             Tables\Columns\TextColumn::make('created_at')
+            ->searchable()
             ->label('Creación')
             ->date('d-m-Y'),
         ])
