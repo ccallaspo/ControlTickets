@@ -52,7 +52,8 @@ class NoteRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                ->label('Crear Nota'),
+                ->label('Crear Nota')
+                ->modalHeading('Nueva nota'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

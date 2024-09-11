@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('note');
             $table->string('author');
-            $table->foreignId('followup_id')->constrained('followups');
+            $table->foreignId('followup_id')->nullable()->constrained('followups')->onDelete('set null');
             $table->foreignId('calendar_id')->nullable()->constrained('calendars')->onDelete('set null');
             $table->timestamps();
         });

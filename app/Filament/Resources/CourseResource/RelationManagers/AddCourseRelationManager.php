@@ -45,7 +45,7 @@ class AddCourseRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                 ->label('Crear Módulo')
-                ->modalHeading('Nuevo Módulo'),
+                ->modalHeading('Nuevo módulo'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
