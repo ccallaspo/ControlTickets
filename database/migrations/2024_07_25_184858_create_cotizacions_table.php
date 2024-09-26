@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('cod_cotizacion')->nullable();
             $table->string('name')->nullable();
-            $table->foreignId('customer_id')->constrained('customers');
+            $table->foreignId('customer_id')->nullable()->constrained('customers');
             $table->foreignId('course_id')->constrained('courses');
             $table->foreignId('add_course_id')->constrained('add_courses');
             $table->text('content')->nullable();

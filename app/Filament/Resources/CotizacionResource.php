@@ -30,7 +30,7 @@ class CotizacionResource extends Resource
     protected static ?string $navigationLabel = 'Cotizaciones';
     public static ?string $pluralModelLabel = 'Cotizaciones';
     protected static ?string $navigationGroup = 'Operaciones';
-
+    public $costs = [];
 
     public static function form(Form $form): Form
     {
@@ -66,11 +66,10 @@ class CotizacionResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->label('Nombre')
-                            ->default(fn () => $newName) // Usa el valor calculado dinámicamente para mostrar en el formulario
+                            ->default(fn () => $newName) 
                             ->readonly(),
                         Forms\Components\Select::make('customer_id')
                             ->relationship('customer', 'name')
-                            ->required()
                             ->searchable()
                             ->preload()
                             ->label('Cliente')
@@ -104,6 +103,8 @@ class CotizacionResource extends Resource
                             ->label('Curso')
                             ->options(Course::all()->pluck('name', 'id'))
                             ->reactive()
+                            ->searchable()
+                            ->preload()
                             ->required()
                             ->afterStateUpdated(fn ($state, callable $set) => $set('add_course_id', null)),
 
@@ -148,20 +149,31 @@ class CotizacionResource extends Resource
                                 Forms\Components\TextInput::make('tpart')
                                     ->label('Total Participantes')
                                     ->required(),
-                                Forms\Components\TextInput::make('vfranq')
-                                    ->label('Valor Franquiciable')
-                                    ->numeric(),
                                 Forms\Components\TextInput::make('vunit')
                                     ->label('Valor Unitario')
                                     ->numeric()
+                                    ->prefix('$')
                                     ->required(),
                                 Forms\Components\TextInput::make('costs')
                                     ->label('Costo Total')
+                                    ->live()
+                                    ->readOnly()
                                     ->numeric()
+                                    ->prefix('$')
                                     ->required(),
                             ]),
                     ])->columns(2),
             ]);
+    }
+
+    protected function updateCost(callable $get): void
+    {
+        $vunit = (float) $get('vunit');
+        $tpart = (float) $get('tpart');
+        $cost = $vunit * $tpart;
+
+        $this->costs['cost'] = $cost; 
+        dd($cost);
     }
 
     public static function table(Table $table): Table
