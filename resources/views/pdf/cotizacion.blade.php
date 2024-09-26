@@ -255,9 +255,6 @@
                         @endif
                         <td>{{ $cost['thour'] }}</td>
                         <td>{{ $cost['tpart'] }}</td>
-                        @if($hasGrup && !is_null($cost['vfranq']))
-                        <td>{{ formatNumber($cost['vfranq']) }}</td>
-                        @endif
                         <td>{{ formatNumber($cost['vunit']) }}</td>
                         <td>{{ formatNumber($cost['costs']) }}</td>
                     </tr>

@@ -14,6 +14,10 @@ class ViewCotizacion extends ViewRecord
     {
         return [
             Actions\EditAction::make(),
+            Actions\Action::make('download')
+            ->label('Descargar')
+            ->url(fn($record) => route('pdf.download', $record->id))
+            ->openUrlInNewTab(true)
         ];
     }
 

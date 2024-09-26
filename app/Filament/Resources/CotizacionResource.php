@@ -20,6 +20,8 @@ use Filament\Forms\Components\Select;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 
 class CotizacionResource extends Resource
 {
@@ -66,7 +68,7 @@ class CotizacionResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->label('Nombre')
-                            ->default(fn () => $newName) 
+                            ->default(fn() => $newName)
                             ->readonly(),
                         Forms\Components\Select::make('customer_id')
                             ->relationship('customer', 'name')
@@ -106,7 +108,7 @@ class CotizacionResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required()
-                            ->afterStateUpdated(fn ($state, callable $set) => $set('add_course_id', null)),
+                            ->afterStateUpdated(fn($state, callable $set) => $set('add_course_id', null)),
 
                         Forms\Components\Select::make('add_course_id')
                             ->label('Módulos del Curso')
@@ -121,7 +123,7 @@ class CotizacionResource extends Resource
                                 return [];
                             })
                             ->reactive()
-                            ->disabled(fn (callable $get) => !$get('course_id'))
+                            ->disabled(fn(callable $get) => !$get('course_id'))
                             ->afterStateUpdated(function ($state, callable $set) {
                                 $content = AddCourse::find($state)?->description ?? '';
                                 $set('content', $content);
@@ -146,35 +148,63 @@ class CotizacionResource extends Resource
                                 Forms\Components\TextInput::make('thour')
                                     ->label('Total Horas')
                                     ->required(),
+
                                 Forms\Components\TextInput::make('tpart')
                                     ->label('Total Participantes')
-                                    ->required(),
+                                    ->numeric()
+                                    ->lazy()
+                                    ->placeholder(0)
+                                    ->required()
+                                    ->afterStateUpdated(function (Get $get, Set $set) {
+                                        self::updateTotals($get, $set);
+                                    }),
+
+
                                 Forms\Components\TextInput::make('vunit')
                                     ->label('Valor Unitario')
                                     ->numeric()
                                     ->prefix('$')
-                                    ->required(),
+                                    ->required()
+                                    ->lazy()
+                                    ->placeholder(0)
+                                    ->afterStateUpdated(function (Get $get, Set $set) {
+                                        self::updateTotals($get, $set);
+                                    }),
+
                                 Forms\Components\TextInput::make('costs')
                                     ->label('Costo Total')
-                                    ->live()
                                     ->readOnly()
-                                    ->numeric()
-                                    ->prefix('$')
-                                    ->required(),
-                            ]),
+                                    ->prefix('$'),
+                            ])
+            
+                            ->reactive(),
                     ])->columns(2),
             ]);
     }
 
-    protected function updateCost(callable $get): void
-    {
-        $vunit = (float) $get('vunit');
-        $tpart = (float) $get('tpart');
-        $cost = $vunit * $tpart;
 
-        $this->costs['cost'] = $cost; 
-        dd($cost);
+    public static function updateTotals(Get $get, Set $set): void
+    {
+        $selectedCosts = collect($get('costs'))->filter(fn($item) => !empty($item['tpart']) && !empty($item['vunit']));
+    
+
+        $vunit = (float) $get("vunit");
+        $tpart = (float) $get("tpart");
+    
+        if ($vunit && $tpart) {
+            // Calcular el costo
+            $cost = $vunit * $tpart;
+      
+            //$set('costs', number_format($cost, 2, ',', '.'));
+            $set('costs', $cost);
+        } else {
+       
+            $set('costs', null);
+        }
     }
+    
+    
+
 
     public static function table(Table $table): Table
     {
@@ -216,8 +246,8 @@ class CotizacionResource extends Resource
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('download')
-                    ->label('PDF')
-                    ->url(fn ($record) => route('pdf.download', $record->id))
+                    ->label('Descargar')
+                    ->url(fn($record) => route('pdf.download', $record->id))
                     ->openUrlInNewTab(true)
 
             ])
