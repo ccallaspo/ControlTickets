@@ -240,9 +240,6 @@
                         @endif
                         <th>Total Horas</th>
                         <th>Total Participantes</th>
-                        @if($hasGrup)
-                        <th>Valor Franquiciable</th>
-                        @endif
                         <th>Valor Unitario</th>
                         <th>Costo Total</th>
                     </tr>
