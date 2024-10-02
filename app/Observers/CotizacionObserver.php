@@ -36,7 +36,7 @@ class CotizacionObserver
 
         $newName = $prefix . $newNumber;
 
-        if ($course->type == 'Con Franquicia') {
+        
             $proced = Task::where('name', 'Cotización con franquicia')->firstOrFail();
             //dd($proced);
 
@@ -53,7 +53,7 @@ class CotizacionObserver
                 'event_id' => $event->id,
                 'customer_id' => $cotizacion->customer_id,
             ]);
-        }
+        
 
         $recipient = auth()->user();
 
