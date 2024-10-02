@@ -127,10 +127,14 @@ class FollowupResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                ->sortable()
+                ->hidden(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('SYC')
                     ->sortable()
                     ->searchable(),
+                    
                 Tables\Columns\TextColumn::make('referent')
                     ->label('Ref. Cotización')
                     ->sortable()
@@ -176,7 +180,7 @@ class FollowupResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-            ])->defaultSort('name', 'desc')
+            ])->defaultSort('id', 'desc')
             ->filters([
                 //
             ])

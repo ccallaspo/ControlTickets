@@ -43,7 +43,7 @@ class CotizacionObserver
             $event = Event::where('task_id', $proced->id)
                 ->where('name', 'Cotización enviada')
                 ->firstOrFail();
-            //dd($event);
+
             Followup::create([
                 'active' => 'Si',
                 'name' => $newName,
