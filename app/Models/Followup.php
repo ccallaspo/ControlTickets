@@ -20,8 +20,21 @@ class Followup extends Model
         'task_id',
         'customer_id',
         'active',
+        'doc_participant',
+        'cod_sence_course',
+        'name_course',
+        'id_sence',
+        'modalily',
+        'week',
+        'h_star',
+        'h_end',
+        'f_star',
+        'f_end',
     ];
 
+    protected $casts = [
+        'week' => 'array',
+    ];
 
     public function note(): HasMany
     {

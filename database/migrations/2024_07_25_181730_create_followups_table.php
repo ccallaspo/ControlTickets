@@ -21,6 +21,17 @@ return new class extends Migration
             $table->foreignId('event_id')->constrained('events');
             $table->foreignId('task_id')->constrained('tasks');
             $table->foreignId('customer_id')->nullable()->constrained('customers')->onDelete('set null');
+            //////////Agenda
+            $table->string('cod_sence_course')->nullable();
+            $table->string('name_course')->nullable();
+            $table->string('id_sence')->nullable();
+            $table->string('modalily')->nullable();
+            $table->json('week')->nullable();
+            $table->string('doc_participant')->nullable();
+            $table->string('h_star')->nullable();
+            $table->string('h_end')->nullable();
+            $table->string('f_star')->nullable();
+            $table->string('f_end')->nullable();
             $table->timestamps();
         });
     }

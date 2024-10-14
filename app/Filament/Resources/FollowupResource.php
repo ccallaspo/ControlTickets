@@ -17,6 +17,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use Filament\Tables\Columns\SelectColumn;
 
 class FollowupResource extends Resource
 {
@@ -74,7 +75,7 @@ class FollowupResource extends Resource
                             ->options(Task::all()->pluck('name', 'id'))
                             ->reactive()
                             ->required()
-                            ->afterStateUpdated(fn ($state, callable $set) => $set('event_id', null)),
+                            ->afterStateUpdated(fn($state, callable $set) => $set('event_id', null)),
 
                         Forms\Components\Select::make('event_id')
                             ->label('Estado')
@@ -89,7 +90,7 @@ class FollowupResource extends Resource
                                 return [];
                             })
                             ->reactive()
-                            ->disabled(fn (callable $get) => !$get('task_id')),
+                            ->disabled(fn(callable $get) => !$get('task_id')),
 
                         Forms\Components\Select::make('customer_id')
                             ->relationship('customer', 'name')
@@ -119,8 +120,60 @@ class FollowupResource extends Resource
                                 Forms\Components\Hidden::make('author')
                                     ->default($myuser),
                             ]),
-                    ])->columns(2),
-            ]);
+                    ])->columns(4),
+
+                Section::make('Agendar Curso')
+                    ->description('Información del curso y participantes.')
+                    ->schema([
+                        Forms\Components\TextInput::make('cod_sence_course')
+                            ->label('Código Sence')
+                            ->maxLength(255),
+
+                        Forms\Components\TextInput::make('name_course')
+                            ->label('Nombre de curso')
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('id_sence')
+                            ->label('ID Sence')
+                            ->maxLength(255),
+                        Forms\Components\Select::make('modalily')
+                            ->label('Modalidad')
+                            ->options([
+                                'asincronico' => 'Asincronico',
+                                'mixto' => 'Mixto',
+                                'presencial' => 'Presencial',
+                                'sincronico' => 'Sincronico',
+                            ]),
+
+                        Forms\Components\CheckboxList::make('week')
+                            ->label('Días')
+                            ->options([
+                                'lunes' => 'Lunes',
+                                'martes' => 'Martes',
+                                'miercoles' => 'Miercoles',
+                                'jueves' => 'Jueves',
+                                'viernes' => 'Viernes',
+                                'sabado' => 'Sabado',
+                                'domingo' => 'Domingo',
+                            ])
+                            ->bulkToggleable()
+                            ->columns(2),
+                        Forms\Components\FileUpload::make('doc_participant')
+                            ->label('Cargar Participantes')
+                            ->downloadable()
+                            ->directory('documentos/participantes') 
+                            ->disk('public')
+                            ->visibility('public'),
+                        Forms\Components\TimePicker::make('h_star')
+                            ->label('Horario de Inicio'),
+                        Forms\Components\TimePicker::make('h_end')
+                            ->label('Horario de Termino'),
+                        Forms\Components\DatePicker::make('f_star')
+                            ->label('Fecha Inicio'),
+                        Forms\Components\DatePicker::make('f_end')
+                            ->label('Fecha Termino'),
+
+                    ])->columns(),
+            ])->columns(2);
     }
 
     public static function table(Table $table): Table
@@ -128,13 +181,13 @@ class FollowupResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')
-                ->sortable()
-                ->hidden(),
+                    ->sortable()
+                    ->hidden(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('SYC')
                     ->sortable()
                     ->searchable(),
-                    
+
                 Tables\Columns\TextColumn::make('referent')
                     ->label('Ref. Cotización')
                     ->sortable()
@@ -146,17 +199,17 @@ class FollowupResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->icon(
-                        fn (Followup $record): ?string =>
+                        fn(Followup $record): ?string =>
                         !empty($record->event->icono) ? $record->event->icono : null
                     )
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
                         'Cotización Aprobada' => 'Cotización aprobada',
                         'Cotización enviada' => 'Cotización enviada',
                         'Terminado' => 'Terminado',
                         'rejected' => 'Rejected',
                         default => $state,
                     })
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'Cotización enviada' => 'danger',
                         'Crear agenda' => 'danger',
                         'Cotización aprobada' => 'success',

@@ -38,7 +38,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogoHeight('4rem')
             ->favicon(asset('img/favi.png'))
             ->colors([
-                'primary' => '#1D1C3D',
+                'primary' => '#83a9ac',
                 'secondary' => '#FFC003',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')

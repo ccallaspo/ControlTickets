@@ -52,6 +52,9 @@ class CotizacionObserver
                 'task_id' => $proced->id,
                 'event_id' => $event->id,
                 'customer_id' => $cotizacion->customer_id,
+                'cod_sence_course' => $course->cod_sence,
+                'name_course' => $course->name,
+
             ]);
         
 
