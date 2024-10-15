@@ -95,7 +95,7 @@
 
         <!-- Contenido principal -->
         <div class="content">
-        <h2>Estimado {{ $myuser ?? 'Usuario' }},</h2>
+        <h2>Estimado colaborador,</h2>
 
             <p>{{ $messageContent ?? 'Una cotización ha sido aprobada. El siguiente paso es agendar el curso.' }}</p>
 
@@ -103,7 +103,7 @@
             @if(isset($data))
             <h3>Detalles de la cotización:</h3>
             <ul>
-                <li><strong>Cotización:</strong> {{ $data->referent ?? 'N/A}}</li>
+                <li><strong>Cotización:</strong> {{ $data->referent ?? 'N/A' }}</li>
                 <li><strong>Curso:</strong> {{ $data->name_course ?? 'N/A' }}</li>
                 <li><strong>Código:</strong> {{ $data->cod_sence_course ?? 'N/A' }}</li>
                 <li><strong>Última actualización:</strong> {{ $data->updated_at }}</li>
