@@ -22,14 +22,21 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         .header {
+            background-color: #32506e;
+            color: #fff;
             text-align: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #ddd;
+            padding: 20px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
         }
         .header h1 {
-            color: #4CAF50;
             margin: 0;
-            font-size: 24px;
+            font-size: 28px;
+        }
+        .header p {
+            margin: 0;
+            font-size: 16px;
+            opacity: 0.9;
         }
         .content {
             padding: 20px;
@@ -82,32 +89,32 @@
     <div class="container">
         <!-- Header del correo -->
         <div class="header">
-            <h1>{{ $subject ?? 'Cotización aprobada' }}</h1>
+            <h1>{{ $subject ?? 'Notificación importante' }}</h1>
+            <p>{{ $subtitle ?? 'Sigue el flujo de trabajo para completar el proceso.' }}</p>
         </div>
 
         <!-- Contenido principal -->
         <div class="content">
-            <h2>Estimado {{ $recipientName ?? 'Usuario' }},</h2>
+        <h2>Estimado {{ $myuser ?? 'Usuario' }},</h2>
 
-            <p>Nos complace informarte que la cotización con el nombre <strong>{{ $data->name }}</strong> ha sido <strong>aprobada</strong>.</p>
-            
-            <p>Como siguiente paso, es necesario que procedas a agendar el curso. A continuación te detallamos lo que necesitamos:</p>
-            <ul>
-                <li><strong>Información de los participantes</strong> (nombres, correos electrónicos, roles)</li>
-                <li><strong>Horarios sugeridos</strong></li>
-                <li><strong>Fecha de inicio y fin del curso</strong></li>
-            </ul>
+            <p>{{ $messageContent ?? 'Una cotización ha sido aprobada. El siguiente paso es agendar el curso.' }}</p>
 
+            <!-- Detalles de la cotización -->
+            @if(isset($data))
             <h3>Detalles de la cotización:</h3>
             <ul>
-                <li><strong>Nombre del curso:</strong> {{ $data->name }}</li>
-                <li><strong>Descripción:</strong> {{ $data->description ?? 'N/A' }}</li>
-                <li><strong>Fecha de aprobación:</strong> {{ $data->updated_at }}</li>
+                <li><strong>Cotización:</strong> {{ $data->referent ?? 'N/A}}</li>
+                <li><strong>Curso:</strong> {{ $data->name_course ?? 'N/A' }}</li>
+                <li><strong>Código:</strong> {{ $data->cod_sence_course ?? 'N/A' }}</li>
+                <li><strong>Última actualización:</strong> {{ $data->updated_at }}</li>
             </ul>
+            @endif
 
-            <!-- Acción sugerida (botón) si aplica -->
+            <p>Ahora, por favor procede a <strong>agendar el curso</strong> para continuar el proceso.</p>
+
+            <!-- Acción sugerida (botón) -->
             @if(isset($actionUrl))
-                <a href="{{ $actionUrl }}" class="btn">Ver Cotización</a>
+                <a href="{{ $actionUrl }}" class="btn">Agendar Curso</a>
             @endif
         </div>
 

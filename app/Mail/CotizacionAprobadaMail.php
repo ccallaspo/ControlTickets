@@ -15,13 +15,15 @@ class CotizacionAprobadaMail extends Mailable
     use Queueable, SerializesModels;
 
     public $data;
+    public $myuser;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($data)
+    public function __construct($data, $myuser)
     {
         $this->data = $data;
+        $this->myuser = $myuser;
     }
 
     /**
@@ -41,7 +43,10 @@ class CotizacionAprobadaMail extends Mailable
     {
         return new Content(
             view: 'mails.cotizacion_aprobada',
-            with: ['data' => $this->data],
+            with: [
+                'data' => $this->data,
+                'myuser' => $this->myuser,
+            ],
         );
     }
 

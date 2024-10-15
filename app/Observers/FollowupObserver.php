@@ -16,11 +16,11 @@ class FollowupObserver
      */
     public function created(Followup $followup): void
     {
-        
+
         $recipient = auth()->user();
         Notification::make()
             ->title('Nuevo ticket')
-            ->body("Hemos registrado el ticket #".$followup->name)
+            ->body("Hemos registrado el ticket #" . $followup->name)
             ->icon('heroicon-m-shield-check')
             ->iconColor('success')
             ->sendToDatabase($recipient);
@@ -32,19 +32,19 @@ class FollowupObserver
     public function updated(Followup $followup): void
     {
         //data original
-        $data = Event::findOrFail($followup->event_id);
-       // dd($event);
+        $event = Event::findOrFail($followup->event_id);
+        $data = $followup;
         $myuser = auth()->user()->name;
+       // dd($myuser);
 
-               
-        if ($data->name == 'Cotización aprobada') {
-           
-            $recipientEmail = 'contacto@otecproyecta.cl';
-            //$recipientEmail = 'cafutrille@gmail.com';
 
-    
-            Mail::to($recipientEmail)->send(new CotizacionAprobadaMail($data));
+        if ($event->name == 'Cotización aprobada') {
 
+            // $recipientEmail = 'contacto@otecproyecta.cl';s
+            $recipientEmail = 'cafutrille@gmail.com';
+
+
+            Mail::to($recipientEmail)->send(new CotizacionAprobadaMail($data,$myuser));
         }
     }
 
