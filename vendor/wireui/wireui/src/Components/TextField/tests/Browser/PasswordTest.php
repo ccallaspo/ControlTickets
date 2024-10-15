@@ -9,15 +9,15 @@ use Tests\Browser\BrowserTestCase;
 
 class PasswordTest extends BrowserTestCase
 {
-    public function test_it_should_see_label_and_corner_hint(): void
+    public function test_it_should_see_label_and_corner(): void
     {
-        Livewire::test(new class() extends Component
+        Livewire::test(new class extends Component
         {
             public function render(): string
             {
                 return <<<'BLADE'
                 <div>
-                    <x-password label="Input 1" corner-hint="Corner 1" />
+                    <x-password label="Input 1" corner="Corner 1" />
                 </div>
                 BLADE;
             }
@@ -26,9 +26,9 @@ class PasswordTest extends BrowserTestCase
             ->assertSee('Corner 1');
     }
 
-    public function test_it_should_see_hint_and_prefix_and_not_see_suffix(): void
+    public function test_it_should_see_description_and_prefix_and_not_see_suffix(): void
     {
-        Livewire::test(new class() extends Component
+        Livewire::test(new class extends Component
         {
             public function render(): string
             {
@@ -36,23 +36,23 @@ class PasswordTest extends BrowserTestCase
                 <div>
                     <x-password
                         label="Input 1"
-                        corner-hint="Corner 1"
-                        hint="Hint 1"
+                        corner="Corner 1"
                         prefix="Prefix 1"
                         suffix="Suffix 1"
+                        description="Description 1"
                     />
                 </div>
                 BLADE;
             }
         })
-            ->assertSee('Hint 1')
             ->assertSee('Prefix 1')
+            ->assertSee('Description 1')
             ->assertDontSee('Suffix 1');
     }
 
     public function test_it_should_not_see_prepend_and_append_slots(): void
     {
-        Livewire::test(new class() extends Component
+        Livewire::test(new class extends Component
         {
             public function render(): string
             {
@@ -79,7 +79,7 @@ class PasswordTest extends BrowserTestCase
 
     public function test_it_should_see_prefix_and_not_see_suffix_instead_append_or_prepend_slots(): void
     {
-        Livewire::test(new class() extends Component
+        Livewire::test(new class extends Component
         {
             public function render(): string
             {
@@ -106,7 +106,7 @@ class PasswordTest extends BrowserTestCase
 
     public function test_it_should_see_input_error(): void
     {
-        Livewire::test(new class() extends Component
+        Livewire::test(new class extends Component
         {
             #[Validate('required', message: 'input cant be empty')]
             public $model = null;
@@ -138,7 +138,7 @@ class PasswordTest extends BrowserTestCase
 
     public function test_it_should_set_model_value_to_livewire(): void
     {
-        Livewire::visit(new class() extends Component
+        Livewire::visit(new class extends Component
         {
             public $password = null;
 
@@ -159,7 +159,7 @@ class PasswordTest extends BrowserTestCase
 
     public function test_it_should_change_the_input_type_when_clicking_on_the_view_password_icon(): void
     {
-        Livewire::visit(new class() extends Component
+        Livewire::visit(new class extends Component
         {
             public function render(): string
             {

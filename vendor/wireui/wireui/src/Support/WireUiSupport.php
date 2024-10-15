@@ -15,22 +15,22 @@ class WireUiSupport
 {
     public function components(): ComponentResolver
     {
-        return new ComponentResolver();
+        return new ComponentResolver;
     }
 
     public function directives(): BladeDirectives
     {
-        return new BladeDirectives();
+        return new BladeDirectives;
     }
 
     public function component(string $name): string
     {
-        return (new static())->components()->resolve($name);
+        return (new static)->components()->resolve($name);
     }
 
     public function extractAttributes(mixed $property): ComponentAttributeBag
     {
-        return $property instanceof ComponentSlot ? $property->attributes : new ComponentAttributeBag();
+        return $property instanceof ComponentSlot ? $property->attributes : new ComponentAttributeBag;
     }
 
     public function alpine(string $component, array $data = []): string
@@ -79,7 +79,7 @@ class WireUiSupport
         return Blade::render("@entangle('{$value}')");
     }
 
-    public static function wireModel(?Component $component, ComponentAttributeBag $attributes): array
+    public function wireModel(?Component $component, ComponentAttributeBag $attributes): array
     {
         $exists = count($attributes->whereStartsWith('wire:model')->getAttributes()) > 0;
 
@@ -99,17 +99,17 @@ class WireUiSupport
                 'blur' => $model->modifiers()->contains('blur'),
                 'debounce' => [
                     'exists' => $model->modifiers()->contains('debounce'),
-                    'delay' => self::getAttributeDelay($model->modifiers()),
+                    'delay' => $this->getAttributeDelay($model->modifiers()),
                 ],
                 'throttle' => [
                     'exists' => $model->modifiers()->contains('throttle'),
-                    'delay' => self::getAttributeDelay($model->modifiers()),
+                    'delay' => $this->getAttributeDelay($model->modifiers()),
                 ],
             ],
         ];
     }
 
-    public static function alpineModel(ComponentAttributeBag $attributes): array
+    public function alpineModel(ComponentAttributeBag $attributes): array
     {
         $exists = count($attributes->whereStartsWith('x-model')->getAttributes()) > 0;
 
@@ -127,17 +127,17 @@ class WireUiSupport
                 'blur' => $model->modifiers()->contains('blur'),
                 'debounce' => [
                     'exists' => $model->modifiers()->contains('debounce'),
-                    'delay' => self::getAttributeDelay($model->modifiers()),
+                    'delay' => $this->getAttributeDelay($model->modifiers()),
                 ],
                 'throttle' => [
                     'exists' => $model->modifiers()->contains('throttle'),
-                    'delay' => self::getAttributeDelay($model->modifiers()),
+                    'delay' => $this->getAttributeDelay($model->modifiers()),
                 ],
             ],
         ];
     }
 
-    protected static function getAttributeDelay(Collection $modifiers): int
+    private function getAttributeDelay(Collection $modifiers): int
     {
         $delay = (int) Str::of($modifiers->last(default: '250'))
             ->replaceMatches('/[^0-9]/', '')

@@ -5,13 +5,14 @@ namespace WireUi\Components\Modal\tests\Unit;
 use WireUi\Components\Modal\Card as ModalCard;
 
 beforeEach(function () {
-    $this->component = (new ModalCard())->withName('modal-card');
+    $this->component = (new ModalCard)->withName('modal-card');
 });
 
 test('it should have array properties', function () {
     $props = $this->invokeProperty($this->component, 'props');
 
     expect($props)->toBe([
+        'persistent' => false,
         'spacing' => null,
         'fullscreen' => false,
         'hide-close' => false,
@@ -23,6 +24,7 @@ test('it should have properties in component', function () {
 
     expect($this->component)->toHaveProperties([
         // Props
+        'persistent',
         'spacing',
         'hideClose',
         'fullscreen',

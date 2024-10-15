@@ -8,20 +8,19 @@ use WireUi\Components\Wrapper\WireUi\Rounded;
 use WireUi\WireUi\Shadow;
 
 beforeEach(function () {
-    $this->component = (new Number())->withName('number');
+    $this->component = (new Number)->withName('number');
 });
 
 test('it should have array properties', function () {
     $packs = $this->invokeProperty($this->component, 'packs');
 
-    expect($packs)->toBe(['shadow']);
+    expect($packs)->toBe([]);
 
     $props = $this->invokeProperty($this->component, 'props');
 
     expect($props)->toBe([
         'icon' => 'minus',
         'right-icon' => 'plus',
-        'shadowless' => false,
     ]);
 });
 
@@ -32,20 +31,16 @@ test('it should have properties in component', function () {
         // Props
         'icon',
         'rightIcon',
-        'shadowless',
         // Packs
         'color',
-        'shadow',
         'rounded',
         'squared',
         'colorClasses',
-        'shadowClasses',
         'roundedClasses',
     ]);
 
     expect($this->component->icon)->toBe('minus');
     expect($this->component->rightIcon)->toBe('plus');
-    expect($this->component->shadowless)->toBeFalse();
 });
 
 test('it should set icon and right icon in component', function () {
@@ -83,6 +78,26 @@ test('it should set random color in component', function () {
         ->toContain(data_get($class, 'input'));
 });
 
+test('it should set html attributes in component', function () {
+    $this->setAttributes($this->component, [
+        'min' => $min = 5,
+        'max' => $max = 10,
+        'step' => $step = 2,
+    ]);
+
+    $this->runWireUiComponent($this->component);
+
+    $attributes = $this->component->attributes->getAttributes();
+
+    expect(data_get($attributes, 'min'))->toBe($min);
+    expect(data_get($attributes, 'max'))->toBe($max);
+    expect(data_get($attributes, 'step'))->toBe($step);
+
+    expect('<x-number :$min :$max :$step />')
+        ->render(compact('min', 'max', 'step'))
+        ->toContain('min="5"', 'max="10"', 'step="2"');
+});
+
 test('it should set random shadow in component', function () {
     $pack = $this->getRandomPack(Shadow::class);
 
@@ -92,13 +107,9 @@ test('it should set random shadow in component', function () {
 
     $this->runWireUiComponent($this->component);
 
-    $class = data_get($pack, 'class');
-
-    expect($this->component->shadow)->toBe($shadow);
-    expect($this->component->shadowless)->toBeFalse();
-    expect($this->component->shadowClasses)->toBe($class);
-
-    expect('<x-number :$shadow />')->render(compact('shadow'))->toContain($class);
+    expect('<x-number :$shadow />')
+        ->render(compact('shadow'))
+        ->toContain(data_get($pack, 'class'));
 });
 
 test('it should set random rounded in component', function () {

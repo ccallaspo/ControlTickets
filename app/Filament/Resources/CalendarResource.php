@@ -26,6 +26,8 @@ class CalendarResource extends Resource
     protected static ?string $navigationLabel = 'Agenda';
     public static ?string $pluralModelLabel = 'Agenda';
     protected static ?string $navigationGroup = 'Operaciones';
+    ///Ocultar
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Form $form): Form
     {

@@ -2,10 +2,12 @@
 
 namespace App\Observers;
 
+use App\Mail\CotizacionAprobadaMail;
 use App\Models\Event;
 use App\Models\Followup;
 use App\Models\Task;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Mail;
 
 class FollowupObserver
 {
@@ -30,13 +32,19 @@ class FollowupObserver
     public function updated(Followup $followup): void
     {
         //data original
-        $event = Event::findOrFail($followup->event_id);
+        $data = Event::findOrFail($followup->event_id);
+       // dd($event);
         $myuser = auth()->user()->name;
 
                
-        if ($event->name == 'Cotización aprobada') {
+        if ($data->name == 'Cotización aprobada') {
            
-       
+            $recipientEmail = 'contacto@otecproyecta.cl';
+            //$recipientEmail = 'cafutrille@gmail.com';
+
+    
+            Mail::to($recipientEmail)->send(new CotizacionAprobadaMail($data));
+
         }
     }
 

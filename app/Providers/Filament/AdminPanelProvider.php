@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
 use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -34,7 +35,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->brandName('OTEC Proyecta')
-            ->brandLogo(asset('img/logo_proyecta.png'))
+            ->brandLogo(asset('img/logo_proyecta_blanco.png'))
             ->brandLogoHeight('4rem')
             ->favicon(asset('img/favi.png'))
             ->colors([
@@ -66,10 +67,8 @@ class AdminPanelProvider extends PanelProvider
             ->databaseNotifications()
             ->authMiddleware([
                 Authenticate::class,
-            ])
-            ->plugin(
-                FilamentFullCalendarPlugin::make()
-
-            );
+            ]);
+           
+            //->plugin(FilamentSpatieRolesPermissionsPlugin::make());
     }
 }

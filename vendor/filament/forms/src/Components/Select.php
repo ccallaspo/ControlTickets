@@ -771,6 +771,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
                     'query' => $relationshipQuery,
+                    'search' => null,
                 ]) ?? $relationshipQuery;
             }
 
@@ -818,6 +819,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 if ($modifyQueryUsing) {
                     $component->evaluate($modifyQueryUsing, [
                         'query' => $relationship->getQuery(),
+                        'search' => null,
                     ]);
                 }
 
@@ -839,10 +841,11 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             }
 
             if ($relationship instanceof BelongsToThrough) {
+                /** @var ?Model $relatedModel */
                 $relatedModel = $relationship->getResults();
 
                 $component->state(
-                    $relatedModel->getAttribute(
+                    $relatedModel?->getAttribute(
                         $relationship->getRelated()->getKeyName(),
                     ),
                 );
@@ -855,9 +858,9 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 $relatedRecords = $relationship->getResults();
 
                 $component->state(
-                    $relatedRecords->pluck(
-                        $relationship->getForeignKeyName(),
-                    ),
+                    $relatedRecords
+                        ->pluck($relationship->getForeignKeyName())
+                        ->all(),
                 );
 
                 return;
@@ -867,7 +870,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 $relatedModel = $relationship->getResults();
 
                 $component->state(
-                    $relatedModel->getAttribute(
+                    $relatedModel?->getAttribute(
                         $relationship->getForeignKeyName(),
                     ),
                 );
@@ -878,12 +881,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             /** @var BelongsTo $relationship */
             $relatedModel = $relationship->getResults();
 
-            if (! $relatedModel) {
-                return;
-            }
-
             $component->state(
-                $relatedModel->getAttribute(
+                $relatedModel?->getAttribute(
                     $relationship->getOwnerKeyName(),
                 ),
             );
@@ -913,6 +912,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
                     'query' => $relationshipQuery,
+                    'search' => null,
                 ]) ?? $relationshipQuery;
             }
 
@@ -931,6 +931,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
                     'query' => $relationshipQuery,
+                    'search' => null,
                 ]) ?? $relationshipQuery;
             }
 
@@ -1012,6 +1013,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             if ($modifyQueryUsing) {
                 $component->evaluate($modifyQueryUsing, [
                     'query' => $relationship->getQuery(),
+                    'search' => null,
                 ]);
             }
 

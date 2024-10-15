@@ -27,16 +27,27 @@ class UserResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label('Nombre de usuario')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
+                    ->label('Correo Electrónico')
                     ->email()
                     ->required()
                     ->maxLength(255),
-                Forms\Components\DateTimePicker::make('email_verified_at'),
+                Forms\Components\DateTimePicker::make('email_verified_at')
+                    ->label('Correo Electrónico'),
+
+                Forms\Components\Select::make('roles')
+                    ->label('Perfil')
+                    ->multiple()
+                    ->relationship('roles', 'name'),
+
                 Forms\Components\TextInput::make('password')
+                    ->label('Cotraseña')
                     ->password()
                     ->required()
+                    ->hiddenOn('edit')
                     ->maxLength(255),
             ]);
     }
@@ -50,9 +61,14 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('email')
                     ->searchable()
                     ->icon('heroicon-m-envelope'),
-                Tables\Columns\TextColumn::make('email_verified_at')
-                    ->dateTime()
-                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->label('Perfil')
+                    ->searchable(),
+
+                // Tables\Columns\TextColumn::make('email_verified_at')
+                //     ->dateTime()
+                //     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

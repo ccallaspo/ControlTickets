@@ -193,7 +193,7 @@ class FollowupResource extends Resource
                     ->sortable()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('event.name')
+                    Tables\Columns\TextColumn::make('event.name')
                     ->label('Estado')
                     ->badge()
                     ->searchable()
@@ -203,16 +203,27 @@ class FollowupResource extends Resource
                         !empty($record->event->icono) ? $record->event->icono : null
                     )
                     ->formatStateUsing(fn(string $state): string => match ($state) {
-                        'Cotización Aprobada' => 'Cotización aprobada',
                         'Cotización enviada' => 'Cotización enviada',
-                        'Terminado' => 'Terminado',
-                        'rejected' => 'Rejected',
+                        'Cotización aprobada' => 'Cotización aprobada',
+                        'Curso agendado' => 'Curso agendado',
+                        'Curso matriculado' => 'Curso matriculado',
+                        'Curso en proceso' => 'Curso en proceso',
+                        'Curso finalizado' => 'Curso finalizado',
+                        'DJ OTEC generada' => 'DJ OTEC generada',
+                        'DJs generadas' => 'DJs generadas',
+                        'Por facturar' => 'Por facturar',
                         default => $state,
                     })
                     ->color(fn(string $state): string => match ($state) {
                         'Cotización enviada' => 'danger',
-                        'Crear agenda' => 'danger',
                         'Cotización aprobada' => 'success',
+                        'Curso agendado' => 'primary',
+                        'Curso matriculado' => 'info',
+                        'Curso en proceso' => 'info',
+                        'Curso finalizado' => 'success',
+                        'DJ OTEC generada' => 'success',
+                        'DJs generadas' => 'success',
+                        'Por facturar' => 'warning',
                         default => 'warning',
                     }),
 

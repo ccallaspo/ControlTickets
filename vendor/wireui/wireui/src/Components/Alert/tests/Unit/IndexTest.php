@@ -8,7 +8,7 @@ use WireUi\Enum\Packs;
 use WireUi\WireUi\Rounded;
 
 beforeEach(function () {
-    $this->component = (new Alert())->withName('alert');
+    $this->component = (new Alert)->withName('alert');
 });
 
 test('it should have array properties', function () {
@@ -67,7 +67,7 @@ test('it should set specific title in component', function () {
 test('it should set icon in component and using iconless', function () {
     $title = fake()->word();
 
-    $pack = $this->getVariantRandomPack(Variant::class);
+    $pack = $this->getVariantRandomPack(Variant::class, 'color');
 
     $this->setAttributes($this->component, [
         'icon' => $icon = $this->getRandomIcon(),
@@ -98,7 +98,7 @@ test('it should set icon in component and using iconless', function () {
 test('it should set random color and variant in component', function () {
     $title = fake()->word();
 
-    $pack = $this->getVariantRandomPack(Variant::class);
+    $pack = $this->getVariantRandomPack(Variant::class, 'color');
 
     $this->setAttributes($this->component, [
         'color' => $color = data_get($pack, 'key'),
@@ -131,7 +131,7 @@ test('it should set rounded full in component', function () {
 
     $this->runWireUiComponent($this->component);
 
-    $class = (new Rounded())->get(Packs\Rounded::FULL);
+    $class = (new Rounded)->get(Packs\Rounded::FULL);
 
     expect($this->component->rounded)->toBeTrue();
     expect($this->component->squared)->toBeFalse();
@@ -147,7 +147,7 @@ test('it should set squared in component', function () {
 
     $this->runWireUiComponent($this->component);
 
-    $class = (new Rounded())->get(Packs\Rounded::NONE);
+    $class = (new Rounded)->get(Packs\Rounded::NONE);
 
     expect($this->component->squared)->toBeTrue();
     expect($this->component->rounded)->toBeFalse();
