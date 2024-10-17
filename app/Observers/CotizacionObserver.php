@@ -37,11 +37,10 @@ class CotizacionObserver
         $newName = $prefix . $newNumber;
 
         
-            $proced = Task::where('name', 'Cotización con franquicia')->firstOrFail();
+           // $proced = Task::where('name', 'Cotización con franquicia')->firstOrFail();
             //dd($proced);
 
-            $event = Event::where('task_id', $proced->id)
-                ->where('name', 'Cotización enviada')
+            $event = Event::where('name', 'Cotización enviada')
                 ->firstOrFail();
 
             Followup::create([
@@ -49,7 +48,7 @@ class CotizacionObserver
                 'name' => $newName,
                 'author' => $myuser,
                 'referent' => $cotizacion->name,
-                'task_id' => $proced->id,
+                'task_id' => 1,
                 'event_id' => $event->id,
                 'customer_id' => $cotizacion->customer_id,
                 'cod_sence_course' => $course->cod_sence,

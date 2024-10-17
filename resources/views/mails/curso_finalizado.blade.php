@@ -83,7 +83,7 @@
         .btn:hover {
             background-color: #45a049;
         }
-        
+
         .red{
             color: red;
         }
@@ -101,7 +101,7 @@
         <div class="content">
         <h2>Estimado colaborador,</h2>
 
-            <p>{{ $messageContent ?? 'Una cotización ha sido aprobada. El siguiente paso es agendar el curso.' }}</p>
+            <p>{{ $messageContent ?? 'El curso ha finalizado. El siguiente paso es la finalización del curso.' }}</p>
 
             <!-- Detalles de la cotización -->
             @if(isset($data))
@@ -110,11 +110,12 @@
                 <li><strong>Cotización:</strong> {{ $data->referent ?? 'N/A' }}</li>
                 <li><strong>Curso:</strong> {{ $data->name_course ?? 'N/A' }}</li>
                 <li><strong>Código:</strong> {{ $data->cod_sence_course ?? 'N/A' }}</li>
+                <li><strong>Tareas:</strong> Generación de informes, encuestas, diplomas - Firma de DJ OTEC</li>
                 <li><strong>Última actualización:</strong> {{ $data->updated_at }}</li>
             </ul>
             @endif
 
-            <p >Ahora, por favor procede a <strong class="red">agendar el curso</strong> para continuar el proceso.</p>
+            <p>Ahora, por favor procede a <strong class="red">DJ OTEC generada</strong> para continuar el proceso.</p>
 
             <!-- Acción sugerida (botón) -->
             @if(isset($actionUrl))

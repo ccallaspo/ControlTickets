@@ -83,7 +83,7 @@
         .btn:hover {
             background-color: #45a049;
         }
-        
+
         .red{
             color: red;
         }
@@ -101,7 +101,7 @@
         <div class="content">
         <h2>Estimado colaborador,</h2>
 
-            <p>{{ $messageContent ?? 'Una cotización ha sido aprobada. El siguiente paso es agendar el curso.' }}</p>
+            <p>{{ $messageContent ?? 'El curso fue agendado. El siguiente paso es matricular el curso.' }}</p>
 
             <!-- Detalles de la cotización -->
             @if(isset($data))
@@ -114,7 +114,7 @@
             </ul>
             @endif
 
-            <p >Ahora, por favor procede a <strong class="red">agendar el curso</strong> para continuar el proceso.</p>
+            <p>Ahora, por favor procede a <strong class="red">matricular el curso</strong> para continuar el proceso.</p>
 
             <!-- Acción sugerida (botón) -->
             @if(isset($actionUrl))

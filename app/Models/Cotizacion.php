@@ -23,7 +23,8 @@ class Cotizacion extends Model
         'course_id',
         'add_course_id',
         'content',
-        'costs'
+        'costs',
+        'type'
     ];
 
     protected $casts = [

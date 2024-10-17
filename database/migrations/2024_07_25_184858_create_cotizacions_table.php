@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('course_id')->constrained('courses');
             $table->foreignId('add_course_id')->constrained('add_courses');
             $table->text('content')->nullable();
+            $table->string('type')->nullable();
             $table->string('author');
             $table->json('grup')->nullable();
             $table->json('thour')->nullable();

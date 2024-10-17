@@ -22,14 +22,21 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         .header {
+            background-color: #32506e;
+            color: #fff;
             text-align: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #ddd;
+            padding: 20px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
         }
         .header h1 {
-            color: #4CAF50;
             margin: 0;
-            font-size: 24px;
+            font-size: 28px;
+        }
+        .header p {
+            margin: 0;
+            font-size: 16px;
+            opacity: 0.9;
         }
         .content {
             padding: 20px;
@@ -76,6 +83,10 @@
         .btn:hover {
             background-color: #45a049;
         }
+
+        .red{
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -83,28 +94,32 @@
         <!-- Header del correo -->
         <div class="header">
             <h1>{{ $subject ?? 'Notificación importante' }}</h1>
+            <p>{{ $subtitle ?? 'Sigue el flujo de trabajo para completar el proceso.' }}</p>
         </div>
 
         <!-- Contenido principal -->
         <div class="content">
-            <h2>Estimado {{ $recipientName ?? 'Usuario' }},</h2>
+        <h2>Estimado colaborador,</h2>
 
-            <p>{{ $messageContent ?? 'Te informamos que se ha realizado una actualización en tu cotización.' }}</p>
+            <p>{{ $messageContent ?? 'El curso fue matriculado. El siguiente paso es curso en proceso.' }}</p>
 
-            <!-- Detalles personalizados según el estatus -->
+            <!-- Detalles de la cotización -->
             @if(isset($data))
             <h3>Detalles de la cotización:</h3>
             <ul>
-                <li><strong>Nombre:</strong> {{ $data->name }}</li>
-                <li><strong>Descripción:</strong> {{ $data->description ?? 'N/A' }}</li>
-                <li><strong>Fecha:</strong> {{ $data->updated_at }}</li>
-                <!-- Agrega más detalles según sea necesario -->
+                <li><strong>Cotización:</strong> {{ $data->referent ?? 'N/A' }}</li>
+                <li><strong>Curso:</strong> {{ $data->name_course ?? 'N/A' }}</li>
+                <li><strong>Código:</strong> {{ $data->cod_sence_course ?? 'N/A' }}</li>
+                <li><strong>Nota:</strong> Comienza el seguimiento del curso</li>
+                <li><strong>Última actualización:</strong> {{ $data->updated_at }}</li>
             </ul>
             @endif
 
-            <!-- Acción sugerida (botón) si aplica -->
+            <p>Ahora, por favor procede a <strong class="red">curso en proceso</strong> para continuar el proceso.</p>
+
+            <!-- Acción sugerida (botón) -->
             @if(isset($actionUrl))
-                <a href="{{ $actionUrl }}" class="btn">Ver Detalles</a>
+                <a href="{{ $actionUrl }}" class="btn">Agendar Curso</a>
             @endif
         </div>
 

@@ -70,12 +70,12 @@ class CourseResource extends Resource
                         Forms\Components\TextInput::make('unit_value')
                             ->label('Valor Unitario')
                             ->numeric(),
-                        Forms\Components\Select::make('type')
-                            ->label('Tipo de Curso')
-                            ->options([
-                                'Con Franquicia' => 'Con Franquicia',
-                                'Sin Franquicia' => 'Sin Franquicia',
-                            ]),
+                        // Forms\Components\Select::make('type')
+                        //     ->label('Tipo de Curso')
+                        //     ->options([
+                        //         'Con Franquicia' => 'Con Franquicia',
+                        //         'Sin Franquicia' => 'Sin Franquicia',
+                        //     ]),
                     ])
                     ->columns(2), // Esto establece que el formulario tendrá 2 columnas
             ]);

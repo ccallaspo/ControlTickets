@@ -101,6 +101,66 @@ class CotizacionResource extends Resource
                             ]),
 
 
+                            Forms\Components\Select::make('type')
+                            ->label('Tipo de Curso')
+                            ->options([
+                                'Con Franquicia' => 'Con Franquicia',
+                                'Sin Franquicia' => 'Sin Franquicia',
+                            ])->required(),
+                            Forms\Components\Hidden::make('author')
+                            ->default($myuser),
+                            ])->columns(3),
+
+            
+
+                            Repeater::make('Costos del curso')
+                           
+                            ->schema([
+
+                                Forms\Components\TextInput::make('grup')
+                                ->label('Grupos'),
+                            Forms\Components\TextInput::make('thour')
+                                ->label('Total Horas')
+                                ->required(),
+
+                            Forms\Components\TextInput::make('tpart')
+                                ->label('Total Participantes')
+                                ->numeric()
+                                ->lazy()
+                                ->placeholder(0)
+                                ->required()
+                                ->afterStateUpdated(function (Get $get, Set $set) {
+                                    self::updateTotals($get, $set);
+                                }),
+
+                            Forms\Components\TextInput::make('vunit')
+                                ->label('Valor Unitario')
+                                ->numeric()
+                                ->prefix('$')
+                                ->required()
+                                ->lazy()
+                                ->placeholder(0)
+                                ->afterStateUpdated(function (Get $get, Set $set) {
+                                    self::updateTotals($get, $set);
+                                }),
+
+                            Forms\Components\TextInput::make('costs')
+                                ->label('Costo Total')
+                                ->readOnly()
+                                ->prefix('$'),
+                        ])
+                        ->reactive()
+                        ->columnSpan(2)
+                        ->columns(5),
+
+
+                  
+
+                    Section::make('Detalles del Curso')
+                    ->description('')
+                    ->schema([
+         
+
                         Forms\Components\Select::make('course_id')
                             ->label('Curso')
                             ->options(Course::all()->pluck('name', 'id'))
@@ -135,49 +195,12 @@ class CotizacionResource extends Resource
                             ->default(function (callable $get) {
                                 $addCourseId = $get('add_course_id');
                                 return AddCourse::find($addCourseId)?->description ?? '';
-                            }),
+                            })->columnSpan(2),
 
                         Forms\Components\Hidden::make('author')
                             ->default($myuser),
 
-                        Forms\Components\Repeater::make('costs')
-                            ->label('Costos')
-                            ->schema([
-                                Forms\Components\TextInput::make('grup')
-                                    ->label('Grupos'),
-                                Forms\Components\TextInput::make('thour')
-                                    ->label('Total Horas')
-                                    ->required(),
 
-                                Forms\Components\TextInput::make('tpart')
-                                    ->label('Total Participantes')
-                                    ->numeric()
-                                    ->lazy()
-                                    ->placeholder(0)
-                                    ->required()
-                                    ->afterStateUpdated(function (Get $get, Set $set) {
-                                        self::updateTotals($get, $set);
-                                    }),
-
-
-                                Forms\Components\TextInput::make('vunit')
-                                    ->label('Valor Unitario')
-                                    ->numeric()
-                                    ->prefix('$')
-                                    ->required()
-                                    ->lazy()
-                                    ->placeholder(0)
-                                    ->afterStateUpdated(function (Get $get, Set $set) {
-                                        self::updateTotals($get, $set);
-                                    }),
-
-                                Forms\Components\TextInput::make('costs')
-                                    ->label('Costo Total')
-                                    ->readOnly()
-                                    ->prefix('$'),
-                            ])
-            
-                            ->reactive(),
                     ])->columns(2),
             ]);
     }
