@@ -175,6 +175,7 @@ class FollowupResource extends Resource
                     ])->columns(),
             ])->columns(2);
     }
+    
 
     public static function table(Table $table): Table
     {
