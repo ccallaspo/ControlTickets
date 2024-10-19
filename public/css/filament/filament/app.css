@@ -3387,7 +3387,7 @@ select {
 
 .bg-custom-600 {
     --tw-bg-opacity: 1;
-    background-color: rgba(var(--c-600), var(--tw-bg-opacity))
+    background-color: #1c1c3c
 }
 
 .bg-gray-100 {
@@ -5916,12 +5916,3 @@ input:focus-visible+.dark\:\[input\:focus-visible\+\&\]\:ring-white\/20:is(.dark
     background-color: #32506e;
 }
 
-#filament-header {
-    background-color: #32506e;
-}
-
-
-
-/* .fi-sidebar {
-    background-color: #32506e;
-} */

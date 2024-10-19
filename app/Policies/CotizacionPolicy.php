@@ -13,7 +13,7 @@ class CotizacionPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole(['Admin']);
+        return $user->hasRole(['Admin', 'Cotizador','Facturador', 'Administrativo']);
     }
 
     /**
@@ -21,7 +21,7 @@ class CotizacionPolicy
      */
     public function view(User $user, Cotizacion $cotizacion): bool
     {
-        return $user->hasRole(['Admin']);
+        return $user->hasRole(['Admin', 'Cotizador','Facturador', 'Administrativo']);
     }
 
     /**
@@ -29,7 +29,7 @@ class CotizacionPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole(['Admin']);
+        return $user->hasRole(['Admin', 'Cotizador','Facturador', 'Administrativo']);
     }
 
     /**
@@ -37,7 +37,7 @@ class CotizacionPolicy
      */
     public function update(User $user, Cotizacion $cotizacion): bool
     {
-        return $user->hasRole(['Admin']);
+        return $user->hasRole(['Admin', 'Cotizador','Facturador', 'Administrativo']);
     }
 
     /**
@@ -45,7 +45,7 @@ class CotizacionPolicy
      */
     public function delete(User $user, Cotizacion $cotizacion): bool
     {
-        return $user->hasRole(['Admin']);
+        return $user->hasRole(['Admin', 'Cotizador','Facturador', 'Administrativo']);
     }
 
     /**
@@ -53,7 +53,7 @@ class CotizacionPolicy
      */
     public function restore(User $user, Cotizacion $cotizacion): bool
     {
-        return $user->hasRole(['Admin']);
+        return $user->hasRole(['Admin', 'Cotizador','Facturador', 'Administrativo']);
     }
 
     /**
@@ -61,6 +61,6 @@ class CotizacionPolicy
      */
     public function forceDelete(User $user, Cotizacion $cotizacion): bool
     {
-        return $user->hasRole(['Admin']);
+        return $user->hasRole(['Admin', 'Cotizador','Facturador', 'Administrativo']);
     }
 }
