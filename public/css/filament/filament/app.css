@@ -5915,3 +5915,13 @@ input:focus-visible+.dark\:\[input\:focus-visible\+\&\]\:ring-white\/20:is(.dark
 .cf_header{
     background-color: #32506e;
 }
+
+#filament-header {
+    background-color: #32506e;
+}
+
+
+
+/* .fi-sidebar {
+    background-color: #32506e;
+} */
