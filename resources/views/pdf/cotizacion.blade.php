@@ -109,7 +109,7 @@
             border-bottom-left-radius: 0;
             margin: 0;
             font-size: 15px;
-            width: 60%;
+            width: 50%;
         }
 
         .content-section {
@@ -174,7 +174,56 @@
             font-size: 25px;
             width: 100% !important;
         }
-        
+
+        .description-curso p {
+            font-family: 'Calibri', sans-serif;
+            font-size: 16px;
+            font-style: italic;
+        }
+
+        .text-add{
+            font-family: 'Calibri', sans-serif;
+            font-size: 16px;
+            font-style: italic;
+        }
+
+        .contact-info {
+    background-color: #f8f8f8; /* Fondo ligeramente gris para hacer resaltar el contenido */
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px; /* Bordes redondeados */
+    margin: 20px 0;
+}
+
+.contact-info h1 {
+    font-family: 'Arial', sans-serif;
+    font-size: 24px; /* Ajuste del tamaño de la fuente */
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+}
+
+.contact-info p {
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+    color: #333; /* Texto en un gris oscuro */
+    margin-bottom: 5px;
+}
+
+.contact-info p strong {
+    font-size: 16px; /* Nombre más grande que el resto del texto */
+    font-weight: bold;
+}
+
+.contact-info a {
+    color: #007bff; /* Color de enlace azul */
+    text-decoration: none; /* Quita el subrayado de los enlaces */
+}
+
+.contact-info a:hover {
+    text-decoration: underline; /* Agrega el subrayado en hover */
+}
+
     </style>
 </head>
 
@@ -193,7 +242,7 @@
             <h1 class="titulo-center-text-h1">{{ $course->name }}</h1>
             <h2 class="titulo-center-text-h2">Curso modalidad {{ $course->modality }}</h2>
 
-            @if($course->type === 'Con Franquicia')
+            @if($cotizacion->type === 'Con Franquicia')
             <h2 class="cod_sence">Código Sence Nº {{ $course->cod_sence }}</h2>
             @endif
         </div>
@@ -217,7 +266,7 @@
         </div>
 
         <div class="content-section description-curso">
-            {!! $addCourse->description !!}
+            {!! $cotizacion->content !!}
         </div>
 
         <div class="investment-curso">
@@ -262,7 +311,7 @@
 
         <div class="payments">
             <h2>MEDIOS DE PAGO</h2>
-            <h4>Depósito o transferencia bancaria a:</h4>
+            <h4 class="text-add">Pago a 30 días mediante depósito o transferencia bancaria a:</h4>
             <table>
                 <thead>
                     <tr>
@@ -291,7 +340,7 @@
             </table>
         </div>
 
-        @if($course->type === 'Con Franquicia')
+        @if($cotizacion->type === 'Con Franquicia')
         <div class="details_sence page-break-before">
             <h2>FRANQUICIA SENCE</h2>
             <p>La empresa debe realizar la inscripción del curso ante SENCE, a más tardar 2 días hábiles antes del inicio del curso.</p>
@@ -306,16 +355,17 @@
         </div>
         @endif
 
-        @if($course->type === 'Sin Franquicia')
+      
 
         <div class="contact-info page-break-before">
-            <h1>COMUNÍCATE CON NOSOTROS</h1>
-            <p><strong>Yasna Carreño Cortés</strong></p>
-            <p>Email: <a href="mailto:contacto@otecproyecta.cl">contacto@otecproyecta.cl</a></p>
-            <p>Directora - (+56) 9 3397 4153</p>
-            <p>Te invitamos a revisar todas nuestras novedades en <a href="http://www.otecproyecta.cl" target="_blank">www.otecproyecta.cl</a></p>
-        </div>
-        @endif
+    <h1>COMUNÍCATE CON NOSOTROS</h1>
+    <p><strong>Yasna Carreño Cortés</strong></p>
+    <p>Email: <a href="mailto:contacto@otecproyecta.cl">contacto@otecproyecta.cl</a></p>
+    <p>Directora - (+56) 9 3397 4153</p>
+    <p>Te invitamos a revisar todas nuestras novedades en <a href="http://www.otecproyecta.cl" target="_blank">www.otecproyecta.cl</a></p>
+</div>
+
+
 
 </body>
 
