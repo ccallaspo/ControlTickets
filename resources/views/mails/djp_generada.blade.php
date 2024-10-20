@@ -114,7 +114,7 @@
             </ul>
             @endif
 
-            <p>Ahora, por favor procede a <strong class="red">Por facturar</strong> para continuar el proceso.</p>
+            <p>Ahora, por favor procede a <strong class="red">Facturar</strong> para finalizar el proceso.</p>
 
             <!-- Acción sugerida (botón) -->
             @if(isset($actionUrl))

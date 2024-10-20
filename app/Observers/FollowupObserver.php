@@ -41,74 +41,56 @@ class FollowupObserver
         $event = Event::findOrFail($followup->event_id);
         $data = $followup;
         $myuser = auth()->user();
-        //dd($event->name);
+        
+        $solicitante = auth()->user()->email;
+        $facturador = 'contacto@otecproyecta.cl';
+        $administrtivo = 'contacto@otecproyecta.cl';
+        $soporte = 'contacto@otecproyecta.cl';
+        $cotizador = 'contacto@otecproyecta.cl';
 
 
         if ($event->name == 'Cotización aprobada') {
 
-            // Correo a maria Jose
-            $solicitante = auth()->user()->email;
-            $recipientEmail = 'contacto@otecproyecta.cl';
-
-            Mail::to($recipientEmail)
+            Mail::to($administrtivo)
                 ->cc($solicitante)->send(new CotizacionAprobadaMail($data, $myuser));
         }
 
         if ($event->name == 'Curso agendado') {
 
-            //Correo a sebas
-            $solicitante = auth()->user()->email;
-            $recipientEmail = 'contacto@otecproyecta.cl';
-
-            Mail::to($recipientEmail)
+            Mail::to($soporte)
                 ->cc($solicitante)->send(new CursoAgendadoMail($data, $myuser));
         }
 
         if ($event->name == 'Curso matriculado') {
 
-            //Correo a Maria comienza seguimiento
-            $solicitante = auth()->user()->email;
-            $recipientEmail = 'contacto@otecproyecta.cl';
-
-            Mail::to($recipientEmail)
+            Mail::to($administrtivo)
                 ->cc($solicitante)->send(new CursoMatriculadoMail($data, $myuser));
         }
 
         if ($event->name == 'Curso finalizado') {
 
-            //Correo a yasna debe firmar DJO
-            //Correo a sebas debe enviar informes
-            $solicitante = auth()->user()->email;
-            $recipientEmail = 'contacto@otecproyecta.cl';
-
-            Mail::to($recipientEmail)
-                ->cc($solicitante)->send(new CursoFinalizadoMail($data, $myuser));
+            Mail::to($cotizador)
+            ->cc($soporte)->cc($solicitante)
+            ->send(new CursoFinalizadoMail($data, $myuser));
         }
 
         if ($event->name == 'DJ OTEC generada') {
             
-            //Correo a Maria Jose 
-            $solicitante = auth()->user()->email;
-            $recipientEmail = 'contacto@otecproyecta.cl';
-
-            Mail::to($recipientEmail)
+            Mail::to($administrtivo)
                 ->cc($solicitante)->send(new DjOtecMail($data, $myuser));
         }
 
         if ($event->name == 'DJs generadas') {
 
-            //Correo a Cristian
-            $solicitante = auth()->user()->email;
-            $recipientEmail = 'contacto@otecproyecta.cl';
-
-            Mail::to($recipientEmail)
+            Mail::to($facturador)
                 ->cc($solicitante)->send(new DjParticipanteMail($data, $myuser));
         }
 
-        if ($event->name == 'Por facturar') {
+        if ($event->name == 'Facturado') {
 
+            //dd('llegue');
             $solicitante = auth()->user()->email;
-            $recipientEmail = 'contacto@otecproyecta.cl';
+            $recipientEmail = 'cafutrille@gmail.com';
 
             Mail::to($recipientEmail)
                 ->cc($solicitante)->send(new PorFacturarMail($data, $myuser));

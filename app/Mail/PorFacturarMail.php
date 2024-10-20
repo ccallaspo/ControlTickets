@@ -31,7 +31,7 @@ class PorFacturarMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Notificación - Curso a facturar',
+            subject: 'Notificación - Curso facturado',
         );
     }
 

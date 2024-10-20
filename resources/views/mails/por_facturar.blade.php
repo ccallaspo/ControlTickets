@@ -94,14 +94,14 @@
         <!-- Header del correo -->
         <div class="header">
             <h1>{{ $subject ?? 'Notificación importante' }}</h1>
-            <p>{{ $subtitle ?? 'Sigue el flujo de trabajo para completar el proceso.' }}</p>
+            <p>{{ $subtitle ?? 'Cierre de ciclo.' }}</p>
         </div>
 
         <!-- Contenido principal -->
         <div class="content">
         <h2>Estimado colaborador,</h2>
 
-            <p>{{ $messageContent ?? 'El curso ha finalizado. El siguiente paso es facturar.' }}</p>
+            <p>{{ $messageContent ?? 'El curso ha finalizado y fue facturado' }}</p>
 
             <!-- Detalles de la cotización -->
             @if(isset($data))
@@ -114,7 +114,7 @@
             </ul>
             @endif
 
-            <p>Ahora, por favor procede a <strong class="red">facturar</strong> para continuar el proceso.</p>
+            <!-- <p>Ahora, por favor procede a <strong class="red">facturar</strong> para continuar el proceso.</p> -->
 
             <!-- Acción sugerida (botón) -->
             @if(isset($actionUrl))
