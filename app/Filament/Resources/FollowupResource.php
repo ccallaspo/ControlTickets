@@ -160,7 +160,7 @@ class FollowupResource extends Resource
                         Forms\Components\FileUpload::make('doc_participant')
                             ->label('Cargar Participantes')
                             ->downloadable()
-                            ->directory('documentos/participantes') 
+                            ->directory('agenda/participantes') 
                             ->disk('public')
                             ->visibility('public'),
                         Forms\Components\TimePicker::make('h_star')
