@@ -88,11 +88,7 @@ class FollowupObserver
 
         if ($event->name == 'Facturado') {
 
-            //dd('llegue');
-            $solicitante = auth()->user()->email;
-            $recipientEmail = 'cafutrille@gmail.com';
-
-            Mail::to($recipientEmail)
+            Mail::to($cotizador)
                 ->cc($solicitante)->send(new PorFacturarMail($data, $myuser));
         }
     }
