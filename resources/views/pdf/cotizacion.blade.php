@@ -122,6 +122,7 @@
             border-bottom-left-radius: 0;
             margin: 0;
             font-size: 18px;
+            text-transform: uppercase;
             width: 50%;
         }
 
