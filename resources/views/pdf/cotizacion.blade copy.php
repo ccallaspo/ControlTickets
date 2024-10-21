@@ -77,15 +77,17 @@
         }
 
         .titulo-center-text-h2 {
-            color: black !important;
-            background-color: #fff;
-            font-size: 25px;
-            width: 100% !important;
-        }
+    color: black !important;
+    background-color: #fff;
+    font-size: 25px;
+    width: 100% !important;
+    font-style: italic !important; /* Agrega esta línea */
+}
+
 
 
         .titulo-center-text-h1 {
-            font-style: oblique;
+            font-style: italic;
         }
         
 

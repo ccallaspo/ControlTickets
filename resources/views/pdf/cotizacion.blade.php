@@ -84,17 +84,20 @@
             background-color: #fff;
             font-size: 28px;
             width: 100% !important;
+            font-style: italic;
+            margin: 0;
+            padding: 0;
         }
 
 
         .titulo-center-text-h1 {
             font-family: 'Aptos', sans-serif;
-            /* Cambia a la fuente Aptos Narrow */
-            font-style: oblique;
+            font-style: italic;
             font-size: 28px;
-            /* Tamaño de fuente 28px */
-            color: #333;
-            /* Color negro o el que prefieras */
+            color: black !important;
+            text-transform: uppercase;
+            margin: 0;
+            padding: 0;
         }
 
 
@@ -178,7 +181,7 @@
 
         .cod_sence {
             color: red !important;
-            font-family: 'Aptos', sans-serif; 
+            font-family: 'Aptos', sans-serif;
             font-size: 24px;
             background-color: #fff;
             font-style: oblique;
