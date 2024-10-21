@@ -4,8 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Aptos:wght@400&display=swap" rel="stylesheet">
-
     <title>OTEC PROYECTA</title>
     <style>
         body {
@@ -79,24 +77,17 @@
         }
 
         .titulo-center-text-h2 {
-            font-family: 'Aptos', sans-serif;
             color: black !important;
             background-color: #fff;
-            font-size: 28px;
+            font-size: 25px;
             width: 100% !important;
         }
 
 
         .titulo-center-text-h1 {
-            font-family: 'Aptos', sans-serif;
-            /* Cambia a la fuente Aptos Narrow */
             font-style: oblique;
-            font-size: 28px;
-            /* Tamaño de fuente 28px */
-            color: #333;
-            /* Color negro o el que prefieras */
         }
-
+        
 
         .title-center-text th,
         td {
@@ -124,6 +115,7 @@
 
         .content-section {
             margin-top: 850px;
+    
             page-break-inside: avoid;
         }
 
@@ -150,7 +142,7 @@
         }
 
         thead th {
-            background-color: #0056b3;
+            background-color: #7a7c7e;
             color: white;
             font-weight: bold;
         }
@@ -178,8 +170,6 @@
 
         .cod_sence {
             color: red !important;
-            font-family: 'Aptos', sans-serif; 
-            font-size: 24px;
             background-color: #fff;
             font-style: oblique;
             font-size: 25px;
@@ -201,6 +191,7 @@
         .contact-info {
             background-color: #f8f8f8;
             /* Fondo ligeramente gris para hacer resaltar el contenido */
+            padding: 20px;
             text-align: center;
             border-radius: 10px;
             /* Bordes redondeados */
