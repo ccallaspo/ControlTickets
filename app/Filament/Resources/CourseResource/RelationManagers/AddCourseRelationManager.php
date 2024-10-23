@@ -26,6 +26,11 @@ class AddCourseRelationManager extends RelationManager
               
                 Forms\Components\RichEditor::make('description')
                 ->label('Contenido')
+                ->default('
+                <h2>OBJETIVO ESPECIFICO</h2><br>
+                <h2>METODOLOGIA</h2><br>
+                <h2>EVALUACION</h2><br>
+                <h2>INFORMACION DE RELATOR</h2><br>')
                     ->required()
                     ->columnSpan(2),
             ]);
