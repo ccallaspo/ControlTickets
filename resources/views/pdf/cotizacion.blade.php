@@ -121,6 +121,7 @@
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
             margin-top: 1rem;
+            margin-bottom: 0.2rem;
             /* Esto crea un espacio antes del h2 sin aumentar el fondo */
             font-size: 15px;
             text-transform: uppercase;
@@ -304,7 +305,7 @@
             {!! $cotizacion->content !!}
         </div>
 
-        <div class="investment-curso">
+        <div class="investment-curso page-break-inside">
             <h2>INVERSION</h2>
             @php
             $hasGrup = collect($costs)->contains(function($cost) {
