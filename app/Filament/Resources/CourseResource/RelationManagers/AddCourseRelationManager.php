@@ -30,7 +30,8 @@ class AddCourseRelationManager extends RelationManager
                 <h2>OBJETIVO ESPECIFICO</h2><br>
                 <h2>METODOLOGIA</h2><br>
                 <h2>EVALUACION</h2><br>
-                <h2>INFORMACION DE RELATOR</h2><br>')
+                <h2>INFORMACION DE RELATOR</h2><br>
+                <h2>TEMARIO</h2><br>')
                     ->required()
                     ->columnSpan(2),
             ]);
