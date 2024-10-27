@@ -120,14 +120,15 @@
             border-bottom-right-radius: 15px;
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
-            margin: 0;
-            font-size: 18px;
+            margin-top: 1rem;
+            /* Esto crea un espacio antes del h2 sin aumentar el fondo */
+            font-size: 15px;
             text-transform: uppercase;
             width: 50%;
             page-break-before: auto;
             page-break-after: auto;
-           
         }
+
 
         .content-section {
             margin-top: 850px;
@@ -254,7 +255,7 @@
             /* Agrega el subrayado en hover */
         }
 
-        .details_sence{
+        .details_sence {
             font-style: italic;
             text-align: justify;
         }
@@ -375,7 +376,7 @@
         </div>
 
         @if($cotizacion->type === 'Con Franquicia')
-        <div >
+        <div>
             <h2>FRANQUICIA SENCE</h2>
             <p class="details_sence">La empresa debe realizar la inscripción del curso ante SENCE, a más tardar 2 días hábiles antes del inicio del curso.</p>
         </div>
