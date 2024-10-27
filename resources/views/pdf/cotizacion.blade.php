@@ -198,6 +198,7 @@
             font-family: 'Calibri', sans-serif;
             font-size: 16px;
             font-style: italic;
+            text-align: justify;
         }
 
         .text-add {
