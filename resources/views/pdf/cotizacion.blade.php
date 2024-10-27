@@ -124,7 +124,8 @@
             font-size: 18px;
             text-transform: uppercase;
             width: 50%;
-            page-break-inside: avoid;
+            page-break-before: auto;
+            page-break-after: auto;
            
         }
 
