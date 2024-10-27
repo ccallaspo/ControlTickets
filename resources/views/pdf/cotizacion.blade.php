@@ -115,7 +115,7 @@
         h2 {
             background-color: #001642;
             color: white;
-            padding: 10px;
+            padding: 8px;
             border-top-right-radius: 15px;
             border-bottom-right-radius: 15px;
             border-top-left-radius: 0;
@@ -125,7 +125,7 @@
             text-transform: uppercase;
             width: 50%;
             page-break-inside: avoid;
-            margin-top: 1rem;
+           
         }
 
         .content-section {
