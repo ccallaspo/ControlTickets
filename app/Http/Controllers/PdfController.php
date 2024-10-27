@@ -33,7 +33,7 @@ class PdfController extends Controller
         $pdf = PDF::loadView('pdf.cotizacion', $data)->setPaper('letter');
 
        
-        $fileName = 'cotizacion_' . $cotizacion->id . '.pdf';
+        $fileName = 'cotizacion_' . $cotizacion->name . '.pdf';
 
  
         return $pdf->stream($fileName);

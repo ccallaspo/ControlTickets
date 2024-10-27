@@ -271,7 +271,7 @@
 
         <div class="header-text">
             <p>Cotización: {{ $cotizacion->name }}</p>
-            <p>Fecha: <?php echo date("d-m-Y") ?></p>
+            <p>Fecha: {{ $cotizacion->created_at->format('d/m/Y') }}</p>
         </div>
 
         <div class="titulo-center-text">
@@ -343,6 +343,7 @@
                     @endforeach
                 </tbody>
             </table>
+            <p class="details_sence">* para mantener valores ofertados se debe considerar el mínimo de participantes informados en esta cotización</p>
         </div>
 
         <div class="payments page-break-inside">
@@ -393,7 +394,7 @@
 
 
 
-        <div class="contact-info page-break-before">
+        <div class="contact-info page-break-inside">
             <h1>COMUNÍCATE CON NOSOTROS</h1>
             <p><strong>Yasna Carreño Cortés</strong></p>
             <p>Email: <a href="mailto:contacto@otecproyecta.cl">contacto@otecproyecta.cl</a></p>
