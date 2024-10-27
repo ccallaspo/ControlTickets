@@ -121,7 +121,7 @@
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
             margin-top: 1rem;
-            margin-bottom: 0.2rem;
+            margin-bottom: 0;
             /* Esto crea un espacio antes del h2 sin aumentar el fondo */
             font-size: 15px;
             text-transform: uppercase;
