@@ -180,6 +180,10 @@
             page-break-before: always;
         }
 
+        .page-break-inside {
+            page-break-inside: avoid;
+        }
+
         .cod_sence {
             color: red !important;
             font-family: 'Aptos', sans-serif;
@@ -330,7 +334,7 @@
             </table>
         </div>
 
-        <div class="payments">
+        <div class="payments page-break-inside">
             <h2>MEDIOS DE PAGO</h2>
             <h4 class="text-add">Pago a 30 días mediante depósito o transferencia bancaria a:</h4>
             <table>
@@ -362,18 +366,18 @@
         </div>
 
         @if($cotizacion->type === 'Con Franquicia')
-        <div class="details_sence page-break-before">
+        <div class="details_sence">
             <h2>FRANQUICIA SENCE</h2>
             <p>La empresa debe realizar la inscripción del curso ante SENCE, a más tardar 2 días hábiles antes del inicio del curso.</p>
         </div>
 
-        <div class="contact-info">
+        <!-- <div class="contact-info">
             <h1>COMUNÍCATE CON NOSOTROS</h1>
             <p><strong>Yasna Carreño Cortés</strong></p>
             <p>Email: <a href="mailto:contacto@otecproyecta.cl">contacto@otecproyecta.cl</a></p>
             <p>Directora - (+56) 9 3397 4153</p>
             <p>Te invitamos a revisar todas nuestras novedades en <a href="http://www.otecproyecta.cl" target="_blank">www.otecproyecta.cl</a></p>
-        </div>
+        </div> -->
         @endif
 
 
