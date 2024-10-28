@@ -68,8 +68,7 @@ class CotizacionResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->label('Nombre')
-                            ->default(fn() => $newName)
-                            ->readonly(),
+                            ->default(fn() => $newName),
                         Forms\Components\Select::make('customer_id')
                             ->relationship('customer', 'name')
                             ->searchable()

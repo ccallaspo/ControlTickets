@@ -42,7 +42,7 @@ class AddCourseRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('title')
             ->columns([
-                Tables\Columns\TextColumn::make('title')->label('Módulo'),
+                Tables\Columns\TextColumn::make('title')->label('Plantilla'),
                 Tables\Columns\TextColumn::make('description')->label('Descripción')->html(),
             ])
             ->filters([
@@ -50,7 +50,7 @@ class AddCourseRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                ->label('Crear Módulo')
+                ->label('Crear plantilla')
                 ->modalHeading('Nuevo módulo'),
             ])
             ->actions([
