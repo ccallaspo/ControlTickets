@@ -1,0 +1,29 @@
+<?php
+
+return [
+
+    'default' => env('FILESYSTEM_DISK', 'public'),
+
+    'disks' => [
+
+        'local' => [
+            'driver' => 'local',
+            'root' => '/home/control7/public_html/uploads',
+            'throw' => false,
+        ],
+
+        'public' => [
+            'driver' => 'local',
+            'root' => '/home/control7/public_html/uploads',
+            'url' => env('APP_URL').'/uploads', // Cambiado de /storage a /uploads
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+
+    ],
+
+    'links' => [
+        public_path('uploads') => '/home/control7/public_html/uploads', // Cambiado de storage a uploads
+    ],
+
+];

@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use Filament\Tables\Columns\SelectColumn;
+use Illuminate\Support\Facades\Auth;
 
 class FollowupResource extends Resource
 {
@@ -160,7 +161,7 @@ class FollowupResource extends Resource
                         Forms\Components\FileUpload::make('doc_participant')
                             ->label('Cargar Participantes')
                             ->downloadable()
-                            ->directory('agenda/participantes') 
+                            ->directory('agenda/participantes')
                             ->disk('public')
                             ->visibility('public'),
                         Forms\Components\TimePicker::make('h_star')
@@ -172,10 +173,27 @@ class FollowupResource extends Resource
                         Forms\Components\DatePicker::make('f_end')
                             ->label('Fecha Termino'),
 
+
+                        Forms\Components\Fieldset::make('Orden de compra y Duración')
+                            ->schema([
+                                Forms\Components\TextInput::make('n_hours')
+                                    ->label('Número de horas')
+                                    ->maxLength(255),
+
+                                Forms\Components\FileUpload::make('doc_oc')
+                                    ->label('Cargar OC')
+                                    ->downloadable()
+                                    ->directory('agenda/oc')
+                                    ->disk('public')
+                                    ->visibility('public')
+                                    ->visible(fn ($get) => Auth::user()->email !== 'soporte@otecproyecta.cl'), 
+                            ])
+                            ->columns(2)
+
                     ])->columns(),
             ])->columns(2);
     }
-    
+
 
     public static function table(Table $table): Table
     {
@@ -194,7 +212,7 @@ class FollowupResource extends Resource
                     ->sortable()
                     ->searchable(),
 
-                    Tables\Columns\TextColumn::make('event.name')
+                Tables\Columns\TextColumn::make('event.name')
                     ->label('Estado')
                     ->badge()
                     ->searchable()

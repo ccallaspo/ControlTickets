@@ -30,6 +30,8 @@ class Followup extends Model
         'h_end',
         'f_star',
         'f_end',
+        'n_hours',
+        'doc_oc',
     ];
 
     protected $casts = [

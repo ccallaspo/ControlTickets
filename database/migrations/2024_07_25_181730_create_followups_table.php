@@ -22,6 +22,8 @@ return new class extends Migration
             $table->foreignId('task_id')->constrained('tasks');
             $table->foreignId('customer_id')->nullable()->constrained('customers')->onDelete('set null');
             //////////Agenda
+            $table->string('n_hours')->nullable();
+            $table->string('doc_oc')->nullable();
             $table->string('cod_sence_course')->nullable();
             $table->string('name_course')->nullable();
             $table->string('id_sence')->nullable();
