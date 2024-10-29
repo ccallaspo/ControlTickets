@@ -305,7 +305,7 @@
             {!! $cotizacion->content !!}
         </div>
 
-        <div class="investment-curso page-break-inside">
+        <div class="investment-curso page-break-before">
             <h2>INVERSION</h2>
             @php
             $hasGrup = collect($costs)->contains(function($cost) {
