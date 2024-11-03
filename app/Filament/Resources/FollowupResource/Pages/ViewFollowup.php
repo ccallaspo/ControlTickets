@@ -19,6 +19,6 @@ class ViewFollowup extends ViewRecord
 
     public function getHeading(): string
     {
-        return 'Ver Seguimiento y Control ';
+        return 'Ver Ticket ';
     }
 }

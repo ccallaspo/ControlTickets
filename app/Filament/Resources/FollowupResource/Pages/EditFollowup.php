@@ -20,6 +20,6 @@ class EditFollowup extends EditRecord
 
     public function getHeading(): string
     {
-        return 'Editar Seguimiento y Control ';
+        return 'Editar Ticket';
     }
 }

@@ -82,6 +82,7 @@ class CustomerResource extends Resource
                     ->columnSpan(1),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Empresa')
+                    ->wrap()
                     ->searchable()
                     ->columnSpan(1),
                 Tables\Columns\TextColumn::make('represent')

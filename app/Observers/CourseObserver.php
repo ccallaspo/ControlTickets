@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Course;
+use Exception;
 use Filament\Notifications\Notification;
 
 class CourseObserver
@@ -33,10 +34,13 @@ class CourseObserver
     /**
      * Handle the Course "deleted" event.
      */
-    public function deleted(Course $course): void
-    {
-        //
-    }
+        // public function deleting(Course $course): void
+        // {
+        //     if ($course->cotizacion()->exists()) {
+        //         // Lanza una excepción con un mensaje personalizado
+        //         throw new Exception('No se puede eliminar el curso porque tiene cotizaciones relacionadas.');
+        //     }
+        // }
 
     /**
      * Handle the Course "restored" event.

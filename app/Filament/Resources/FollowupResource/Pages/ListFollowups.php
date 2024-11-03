@@ -14,7 +14,7 @@ class ListFollowups extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-            ->label('Crear Seguimiento'),
+            ->label('Crear Ticket'),
         ];
     }
 }

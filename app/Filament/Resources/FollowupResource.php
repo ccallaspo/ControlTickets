@@ -18,7 +18,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\Auth;
+
+use function Laravel\Prompts\select;
 
 class FollowupResource extends Resource
 {
@@ -165,9 +170,11 @@ class FollowupResource extends Resource
                             ->disk('public')
                             ->visibility('public'),
                         Forms\Components\TimePicker::make('h_star')
-                            ->label('Horario de Inicio'),
+                            ->label('Horario de Inicio')
+                            ->seconds(false),
                         Forms\Components\TimePicker::make('h_end')
-                            ->label('Horario de Termino'),
+                            ->label('Horario de Termino')
+                            ->seconds(false),
                         Forms\Components\DatePicker::make('f_star')
                             ->label('Fecha Inicio'),
                         Forms\Components\DatePicker::make('f_end')
@@ -186,7 +193,7 @@ class FollowupResource extends Resource
                                     ->directory('agenda/oc')
                                     ->disk('public')
                                     ->visibility('public')
-                                    ->visible(fn ($get) => Auth::user()->email !== 'soporte@otecproyecta.cl'), 
+                                    ->visible(fn($get) => Auth::user()->email !== 'soporte@otecproyecta.cl'),
                             ])
                             ->columns(2)
 
@@ -198,6 +205,7 @@ class FollowupResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->query(Followup::query()->restrictedForSupportUser())
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->sortable()
@@ -205,15 +213,19 @@ class FollowupResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label('SYC')
                     ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('referent')
                     ->label('Ref. Cotización')
                     ->sortable()
+                    ->size('sm')
+                    ->extraAttributes(['style' => 'width: 1px;'])
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('event.name')
                     ->label('Estado')
+                    ->size('sm')
                     ->badge()
                     ->searchable()
                     ->sortable()
@@ -238,7 +250,7 @@ class FollowupResource extends Resource
                         'Cotización aprobada' => 'success',
                         'Curso agendado' => 'primary',
                         'Curso matriculado' => 'info',
-                        'Curso en proceso' => 'info',
+                        'Curso en proceso' => 'primary',
                         'Curso finalizado' => 'success',
                         'DJ OTEC generada' => 'success',
                         'DJs generadas' => 'success',
@@ -246,26 +258,41 @@ class FollowupResource extends Resource
                         default => 'warning',
                     }),
 
+                Tables\Columns\TextColumn::make('name_course')
+                    ->label('Curso')
+                    ->sortable()
+                    ->size('sm')
+                    ->searchable(),
+
                 Tables\Columns\TextColumn::make('customer.name')
                     ->label('Cliente')
                     ->sortable()
+                    ->size('sm')
+                    ->wrap()
                     ->searchable(),
+
+
                 Tables\Columns\TextColumn::make('author')
                     ->label('Creado por')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('F. Creac.')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('F. Ult. Act.')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])->defaultSort('id', 'desc')
             ->filters([
-                //
+                SelectFilter::make('event.name')
+                    ->label('Estados')
+                    ->indicator('Estado')
+                    ->relationship('event', 'name')
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

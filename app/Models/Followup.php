@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 
 class Followup extends Model
 {
@@ -57,4 +58,19 @@ class Followup extends Model
     {
         return $this->BelongsTo(Customer::class);
     }
+
+    public function scopeRestrictedForSupportUser($query)
+{
+    if (Auth::check() && Auth::user()->email === 'soporte@otecproyecta.cl') {
+        return $query->whereHas('event', function ($q) {
+            $q->whereIn('name', [
+                'Curso agendado',
+                'Curso matriculado',
+                'Curso finalizado'
+            ]);
+        });
+    }
+
+    return $query;
+}
 }
