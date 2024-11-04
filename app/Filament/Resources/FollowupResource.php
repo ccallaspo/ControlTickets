@@ -261,6 +261,7 @@ class FollowupResource extends Resource
                 Tables\Columns\TextColumn::make('name_course')
                     ->label('Curso')
                     ->sortable()
+                    ->wrap()
                     ->size('sm')
                     ->searchable(),
 

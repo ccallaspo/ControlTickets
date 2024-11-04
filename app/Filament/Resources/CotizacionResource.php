@@ -112,7 +112,7 @@ class CotizacionResource extends Resource
 
 
                 Repeater::make('costs')
-                ->label('Costos de Curso')
+                    ->label('Costos de Curso')
                     ->schema([
                         Forms\Components\TextInput::make('grup')
                             ->label('Grupos'),
@@ -230,18 +230,25 @@ class CotizacionResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Cotización')
+                    ->size('sm')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('course.cod_sence')
                     ->label('Código')
+                    ->size('sm')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('course.name')
                     ->label('Curso')
+                    ->wrap()
+                    ->size('sm')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('customer.name')
                     ->label('Cliente')
+                    ->wrap()
+                    ->size('sm')
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('author')
+                    ->size('sm')
                     ->label('Creado por')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),

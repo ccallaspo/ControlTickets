@@ -54,6 +54,7 @@ class CourseResource extends Resource
                                 'E-learning' => 'E-learning',
                                 'Presencial' => 'Presencial',
                                 'A-Distancia' => 'A-Distancia',
+                                'Mixta' => 'Mixta',
                             ]),
                         Forms\Components\Select::make('category')
                             ->label('Categoria')
