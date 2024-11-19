@@ -271,8 +271,6 @@ class FollowupResource extends Resource
                     ->size('sm')
                     ->wrap()
                     ->searchable(),
-
-
                 Tables\Columns\TextColumn::make('author')
                     ->label('Creado por')
                     ->sortable()

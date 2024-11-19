@@ -231,22 +231,34 @@ class CotizacionResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label('Cotización')
                     ->size('sm')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('course.cod_sence')
                     ->label('Código')
                     ->size('sm')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('course.name')
                     ->label('Curso')
                     ->wrap()
                     ->size('sm')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('customer.name')
                     ->label('Cliente')
                     ->wrap()
                     ->size('sm')
+                    ->sortable()
                     ->searchable(),
-
+                Tables\Columns\TextColumn::make('course.modality')
+                    ->label('Modalidad')
+                    ->wrap()
+                    ->size('sm')
+                    ->searchable()
+                    ->sortable()
+                    ->color(fn(string $state): string => match ($state) {
+                           default => 'secondary',
+                    }),
                 Tables\Columns\TextColumn::make('author')
                     ->size('sm')
                     ->label('Creado por')
