@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\CotizacionResource\Pages;
 use App\Filament\Resources\CotizacionResource\RelationManagers;
+use App\Mail\CotizacionAprobadaMail;
 use App\Models\AddCourse;
 use App\Models\Cotizacion;
 use App\Models\Course;
@@ -22,6 +23,8 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Mail;
 
 class CotizacionResource extends Resource
 {
@@ -257,7 +260,7 @@ class CotizacionResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->color(fn(string $state): string => match ($state) {
-                           default => 'secondary',
+                        default => 'secondary',
                     }),
                 Tables\Columns\TextColumn::make('author')
                     ->size('sm')
@@ -285,7 +288,29 @@ class CotizacionResource extends Resource
                 Tables\Actions\Action::make('download')
                     ->label('Descargar')
                     ->url(fn($record) => route('pdf.download', $record->id))
-                    ->openUrlInNewTab(true)
+                    ->openUrlInNewTab(true),
+
+                    Tables\Actions\Action::make('enviarCotizacion')
+                    ->label('Enviar')
+                    ->icon('')
+                    ->action(function ($record, array $data) {
+                        // Aquí procesas el correo y envías la cotización
+                        Mail::to($data['email'])->send(new CotizacionAprobadaMail ($record, $data));
+            
+                        Notification::make()
+                            ->title('Correo enviado correctamente')
+                            ->success()
+                            ->send();
+                    })
+                    ->form([
+                        Forms\Components\TextInput::make('email')
+                            ->label('Correo electrónico')
+                            ->required()
+                            ->email(),
+                    ])
+                    ->modalHeading('Enviar Cotización')
+                    ->modalButton('Enviar'),
+            
 
             ])
             ->bulkActions([
