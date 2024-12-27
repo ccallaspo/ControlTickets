@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\Followup; 
+use App\Models\Followup;
 use App\Mail\DailyCourseReportMail;
 use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
@@ -39,10 +39,17 @@ class SendDailyCourseReport extends Command
         $coursesEndingToday = Followup::whereDate('f_end', $today)->get();
 
         // Usuario al que se enviará el correo
-        $recipient = 'cafutrille@gmail.com';
+        $recipient = 'contacto@otecproyecta.cl';
+
+        // Usuario en copia oculta
+        $bccRecipient = 'cafutrille@gmail.com';
 
         // Enviar correo
-        Mail::to($recipient)->send(new DailyCourseReportMail($coursesStartingToday, $coursesEndingToday));
+        // Mail::to($recipient)->send(new DailyCourseReportMail($coursesStartingToday, $coursesEndingToday));
+
+        Mail::to($recipient)
+            ->bcc($bccRecipient)
+            ->send(new DailyCourseReportMail($coursesStartingToday, $coursesEndingToday));
 
         $this->info('Correo enviado correctamente.');
     }
