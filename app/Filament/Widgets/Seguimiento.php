@@ -12,7 +12,7 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 class Seguimiento extends BaseWidget
 {
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 5;
     protected static ?string $heading = 'Últimos Tickets';
     protected int | string | array $columnSpan = 'full';
 
