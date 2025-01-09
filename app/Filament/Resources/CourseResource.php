@@ -55,6 +55,7 @@ class CourseResource extends Resource
                                 'Presencial' => 'Presencial',
                                 'A-Distancia' => 'A-Distancia',
                                 'Mixta' => 'Mixta',
+                                'Sincronica o Presencial' => 'Sincronica o Presencial',
                             ]),
                         Forms\Components\Select::make('category')
                             ->label('Categoria')
