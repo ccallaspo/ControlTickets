@@ -10,8 +10,6 @@ class Note extends Model
 {
     use HasFactory;
 
-    use HasFactory;
-
     protected $fillable = [
         'note',
         'author',

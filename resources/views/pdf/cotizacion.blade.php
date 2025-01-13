@@ -275,8 +275,9 @@
         </div>
 
         <div class="titulo-center-text">
-            <h1 class="titulo-center-text-h1">{{ $course->name }}</h1>
-            <h2 class="titulo-center-text-h2">Curso modalidad {{ $course->modality }}</h2>
+            <h2 class="titulo-center-text-h2">{{ $course->name }}</h2>
+            <br>
+            <h4 class="titulo-center-text-h2">Curso modalidad {{ $course->modality }}</h4>
 
             @if($cotizacion->type === 'Con Franquicia')
             <h2 class="cod_sence">Código Sence Nº {{ $course->cod_sence }}</h2>
