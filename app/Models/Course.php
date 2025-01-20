@@ -20,6 +20,7 @@ class Course extends Model
         'hour',
         'unit_value',
         'type',
+        'modalidad_id',
     ];
 
     public function AddCourse()
@@ -31,4 +32,10 @@ class Course extends Model
     {
         return $this->hasMany(Cotizacion::class);
     }
+
+    public function modalidad()
+{
+    return $this->belongsTo(Modalidades::class); 
+}
+
 }

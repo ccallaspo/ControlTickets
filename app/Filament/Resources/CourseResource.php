@@ -41,22 +41,19 @@ class CourseResource extends Resource
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('name')
-                        ->label('Curso')
-                        ->required()
-                        ->maxLength(255)
-                        ->autocapitalize(),
+                            ->label('Curso')
+                            ->required()
+                            ->maxLength(255)
+                            ->autocapitalize(),
                         Forms\Components\TextInput::make('description')
                             ->label('Descripción'),
+
                         Forms\Components\Select::make('modality')
                             ->label('Modalidad')
-                            ->required()
-                            ->options([
-                                'E-learning' => 'E-learning',
-                                'Presencial' => 'Presencial',
-                                'A-Distancia' => 'A-Distancia',
-                                'Mixta' => 'Mixta',
-                                'Sincronica o Presencial' => 'Sincronica o Presencial',
-                            ]),
+                            ->options(function () {
+                                return \App\Models\Modalidades::orderBy('name', 'asc')->pluck('name', 'name');
+                            }),
+                            
                         Forms\Components\Select::make('category')
                             ->label('Categoria')
                             ->options([

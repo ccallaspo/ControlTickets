@@ -21,4 +21,8 @@ class EditCotizacion extends EditRecord
     {
         return 'Editar Cotización';
     }
+
+    protected function getRedirectUrl(): string {
+        return $this->getResource()::getUrl('index');
+    }
 }

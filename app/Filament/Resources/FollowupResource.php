@@ -143,13 +143,9 @@ class FollowupResource extends Resource
                             ->maxLength(255),
                         Forms\Components\Select::make('modalily')
                             ->label('Modalidad')
-                            ->options([
-                                'asincronico' => 'Asincronico',
-                                'mixto' => 'Mixto',
-                                'presencial' => 'Presencial',
-                                'sincronico' => 'Sincronico',
-                            ]),
-
+                            ->options(function () {
+                                return \App\Models\Modalidades::orderBy('name', 'asc')->pluck('name', 'name');
+                            }),
                         Forms\Components\CheckboxList::make('week')
                             ->label('Días')
                             ->options([
