@@ -10,8 +10,9 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 class CoursesToEnd extends BaseWidget
 {
-    protected static ?int $sort = 4;
-    protected static ?string $heading = 'Cursos por Finalizar'; // Título del widget
+    protected static ?int $sort = 5;
+    protected static ?string $heading = 'Cursos por Finalizar'; 
+    protected int | string | array $columnSpan = 'full';
     
    
 

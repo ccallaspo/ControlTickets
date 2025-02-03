@@ -11,8 +11,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class CoursesToStart extends BaseWidget
 {
-    protected static ?int $sort = 3;
-    protected static ?string $heading = 'Cursos por Iniciar'; // Título del widget
+    protected static ?int $sort = 4;
+    protected static ?string $heading = 'Cursos por Iniciar'; 
+    protected int | string | array $columnSpan = 'full';
     
 
 

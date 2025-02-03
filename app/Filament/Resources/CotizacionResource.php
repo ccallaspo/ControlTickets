@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\CotizacionResource\Pages;
 use App\Filament\Resources\CotizacionResource\RelationManagers;
 use App\Mail\CotizacionAprobadaMail;
+use App\Mail\SendCotizacion;
 use App\Models\AddCourse;
 use App\Models\Cotizacion;
 use App\Models\Course;
@@ -21,6 +22,7 @@ use Filament\Forms\Components\Select;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
@@ -286,32 +288,38 @@ class CotizacionResource extends Resource
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('download')
-                    ->label('Descargar')
+                    ->icon('heroicon-m-arrow-down-tray')
+                    ->tooltip('Descargar cotización')
                     ->url(fn($record) => route('pdf.download', $record->id))
                     ->openUrlInNewTab(true),
 
                     Tables\Actions\Action::make('enviarCotizacion')
-                    ->label('Enviar')
-                    ->icon('')
+                    ->icon('heroicon-o-rocket-launch')
+                    ->tooltip('Enviar cotización')
                     ->action(function ($record, array $data) {
-                        // Aquí procesas el correo y envías la cotización
-                        Mail::to($data['email'])->send(new CotizacionAprobadaMail ($record, $data));
-            
-                        Notification::make()
-                            ->title('Correo enviado correctamente')
-                            ->success()
-                            ->send();
+                        // Llamar al controlador para enviar el PDF por correo
+                        return redirect()->route('send.pdf', [
+                            'record' => $record,
+                            'emails' => collect($data['emails'])->pluck('email')->toArray(), 
+                        ]);
                     })
                     ->form([
-                        Forms\Components\TextInput::make('email')
+                        Repeater::make('emails')
                             ->label('Correo electrónico')
-                            ->required()
-                            ->email(),
+                            ->schema([
+                                TextInput::make('email')
+                                    ->label('Destinatario')
+                                    ->required()
+                                    ->email(),
+                            ])
+                            ->default(fn ($record) => [['email' => $record->customer->email ?? '']]) // Siempre muestra un input
+                            ->minItems(1) // Asegura que haya al menos un campo visible
+                            ->collapsible(), // Permite expandir/contraer los correos
                     ])
+                    
                     ->modalHeading('Enviar Cotización')
                     ->modalButton('Enviar'),
-            
-
+                
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
