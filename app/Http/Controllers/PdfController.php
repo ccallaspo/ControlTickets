@@ -43,18 +43,16 @@ class PdfController extends Controller
         //return $pdf->download($fileName);
     }
 
-    /////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
 
     public function sendPdf(Request $request, $id)
     {
-
-        // Obtener los datos necesarios
+        // Obtener los datos
         $cotizacion = Cotizacion::findOrFail($id);
         $course = Course::findOrFail($cotizacion->course_id);
         $addCourse = AddCourse::findOrFail($cotizacion->add_course_id);
         $costs = is_string($cotizacion->costs) ? json_decode($cotizacion->costs, true) : $cotizacion->costs;
 
-        // Preparar los datos para la vista
         $data = [
             'cotizacion' => $cotizacion,
             'course' => $course,
@@ -65,9 +63,9 @@ class PdfController extends Controller
         // Generar el PDF
         $pdf = PDF::loadView('pdf.cotizacion', $data)->setPaper('letter');
 
-        // Ruta donde se guardará el PDF
-        $directory = public_path('storage' . DIRECTORY_SEPARATOR . 'agenda' . DIRECTORY_SEPARATOR . 'oc');
-        $fileName = 'cotizacion_' . $cotizacion->name . '.pdf';
+        // Ruta donde se guardará el PDF en storage/app/public/agenda/oc/
+        $directory = storage_path('uploads/agenda/coti');
+        $fileName = 'cotizacion_' . $cotizacion->id . '.pdf';
         $pdfPath = $directory . DIRECTORY_SEPARATOR . $fileName;
 
         // Crear la carpeta si no existe
@@ -77,42 +75,25 @@ class PdfController extends Controller
 
         // Guardar el PDF
         $pdf->save($pdfPath);
-
-        // Obtener el correo del usuario logueado
+        dd($pdfPath);
+        // Obtener el correo del usuario autenticado
         $userEmail = auth()->user()->email;
 
-        // Extraer los correos como un array
-        $emails = array_merge([$userEmail], $request->emails);
 
-        // dd($request->emails);
 
-        // 🔹 **Verificar si hay correos antes de enviar el email**
-        if (empty($emails)) {
-            //    return response()->json(['error' => 'Debe ingresar al menos un correo válido.'], 400);
-        }
+        // Obtener los correos del request y agregar el del usuario autenticado
+        $emails = array_merge([$userEmail], $request->emails ?? []);
 
-        // Enviar el correo con múltiples destinatarios
-        Mail::send('mails.sendCotizacion', $data, function ($message) use ($emails, $pdfPath, $cotizacion, $userEmail) {
-            $message->to($emails)
-                    ->subject('OTEC Proyecta - Cotización #' . $cotizacion->id)
-                    ->cc($userEmail)
-                    ->attach($pdfPath, [
-                        'as' => 'cotizacion_' . $cotizacion->id . '.pdf',
-                        'mime' => 'application/pdf',
-                    ]);
-        });
+        // Enviar el correo a la cola
+        Mail::to($emails)->queue(new SendCotizacion($data, $pdfPath));
 
-        // Eliminar el archivo PDF temporal después de enviarlo (opcional)
-        unlink($pdfPath);
-
-        // Respuesta JSON
-        // ✅ Enviar la notificación en la vista
+        // Notificación de éxito
         Notification::make()
             ->title('Correo enviado con éxito')
             ->success()
             ->send();
 
-        return redirect()->back(); // O redirige a otra página
+        return redirect()->back();
     }
 
 

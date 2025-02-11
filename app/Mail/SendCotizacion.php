@@ -45,7 +45,10 @@ class SendCotizacion extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'mails.sendCotizacion', // Usa la vista de correo
+            view: 'mails.sendCotizacion',
+            with: [
+                'data' => $this->data
+            ],
         );
     }
 
