@@ -287,13 +287,13 @@ class CotizacionResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('download')
+                Tables\Actions\Action::make('Descargar')
                     ->icon('heroicon-m-arrow-down-tray')
                     ->tooltip('Descargar cotización')
                     ->url(fn($record) => route('pdf.download', $record->id))
                     ->openUrlInNewTab(true),
 
-                    Tables\Actions\Action::make('enviarCotizacion')
+                    Tables\Actions\Action::make('Enviar')
                     ->icon('heroicon-o-rocket-launch')
                     ->tooltip('Enviar cotización')
                     ->action(function ($record, array $data) {

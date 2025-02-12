@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('notes', function (Blueprint $table) {
             $table->id();
-            $table->string('note');
+            $table->longText('note');
             $table->string('author');
             $table->foreignId('followup_id')->nullable()->constrained('followups')->onDelete('set null');
             $table->foreignId('calendar_id')->nullable()->constrained('calendars')->onDelete('set null');

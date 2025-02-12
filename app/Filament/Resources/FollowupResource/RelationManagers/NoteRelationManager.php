@@ -12,13 +12,15 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class NoteRelationManager extends RelationManager
 {
+    
     protected static string $relationship = 'note';
     protected static ?string $title = 'Notas';
+    
     
     public function form(Form $form): Form
     {
         $myuser = auth()->user()->name;
-
+        
         return $form
             ->schema([
                 Forms\Components\RichEditor::make('note')
@@ -34,7 +36,18 @@ class NoteRelationManager extends RelationManager
 
                 Forms\Components\Hidden::make('author')
                     ->default($myuser),
-            ]);
+            ]);            
+    }
+    
+    protected function getModalTitle($record): string
+    {
+        // Si estamos editando un registro
+        if ($record) {
+            return 'Editar';
+        }
+        
+        // Si estamos creando un nuevo registro
+        return 'Vista de registro';
     }
 
     public function table(Table $table): Table
@@ -62,7 +75,8 @@ class NoteRelationManager extends RelationManager
                 ->modalHeading('Nueva nota'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->modalHeading('Editar Registro'),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
@@ -71,4 +85,6 @@ class NoteRelationManager extends RelationManager
                 ]),
             ]);
     }
+
+    
 }
