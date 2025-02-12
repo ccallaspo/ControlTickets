@@ -43,7 +43,7 @@ class InvitacionResource extends Resource
                             });
                         }
                     )
-                    ->getOptionLabelFromRecordUsing(fn($record) => $record->referent)
+                    ->getOptionLabelFromRecordUsing(fn($record) => $record?->referent ?? 'Sin referencia')
                     ->searchable()
                     ->preload()
                     ->required()
