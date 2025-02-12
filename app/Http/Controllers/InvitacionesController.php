@@ -28,9 +28,15 @@ class InvitacionesController extends Controller
             return redirect()->back();
         }
 
-        // Ruta del archivo
-        $ruta = storage_path('app/public' . DIRECTORY_SEPARATOR . $followp->doc_participant);
+        // Ruta Local
+       // $ruta = storage_path('app/public' . DIRECTORY_SEPARATOR . $followp->doc_participant);
+
+        //Ruta Nube
+        $ruta = public_path('uploads' . DIRECTORY_SEPARATOR . 'agenda' . DIRECTORY_SEPARATOR . 'participantes' . DIRECTORY_SEPARATOR . $followp->doc_participant);
+        
         $filePath = str_replace('\\', '/', $ruta);
+
+
 
         // dd($filePath);
 
@@ -46,14 +52,14 @@ class InvitacionesController extends Controller
 
             // Elimina todos los espacios en blanco dentro del correo
             $email = str_replace(' ', '', $email);
-        
+
             // Normaliza el valor eliminando caracteres invisibles y espacios externos
             $email = trim($email);
-        
+
             // Verifica si el valor es un array o una cadena separada por comas
             if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 // Si hay más de un correo, separa por coma y agrega todos al array
-                $emailList = array_map('trim', explode(',', $email)); 
+                $emailList = array_map('trim', explode(',', $email));
                 $emails = array_merge($emails, $emailList);  // Fusiona los correos nuevos con los anteriores
             }
         }
@@ -72,7 +78,7 @@ class InvitacionesController extends Controller
             'h_end' => $followp->h_end,
         ];
 
-//dd($data);
+        //dd($data);
         try {
 
             Mail::bcc($emails)->queue(new SendInvitaciones($data));
@@ -89,19 +95,18 @@ class InvitacionesController extends Controller
         try {
 
             $totalEmails = count($emails);
-           
+
 
             $invitaciones->date_execution = now();
             $invitaciones->save();
 
             $log = new LogInvitacion();
-            $log->invitacion_id = $invitaciones->id;           
-            $log->type = 'Manual';     
-            $log->count = $totalEmails;                     
-            $log->emails = json_encode($emails);                         
-            $log->status = 'Completado';     
-            $log->save();          
-
+            $log->invitacion_id = $invitaciones->id;
+            $log->type = 'Manual';
+            $log->count = $totalEmails;
+            $log->emails = json_encode($emails);
+            $log->status = 'Completado';
+            $log->save();
         } catch (\Throwable $th) {
             //throw $th;
         }
