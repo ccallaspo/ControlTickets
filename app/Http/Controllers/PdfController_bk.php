@@ -75,7 +75,7 @@ class PdfController extends Controller
 
         // Guardar el PDF
         $pdf->save($pdfPath);
-       // dd($pdfPath);
+        //dd($pdfPath);
         // Obtener el correo del usuario autenticado
         $userEmail = auth()->user()->email;
 
@@ -86,12 +86,11 @@ class PdfController extends Controller
 
         // Enviar el correo a la cola
         Mail::to($emails)->queue(new SendCotizacion($data, $pdfPath));
-        
-        
+
         // Eliminar el archivo después de enviarlo
-if (file_exists($pdfPath)) {
-    unlink($pdfPath);
-}
+        if (file_exists($pdfPath)) {
+            unlink($pdfPath);
+        }
 
         // Notificación de éxito
         Notification::make()
@@ -100,8 +99,6 @@ if (file_exists($pdfPath)) {
             ->send();
 
         return redirect()->back();
-        
-       
     }
 
 
