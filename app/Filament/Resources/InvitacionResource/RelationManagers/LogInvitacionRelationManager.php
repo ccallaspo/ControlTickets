@@ -23,8 +23,7 @@ class LogInvitacionRelationManager extends RelationManager
                 ->label('E-Mails')
                 ->rows(3) 
                 ->extraAttributes(['style' => 'resize: none; white-space: pre-wrap; overflow-wrap: break-word;']) 
-                ->disabled() 
-                ->dehydrated(false), 
+                ->disabled(), 
         ])
         ->columns(1);
     }
