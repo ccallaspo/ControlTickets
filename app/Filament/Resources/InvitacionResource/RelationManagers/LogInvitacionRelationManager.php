@@ -56,9 +56,9 @@ class LogInvitacionRelationManager extends RelationManager
                         'Cancelado' => 'danger',   // Rojo
                         default => 'secondary',   // Gris para cualquier otro estado
                     }),
-                
-                Tables\Columns\TextColumn::make('status')
-                    ->label('Estado'),
+                    Tables\Columns\TextColumn::make('created_at')
+                    ->label('F. Ejec')
+
             ])->defaultSort('id', 'desc')
             ->filters([
                 //
