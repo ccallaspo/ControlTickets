@@ -180,6 +180,7 @@ class FollowupResource extends Resource
                                     ->disk('public')
                                     ->visibility('public')
                                     ->visible(fn($get) => Auth::user()->email !== 'soporte@otecproyecta.cl'),
+                                    
 
                             ])
                             ->columns(3)

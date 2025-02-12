@@ -22,7 +22,6 @@ class LogInvitacionRelationManager extends RelationManager
                 Forms\Components\Textarea::make('emails')
                 ->label('E-Mails')
                 ->rows(3) 
-                ->extraAttributes(['style' => 'resize: none; white-space: pre-wrap; overflow-wrap: break-word;']) 
                 ->disabled(), 
         ])
         ->columns(1);
