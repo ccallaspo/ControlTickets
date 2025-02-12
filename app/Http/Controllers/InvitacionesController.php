@@ -32,7 +32,7 @@ class InvitacionesController extends Controller
        // $ruta = storage_path('app/public' . DIRECTORY_SEPARATOR . $followp->doc_participant);
 
         //Ruta Nube
-        $ruta = public_path('uploads/' . $followp->doc_participant);
+        $ruta = '/home/control7/public_html/' . $followp->doc_participant;
         
         $filePath = str_replace('\\', '/', $ruta);
 
