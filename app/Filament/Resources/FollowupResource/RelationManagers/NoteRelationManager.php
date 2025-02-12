@@ -22,10 +22,9 @@ class NoteRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\RichEditor::make('note')
-                ->fileAttachmentsDisk('public')
-                ->fileAttachmentsDirectory('agenda/images')
+                ->fileAttachmentsDisk('public') 
+                ->fileAttachmentsDirectory('agenda/images') 
                 ->fileAttachmentsVisibility('public')
-                ->fileAttachmentsBaseUrl(url('/uploads/agenda/images'))
                 ->label('Comentarios')
                 ->required()
                 ->validationMessages([
