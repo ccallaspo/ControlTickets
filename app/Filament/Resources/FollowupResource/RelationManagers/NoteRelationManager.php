@@ -14,6 +14,7 @@ class NoteRelationManager extends RelationManager
 {
     protected static string $relationship = 'note';
     protected static ?string $title = 'Notas';
+    
     public function form(Form $form): Form
     {
         $myuser = auth()->user()->name;
@@ -21,9 +22,10 @@ class NoteRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\RichEditor::make('note')
-                ->fileAttachmentsDisk('public') 
-                ->fileAttachmentsDirectory('agenda/images') 
+                ->fileAttachmentsDisk('public')
+                ->fileAttachmentsDirectory('agenda/images')
                 ->fileAttachmentsVisibility('public')
+                ->fileAttachmentsBaseUrl(url('/uploads/agenda/images'))
                 ->label('Comentarios')
                 ->required()
                 ->validationMessages([
