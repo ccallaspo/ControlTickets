@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\InvitacionesController;
 use App\Http\Controllers\PdfController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,3 +30,5 @@ Route::get('/send-pdf/{record}', [PdfController::class, 'sendPdf'])->name('send.
 Route::get('/pdf', function () {
     return redirect('/pdf/my_pdf_view');
 });
+
+Route::get('/import-emails/{id}', [InvitacionesController::class, 'readEmails'])->name('enviar.invitaciones');

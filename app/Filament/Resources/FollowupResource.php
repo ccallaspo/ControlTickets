@@ -22,6 +22,7 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\Auth;
+use Filament\Forms\Components\Repeater;
 
 use function Laravel\Prompts\select;
 
@@ -128,6 +129,8 @@ class FollowupResource extends Resource
                             ]),
                     ])->columns(4),
 
+
+
                 Section::make('Agendar Curso')
                     ->description('Información del curso y participantes.')
                     ->schema([
@@ -146,39 +149,26 @@ class FollowupResource extends Resource
                             ->options(function () {
                                 return \App\Models\Modalidades::orderBy('name', 'asc')->pluck('name', 'name');
                             }),
-                        Forms\Components\CheckboxList::make('week')
-                            ->label('Días')
-                            ->options([
-                                'lunes' => 'Lunes',
-                                'martes' => 'Martes',
-                                'miercoles' => 'Miercoles',
-                                'jueves' => 'Jueves',
-                                'viernes' => 'Viernes',
-                                'sabado' => 'Sabado',
-                                'domingo' => 'Domingo',
-                            ])
-                            ->bulkToggleable()
-                            ->columns(2),
-                        Forms\Components\FileUpload::make('doc_participant')
-                            ->label('Cargar Participantes')
-                            ->downloadable()
-                            ->directory('agenda/participantes')
-                            ->disk('public')
-                            ->visibility('public'),
-                        Forms\Components\TimePicker::make('h_star')
+
+                        /*                         Forms\Components\TimePicker::make('h_star')
                             ->label('Horario de Inicio')
                             ->seconds(false),
                         Forms\Components\TimePicker::make('h_end')
                             ->label('Horario de Termino')
-                            ->seconds(false),
+                            ->seconds(false), */
                         Forms\Components\DatePicker::make('f_star')
                             ->label('Fecha Inicio'),
                         Forms\Components\DatePicker::make('f_end')
                             ->label('Fecha Termino'),
 
-
-                        Forms\Components\Fieldset::make('Orden de compra y Duración')
+                        Forms\Components\Fieldset::make('Subir Participantes y Orden de compra')
                             ->schema([
+                                Forms\Components\FileUpload::make('doc_participant')
+                                    ->label('Cargar Participantes')
+                                    ->downloadable()
+                                    ->directory('agenda/participantes')
+                                    ->disk('public')
+                                    ->visibility('public'),
                                 Forms\Components\TextInput::make('n_hours')
                                     ->label('Número de horas')
                                     ->maxLength(255),
@@ -190,10 +180,36 @@ class FollowupResource extends Resource
                                     ->disk('public')
                                     ->visibility('public')
                                     ->visible(fn($get) => Auth::user()->email !== 'soporte@otecproyecta.cl'),
+
                             ])
-                            ->columns(2)
+                            ->columns(3)
 
                     ])->columns(),
+
+                    Section::make('Detalle de horarios (Opcional)')
+                    ->description('Utilizado para desglosar los horarios de capacitación de manera detallada.')
+                    ->schema([
+                
+                        Repeater::make('week')
+                            ->schema([
+                                Forms\Components\DatePicker::make('day')
+                                    ->label('Día')
+                                    ->native(false),
+                                Forms\Components\TimePicker::make('start_time')
+                                    ->label('Hora Inicio')
+                                    ->seconds(false),
+                                Forms\Components\TimePicker::make('end_time')
+                                    ->label('Hora Termino')
+                                    ->seconds(false),
+                            ])
+                            ->columns(3)  
+                            ->label('Horario.')
+                            ->columnSpan(2),  
+                
+                    ])
+                    ->columns(1), 
+                
+
             ])->columns(2);
     }
 

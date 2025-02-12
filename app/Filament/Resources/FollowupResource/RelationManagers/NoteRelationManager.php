@@ -21,10 +21,15 @@ class NoteRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\RichEditor::make('note')
-                    ->label('Comentarios')
-                    ->required()
-                    ->columnSpan('full'),
-                    
+                ->fileAttachmentsDisk('public') 
+                ->fileAttachmentsDirectory('agenda/images') 
+                ->fileAttachmentsVisibility('public')
+                ->label('Comentarios')
+                ->required()
+                ->validationMessages([
+                    'required' => 'El campo es obligatorio', 
+                ])
+                ->columnSpan('full'),                    
 
                 Forms\Components\Hidden::make('author')
                     ->default($myuser),

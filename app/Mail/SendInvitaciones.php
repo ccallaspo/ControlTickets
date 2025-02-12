@@ -5,28 +5,22 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SendCotizacion extends Mailable implements ShouldQueue
+class SendInvitaciones extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $data; // Datos adicionales para la vista
-    private $pdfPath; // Ruta del archivo PDF
+    public $data;
 
     /**
      * Create a new message instance.
-     *
-     * @param mixed $data Datos adicionales para la vista.
-     * @param string $pdfPath Ruta del archivo PDF generado.
      */
-    public function __construct($data, $pdfPath)
+    public function __construct($data)
     {
         $this->data = $data;
-        $this->pdfPath = $pdfPath;
     }
 
     /**
@@ -35,7 +29,7 @@ class SendCotizacion extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'OTEC Proyecta - Cotización #' . $this->data['cotizacion']->id, 
+            subject: ' Bienvenidos al Curso " '.$this->data['name_course'].' "', 
         );
     }
 
@@ -45,7 +39,7 @@ class SendCotizacion extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'mails.sendCotizacion',
+            view: 'mails.sendInvitaciones',
             with: [
                 'data' => $this->data
             ],
@@ -55,14 +49,10 @@ class SendCotizacion extends Mailable implements ShouldQueue
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, Attachment>
+     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
     public function attachments(): array
     {
-        return [
-            Attachment::fromPath($this->pdfPath)
-                ->as("Cotizacion_{$this->data['cotizacion']->id}.pdf") // Nombre del archivo adjunto
-                ->withMime('application/pdf'), // Tipo MIME
-        ];
+        return [];
     }
 }

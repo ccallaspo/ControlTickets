@@ -36,7 +36,7 @@ class Followup extends Model
     ];
 
     protected $casts = [
-        'week' => 'array',
+        'week' => 'json',    
     ];
 
     public function note(): HasMany
