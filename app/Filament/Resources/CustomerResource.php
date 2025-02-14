@@ -30,47 +30,55 @@ class CustomerResource extends Resource
         $myuser = auth()->user()->name;
 
         return $form
-        ->schema([
-            Section::make('Cliente')
-                ->description('Maestro de clientes.')
-                ->schema([
-                    Forms\Components\Hidden::make('active')
-                        ->label('Anular')
-                        ->default('Si'), 
-                    Forms\Components\TextInput::make('rut')
-                        ->maxLength(255)
-                        ->columnSpan(1),
-                    Forms\Components\TextInput::make('name')
-                        ->label('Empresa')
-                        ->required()
-                        ->maxLength(255)
-                        ->columnSpan(1),
-                    Forms\Components\TextInput::make('represent')
-                        ->label('Contacto')
-                        ->maxLength(255)
-                        ->columnSpan(1),
-                    Forms\Components\TextInput::make('phone')
-                        ->label('Telefono')
-                        ->maxLength(255)
-                        ->columnSpan(1),
-                    Forms\Components\TextInput::make('email')
-                        ->label('Correo Electronico')
-                        ->maxLength(255)
-                        ->email()
-                        ->columnSpan(1),
-                    Forms\Components\TextInput::make('address')
-                        ->label('Dirección')
-                        ->maxLength(255)
-                        ->columnSpan(1),
-                    Forms\Components\RichEditor::make('description')
-                        ->label('Comentarios')
-                        ->maxLength(255)
-                        ->columnSpan('full'), // Esto hace que ocupe todo el ancho
-                    Forms\Components\Hidden::make('author')
-                        ->default($myuser),
-                ])
-                ->columns(2), // Esto establece que el formulario tendrá 2 columnas
-        ]);
+            ->schema([
+                Section::make('Cliente')
+                    ->description('Maestro de clientes.')
+                    ->schema([
+                        Forms\Components\Hidden::make('active')
+                            ->label('Anular')
+                            ->default('Si'),
+                        Forms\Components\TextInput::make('rut')
+                            ->maxLength(255)
+                            ->columnSpan(1),
+                        Forms\Components\TextInput::make('name')
+                            ->label('Empresa')
+                            ->required()
+                            ->maxLength(255)
+                            ->columnSpan(1),
+                        Forms\Components\TextInput::make('represent')
+                            ->label('Contacto')
+                            ->maxLength(255)
+                            ->columnSpan(1),
+                        Forms\Components\TextInput::make('phone')
+                            ->label('Telefono')
+                            ->maxLength(255)
+                            ->columnSpan(1),
+                        Forms\Components\TextInput::make('email')
+                            ->label('Correo Electronico')
+                            ->maxLength(255)
+                            ->email()
+                            ->rules([
+                                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/'
+                            ])
+                            ->validationMessages([
+                                'regex' => 'El formato del correo electrónico no es válido.',
+                            ])
+                            ->dehydrateStateUsing(fn($state) => trim($state))
+                            ->rule('not_regex:/\s/')
+                            ->columnSpan(1),
+                        Forms\Components\TextInput::make('address')
+                            ->label('Dirección')
+                            ->maxLength(255)
+                            ->columnSpan(1),
+                        Forms\Components\RichEditor::make('description')
+                            ->label('Comentarios')
+                            ->maxLength(255)
+                            ->columnSpan('full'), // Esto hace que ocupe todo el ancho
+                        Forms\Components\Hidden::make('author')
+                            ->default($myuser),
+                    ])
+                    ->columns(2), // Esto establece que el formulario tendrá 2 columnas
+            ]);
     }
 
     public static function table(Table $table): Table

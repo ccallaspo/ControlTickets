@@ -31,6 +31,8 @@ class FollowupResource extends Resource
     protected static ?string $model = Followup::class;
 
     protected static ?string $navigationIcon = 'heroicon-m-shield-check';
+    
+    // protected static ?string $slug = 'tickets'; traduce las rutas
 
     protected static ?string $navigationLabel = 'Tickets';
     public static ?string $pluralModelLabel = 'Tickets';

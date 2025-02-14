@@ -310,13 +310,19 @@ class CotizacionResource extends Resource
                                 TextInput::make('email')
                                     ->label('Destinatario')
                                     ->required()
-                                    ->email(),
+                                    ->email()
+                                    ->validationMessages([
+                                        'email' => 'El correo electrónico ingresado no es válido. Por favor, verifica el formato.',
+                                        'required' => 'El campo correo electrónico es obligatorio.',
+                                    ])
+                                    ->dehydrateStateUsing(fn ($state) => trim($state)), 
                             ])
-                            ->default(fn ($record) => [['email' => $record->customer->email ?? '']]) // Siempre muestra un input
-                            ->minItems(1) // Asegura que haya al menos un campo visible
-                            ->collapsible(), // Permite expandir/contraer los correos
-                    ])
-                    
+                            ->default(fn ($record) => [
+                                ['email' => isset($record->customer->email) ? trim($record->customer->email) : '']
+                            ]) // Limpia espacios al cargar
+                            ->minItems(1)
+                            ->collapsible(),
+                    ])  
                     ->modalHeading('Enviar Cotización')
                     ->modalButton('Enviar'),
                 
