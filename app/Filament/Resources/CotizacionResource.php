@@ -28,6 +28,7 @@ use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Mail;
 
+
 class CotizacionResource extends Resource
 {
     protected static ?string $model = Cotizacion::class;
@@ -113,6 +114,8 @@ class CotizacionResource extends Resource
                             ])->required(),
                         Forms\Components\Hidden::make('author')
                             ->default($myuser),
+                        Forms\Components\Toggle::make('grup')
+                        ->label('Programa'),
                     ])->columns(3),
 
 
@@ -293,14 +296,14 @@ class CotizacionResource extends Resource
                     ->url(fn($record) => route('pdf.download', $record->id))
                     ->openUrlInNewTab(true),
 
-                    Tables\Actions\Action::make('Enviar')
+                Tables\Actions\Action::make('Enviar')
                     ->icon('heroicon-o-rocket-launch')
                     ->tooltip('Enviar cotización')
                     ->action(function ($record, array $data) {
                         // Llamar al controlador para enviar el PDF por correo
                         return redirect()->route('send.pdf', [
                             'record' => $record,
-                            'emails' => collect($data['emails'])->pluck('email')->toArray(), 
+                            'emails' => collect($data['emails'])->pluck('email')->toArray(),
                         ]);
                     })
                     ->form([
@@ -315,17 +318,17 @@ class CotizacionResource extends Resource
                                         'email' => 'El correo electrónico ingresado no es válido. Por favor, verifica el formato.',
                                         'required' => 'El campo correo electrónico es obligatorio.',
                                     ])
-                                    ->dehydrateStateUsing(fn ($state) => trim($state)), 
+                                    ->dehydrateStateUsing(fn($state) => trim($state)),
                             ])
-                            ->default(fn ($record) => [
+                            ->default(fn($record) => [
                                 ['email' => isset($record->customer->email) ? trim($record->customer->email) : '']
                             ]) // Limpia espacios al cargar
                             ->minItems(1)
                             ->collapsible(),
-                    ])  
+                    ])
                     ->modalHeading('Enviar Cotización')
                     ->modalButton('Enviar'),
-                
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

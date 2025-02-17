@@ -35,7 +35,7 @@ class SendCotizacion extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'OTEC Proyecta - Cotización #' . $this->data['cotizacion']->id, 
+            subject: 'OTEC Proyecta - Cotización #' . $this->data['cotizacion']->name, 
         );
     }
 

@@ -277,7 +277,13 @@
         <div class="titulo-center-text">
             <h2 class="titulo-center-text-h2">{{ $course->name }}</h2>
             <br>
-            <h4 class="titulo-center-text-h2">Curso modalidad {{ $course->modality }}</h4>
+            <h4 class="titulo-center-text-h2">
+                @if($cotizacion->grup === true || $cotizacion->grup === 'true')
+                Modalidad {{ $course->modality }}
+                @else
+                Curso modalidad {{ $course->modality }}
+                @endif
+            </h4>
 
             @if($cotizacion->type === 'Con Franquicia')
             <h2 class="cod_sence">Código Sence Nº {{ $course->cod_sence }}</h2>
