@@ -44,7 +44,7 @@ class FollowupObserver
         
         $solicitante = auth()->user()->email;
         $facturador = 'Christian.lillo@otecproyecta.cl';
-        $administrtivo = 'Maria.montilla@otecproyecta.cl';
+        $administrtivo = 'coordinacion@otecproyecta.cl';
         $soporte = 'soporte@otecproyecta.cl';
         $cotizador = 'contacto@otecproyecta.cl';
 

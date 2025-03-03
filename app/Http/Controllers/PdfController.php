@@ -33,8 +33,11 @@ class PdfController extends Controller
         ];
 
         //dd($costs);
-        $pdf = PDF::loadView('pdf.cotizacion', $data)->setPaper('letter');
-
+        //$pdf = PDF::loadView('pdf.cotizacion', $data)->setPaper('letter');
+        $pdf = PDF::loadView('pdf.cotizacion', $data)
+        ->setPaper('letter')
+        ->setOption('encoding', 'UTF-8');
+    
 
         $fileName = 'cotizacion_' . $cotizacion->name . '.pdf';
 
