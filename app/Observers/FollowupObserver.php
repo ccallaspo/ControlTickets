@@ -50,10 +50,10 @@ class FollowupObserver
 
 
         if ($event->name == 'Cotización aprobada') {
-
+            $ccRecipients = [$cotizador, $solicitante];
             Mail::to($administrativo)
                 ->cc($cotizador)
-                ->cc($solicitante)->send(new CotizacionAprobadaMail($data, $myuser));
+                ->cc($ccRecipients)->send(new CotizacionAprobadaMail($data, $myuser));
         }
 
         if ($event->name == 'Curso agendado') {
@@ -64,31 +64,29 @@ class FollowupObserver
         }
 
         if ($event->name == 'Curso matriculado') {
-
+            $ccRecipients = [$cotizador, $solicitante];
             Mail::to($administrativo)
                 ->cc($cotizador)
-                ->cc($solicitante)->send(new CursoMatriculadoMail($data, $myuser));
+                ->cc($ccRecipients)->send(new CursoMatriculadoMail($data, $myuser));
         }
 
         if ($event->name == 'Curso finalizado') {
-
+            $ccRecipients = [$soporte, $solicitante];
             Mail::to($cotizador)
-                ->cc($soporte)->cc($solicitante)
+                ->cc($ccRecipients)
                 ->send(new CursoFinalizadoMail($data, $myuser));
         }
 
         if ($event->name == 'DJ OTEC generada') {
-
+            $ccRecipients = [$cotizador, $solicitante];
             Mail::to($administrativo)
-                ->cc($cotizador)
-                ->cc($solicitante)->send(new DjOtecMail($data, $myuser));
+                ->cc($ccRecipients)->send(new DjOtecMail($data, $myuser));
         }
 
         if ($event->name == 'DJs generadas') {
-
+            $ccRecipients = [$cotizador, $solicitante];
             Mail::to($facturador)
-                ->cc($cotizador)
-                ->cc($solicitante)->send(new DjParticipanteMail($data, $myuser));
+                ->cc($ccRecipients)->send(new DjParticipanteMail($data, $myuser));
         }
 
         if ($event->name == 'Facturado') {
