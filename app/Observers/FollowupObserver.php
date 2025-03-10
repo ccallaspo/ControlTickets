@@ -58,29 +58,28 @@ class FollowupObserver
 
         if ($event->name == 'Curso agendado') {
 
-            Mail::to($soporte)
-                ->cc($cotizador)
+            Mail::to($soporte)->to($cotizador)
                 ->cc($solicitante)->send(new CursoAgendadoMail($data, $myuser));
         }
 
         if ($event->name == 'Curso matriculado') {
 
             Mail::to($administrativo)
-            ->cc($cotizador)
+                ->cc($cotizador)
                 ->cc($solicitante)->send(new CursoMatriculadoMail($data, $myuser));
         }
 
         if ($event->name == 'Curso finalizado') {
 
             Mail::to($cotizador)
-                     ->cc($soporte)->cc($solicitante)
+                ->cc($soporte)->cc($solicitante)
                 ->send(new CursoFinalizadoMail($data, $myuser));
         }
 
         if ($event->name == 'DJ OTEC generada') {
 
             Mail::to($administrativo)
-            ->cc($cotizador)
+                ->cc($cotizador)
                 ->cc($solicitante)->send(new DjOtecMail($data, $myuser));
         }
 
