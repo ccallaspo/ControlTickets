@@ -58,7 +58,9 @@ class FollowupObserver
 
         if ($event->name == 'Curso agendado') {
 
-            Mail::to($soporte)->to($cotizador)
+            Mail::to($soporte)
+                ->cc($cotizador)
+                ->cc('tcotizo.cl@gmail.com')
                 ->cc($solicitante)->send(new CursoAgendadoMail($data, $myuser));
         }
 
