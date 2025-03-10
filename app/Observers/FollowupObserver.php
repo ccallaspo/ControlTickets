@@ -44,56 +44,56 @@ class FollowupObserver
 
         $solicitante = auth()->user()->email;
         $facturador = 'Christian.lillo@otecproyecta.cl';
-        $administrtivo = 'coordinacion@otecproyecta.cl';
+        $administrativo = 'coordinacion@otecproyecta.cl';
         $soporte = 'soporte@otecproyecta.cl';
         $cotizador = 'contacto@otecproyecta.cl';
 
 
         if ($event->name == 'Cotización aprobada') {
 
-            Mail::to($administrtivo)
-                ->cc($administrtivo)
+            Mail::to($administrativo)
+                ->cc($cotizador)
                 ->cc($solicitante)->send(new CotizacionAprobadaMail($data, $myuser));
         }
 
         if ($event->name == 'Curso agendado') {
 
             Mail::to($soporte)
-                ->cc($administrtivo)
+                ->cc($cotizador)
                 ->cc($solicitante)->send(new CursoAgendadoMail($data, $myuser));
         }
 
         if ($event->name == 'Curso matriculado') {
 
-            Mail::to($administrtivo)
+            Mail::to($administrativo)
+            ->cc($cotizador)
                 ->cc($solicitante)->send(new CursoMatriculadoMail($data, $myuser));
         }
 
         if ($event->name == 'Curso finalizado') {
 
             Mail::to($cotizador)
-                ->cc($administrtivo)
-                ->cc($soporte)->cc($solicitante)
+                     ->cc($soporte)->cc($solicitante)
                 ->send(new CursoFinalizadoMail($data, $myuser));
         }
 
         if ($event->name == 'DJ OTEC generada') {
 
-            Mail::to($administrtivo)
+            Mail::to($administrativo)
+            ->cc($cotizador)
                 ->cc($solicitante)->send(new DjOtecMail($data, $myuser));
         }
 
         if ($event->name == 'DJs generadas') {
 
             Mail::to($facturador)
-                ->cc($administrtivo)
+                ->cc($cotizador)
                 ->cc($solicitante)->send(new DjParticipanteMail($data, $myuser));
         }
 
         if ($event->name == 'Facturado') {
 
             Mail::to($cotizador)
-                ->cc($administrtivo)
                 ->cc($solicitante)->send(new PorFacturarMail($data, $myuser));
         }
     }
