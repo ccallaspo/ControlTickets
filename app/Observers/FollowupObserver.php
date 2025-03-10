@@ -66,7 +66,6 @@ class FollowupObserver
         if ($event->name == 'Curso matriculado') {
 
             Mail::to($administrtivo)
-                ->cc($administrtivo)
                 ->cc($solicitante)->send(new CursoMatriculadoMail($data, $myuser));
         }
 
