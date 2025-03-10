@@ -41,7 +41,7 @@ class FollowupObserver
         $event = Event::findOrFail($followup->event_id);
         $data = $followup;
         $myuser = auth()->user();
-        
+
         $solicitante = auth()->user()->email;
         $facturador = 'Christian.lillo@otecproyecta.cl';
         $administrtivo = 'coordinacion@otecproyecta.cl';
@@ -52,30 +52,34 @@ class FollowupObserver
         if ($event->name == 'Cotización aprobada') {
 
             Mail::to($administrtivo)
+                ->cc($administrtivo)
                 ->cc($solicitante)->send(new CotizacionAprobadaMail($data, $myuser));
         }
 
         if ($event->name == 'Curso agendado') {
 
             Mail::to($soporte)
+                ->cc($administrtivo)
                 ->cc($solicitante)->send(new CursoAgendadoMail($data, $myuser));
         }
 
         if ($event->name == 'Curso matriculado') {
 
             Mail::to($administrtivo)
+                ->cc($administrtivo)
                 ->cc($solicitante)->send(new CursoMatriculadoMail($data, $myuser));
         }
 
         if ($event->name == 'Curso finalizado') {
 
             Mail::to($cotizador)
-            ->cc($soporte)->cc($solicitante)
-            ->send(new CursoFinalizadoMail($data, $myuser));
+                ->cc($administrtivo)
+                ->cc($soporte)->cc($solicitante)
+                ->send(new CursoFinalizadoMail($data, $myuser));
         }
 
         if ($event->name == 'DJ OTEC generada') {
-            
+
             Mail::to($administrtivo)
                 ->cc($solicitante)->send(new DjOtecMail($data, $myuser));
         }
@@ -83,12 +87,14 @@ class FollowupObserver
         if ($event->name == 'DJs generadas') {
 
             Mail::to($facturador)
+                ->cc($administrtivo)
                 ->cc($solicitante)->send(new DjParticipanteMail($data, $myuser));
         }
 
         if ($event->name == 'Facturado') {
 
             Mail::to($cotizador)
+                ->cc($administrtivo)
                 ->cc($solicitante)->send(new PorFacturarMail($data, $myuser));
         }
     }
