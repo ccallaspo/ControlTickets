@@ -61,7 +61,7 @@ class SendCotizacion extends Mailable implements ShouldQueue
     {
         return [
             Attachment::fromPath($this->pdfPath)
-                ->as("Cotizacion_{$this->data['cotizacion']->id}.pdf") // Nombre del archivo adjunto
+                ->as("Cotizacion_{$this->data['cotizacion']->name}.pdf") // Nombre del archivo adjunto
                 ->withMime('application/pdf'), // Tipo MIME
         ];
     }
