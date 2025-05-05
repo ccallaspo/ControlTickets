@@ -255,15 +255,12 @@ class FollowupResource extends Resource
                                                 // Generar un nombre de archivo único
                                                 $fileName = $state->getClientOriginalName();
 
-                                                // Intentar subir el archivo en la carpeta específica del followup
+                                                // Intentar subir el archivo directamente en la carpeta del followup
                                                 $path = Storage::disk('digitalocean')->put($followupFolder . '/' . $fileName, $fileContent);
                                                 
                                                 if (!$path) {
                                                     throw new \Exception('La operación de subida falló sin error específico');
                                                 }
-
-                                                // Actualizar el estado con la ruta correcta para la base de datos
-                                                $state->setPath($followupFolder . '/' . $fileName);
                                                 
                                                 \Illuminate\Support\Facades\Log::info('File uploaded successfully', [
                                                     'path' => $path,
