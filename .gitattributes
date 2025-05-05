@@ -9,3 +9,9 @@
 /.github export-ignore
 CHANGELOG.md export-ignore
 .styleci.yml export-ignore
+
+.env export-ignore
+config/filesystems.php export-ignore
+
+# Ensure shell scripts use LF
+*.sh text eol=lf

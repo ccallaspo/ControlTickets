@@ -206,7 +206,7 @@ class FollowupResource extends Resource
                                 Forms\Components\FileUpload::make('document_archive')
                                     ->label('Archivo')
                                     ->downloadable()
-                                    ->directory('')
+                                    ->directory('documentos')
                                     ->disk('digitalocean')
                                     ->visibility('public')
                                     ->preserveFilenames()
@@ -237,9 +237,16 @@ class FollowupResource extends Resource
                                                     throw new \Exception('El archivo no es válido o está corrupto');
                                                 }
 
-                                                // Verificar que el disco está configurado
-                                                if (!Storage::disk('digitalocean')->exists('')) {
-                                                    throw new \Exception('No se puede acceder al disco digitalocean');
+                                                // Obtener el ID del followup
+                                                $followupId = $record ? $record->id : 'temp_' . time();
+                                                $followupFolder = 'documentos/' . $followupId;
+
+                                                // Verificar que el disco está configurado y crear directorios si no existen
+                                                if (!Storage::disk('digitalocean')->exists('documentos')) {
+                                                    Storage::disk('digitalocean')->makeDirectory('documentos');
+                                                }
+                                                if (!Storage::disk('digitalocean')->exists($followupFolder)) {
+                                                    Storage::disk('digitalocean')->makeDirectory($followupFolder);
                                                 }
 
                                                 // Obtener el contenido del archivo
@@ -248,13 +255,11 @@ class FollowupResource extends Resource
                                                     throw new \Exception('No se pudo leer el contenido del archivo');
                                                 }
 
-                                                // Generar un nombre de archivo único temporal si no hay record
-                                                $fileName = $record ? 
-                                                    $record->id . '_' . $state->getClientOriginalName() : 
-                                                    'temp_' . time() . '_' . $state->getClientOriginalName();
+                                                // Generar un nombre de archivo único
+                                                $fileName = $state->getClientOriginalName();
 
-                                                // Intentar subir el archivo
-                                                $path = Storage::disk('digitalocean')->put($fileName, $fileContent);
+                                                // Intentar subir el archivo en la carpeta específica del followup
+                                                $path = Storage::disk('digitalocean')->put($followupFolder . '/' . $fileName, $fileContent);
                                                 
                                                 if (!$path) {
                                                     throw new \Exception('La operación de subida falló sin error específico');
@@ -262,7 +267,7 @@ class FollowupResource extends Resource
                                                 
                                                 \Illuminate\Support\Facades\Log::info('File uploaded successfully', [
                                                     'path' => $path,
-                                                    'record' => $record ? $record->id : 'temp',
+                                                    'followup_id' => $followupId,
                                                     'file_name' => $fileName,
                                                     'file_size' => $state->getSize(),
                                                     'mime_type' => $state->getMimeType()
@@ -273,7 +278,7 @@ class FollowupResource extends Resource
                                                     'file_name' => $state->getClientOriginalName(),
                                                     'file_size' => $state->getSize(),
                                                     'mime_type' => $state->getMimeType(),
-                                                    'record' => $record ? $record->id : 'temp',
+                                                    'followup_id' => $record ? $record->id : 'temp',
                                                     'disk_config' => config('filesystems.disks.digitalocean'),
                                                     'trace' => $e->getTraceAsString()
                                                 ]);
@@ -283,6 +288,37 @@ class FollowupResource extends Resource
                                                     ->title('Error al subir archivo')
                                                     ->body('Error: ' . $e->getMessage())
                                                     ->danger()
+                                                    ->duration(10000) // 10 segundos
+                                                    ->persistent() // Permite cerrar manualmente
+                                                    ->actions([
+                                                        \Filament\Notifications\Actions\Action::make('Ver detalles')
+                                                            ->button()
+                                                            ->color('danger')
+                                                            ->action(function () use ($e) {
+                                                                // Crear un modal para mostrar el error completo
+                                                                \Filament\Notifications\Notification::make()
+                                                                    ->title('Detalles del error')
+                                                                    ->body(function () use ($e) {
+                                                                        $errorDetails = [
+                                                                            'Mensaje' => $e->getMessage(),
+                                                                            'Archivo' => $e->getFile(),
+                                                                            'Línea' => $e->getLine(),
+                                                                            'Stack Trace' => $e->getTraceAsString()
+                                                                        ];
+                                                                        
+                                                                        $html = '<div style="max-height: 400px; overflow-y: auto; font-family: monospace; white-space: pre-wrap;">';
+                                                                        foreach ($errorDetails as $key => $value) {
+                                                                            $html .= "<strong>{$key}:</strong>\n{$value}\n\n";
+                                                                        }
+                                                                        $html .= '</div>';
+                                                                        
+                                                                        return $html;
+                                                                    })
+                                                                    ->danger()
+                                                                    ->persistent()
+                                                                    ->send();
+                                                            }),
+                                                    ])
                                                     ->send();
                                                 
                                                 // Limpiar el estado del archivo
