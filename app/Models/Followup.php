@@ -44,6 +44,11 @@ class Followup extends Model
         return $this->HasMany(Note::class);
     }
 
+    public function documents(): HasMany
+    {
+        return $this->hasMany(Document::class);
+    }
+
     public function Task(): BelongsTo
     {
         return $this->BelongsTo(Task::class);
@@ -60,17 +65,17 @@ class Followup extends Model
     }
 
     public function scopeRestrictedForSupportUser($query)
-{
-    if (Auth::check() && Auth::user()->email === 'soporte@otecproyecta.cl') {
-        return $query->whereHas('event', function ($q) {
-            $q->whereIn('name', [
-                'Curso agendado',
-                'Curso matriculado',
-                'Curso finalizado'
-            ]);
-        });
-    }
+    {
+        if (Auth::check() && Auth::user()->email === 'soporte@otecproyecta.cl') {
+            return $query->whereHas('event', function ($q) {
+                $q->whereIn('name', [
+                    'Curso agendado',
+                    'Curso matriculado',
+                    'Curso finalizado'
+                ]);
+            });
+        }
 
-    return $query;
-}
+        return $query;
+    }
 }

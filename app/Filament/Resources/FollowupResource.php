@@ -23,6 +23,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Repeater;
+use Illuminate\Support\Facades\Storage;
 
 use function Laravel\Prompts\select;
 
@@ -189,6 +190,126 @@ class FollowupResource extends Resource
 
                     ])->columns(),
 
+                    Section::make('Carga de Documentos')
+                    ->description('Gestión de documentos del curso')
+                    ->schema([
+                        Forms\Components\Repeater::make('documents')
+                            ->label('Documentos')
+                            ->relationship()
+                            ->schema([
+                                Forms\Components\Select::make('typedocument_id')
+                                    ->label('Tipo de Documento')
+                                    ->options(\App\Models\Typedocument::pluck('name', 'id'))
+                                    ->required()
+                                    ->columnSpan(1),
+                                
+                                Forms\Components\FileUpload::make('document_archive')
+                                    ->label('Archivo')
+                                    ->downloadable()
+                                    ->directory('')
+                                    ->disk('digitalocean')
+                                    ->visibility('public')
+                                    ->preserveFilenames()
+                                    ->getUploadedFileNameForStorageUsing(
+                                        fn (\Illuminate\Http\UploadedFile $file, $get): string => 
+                                            ($get('../../id') ?? '') . '_' . $file->getClientOriginalName()
+                                    )
+                                    ->acceptedFileTypes([
+                                        'application/pdf',
+                                        'application/msword',
+                                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                                        'application/vnd.ms-excel',
+                                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                                        'image/jpeg',
+                                        'image/png'
+                                    ])
+                                    ->maxSize(10240) // 10MB
+                                    ->helperText('Formatos permitidos: PDF, Word, Excel, JPG, PNG. Tamaño máximo: 10MB')
+                                    ->required()
+                                    ->columnSpan(1)
+                                    ->moveFiles()
+                                    ->storeFileNamesIn('original_filename')
+                                    ->afterStateUpdated(function ($state, $record) {
+                                        if ($state) {
+                                            try {
+                                                // Verificar que el archivo existe y es accesible
+                                                if (!$state->isValid()) {
+                                                    throw new \Exception('El archivo no es válido o está corrupto');
+                                                }
+
+                                                // Verificar que el disco está configurado
+                                                if (!Storage::disk('digitalocean')->exists('')) {
+                                                    throw new \Exception('No se puede acceder al disco digitalocean');
+                                                }
+
+                                                // Obtener el contenido del archivo
+                                                $fileContent = file_get_contents($state->getRealPath());
+                                                if ($fileContent === false) {
+                                                    throw new \Exception('No se pudo leer el contenido del archivo');
+                                                }
+
+                                                // Generar un nombre de archivo único temporal si no hay record
+                                                $fileName = $record ? 
+                                                    $record->id . '_' . $state->getClientOriginalName() : 
+                                                    'temp_' . time() . '_' . $state->getClientOriginalName();
+
+                                                // Intentar subir el archivo
+                                                $path = Storage::disk('digitalocean')->put($fileName, $fileContent);
+                                                
+                                                if (!$path) {
+                                                    throw new \Exception('La operación de subida falló sin error específico');
+                                                }
+                                                
+                                                \Illuminate\Support\Facades\Log::info('File uploaded successfully', [
+                                                    'path' => $path,
+                                                    'record' => $record ? $record->id : 'temp',
+                                                    'file_name' => $fileName,
+                                                    'file_size' => $state->getSize(),
+                                                    'mime_type' => $state->getMimeType()
+                                                ]);
+                                            } catch (\Exception $e) {
+                                                \Illuminate\Support\Facades\Log::error('File upload failed', [
+                                                    'error' => $e->getMessage(),
+                                                    'file_name' => $state->getClientOriginalName(),
+                                                    'file_size' => $state->getSize(),
+                                                    'mime_type' => $state->getMimeType(),
+                                                    'record' => $record ? $record->id : 'temp',
+                                                    'disk_config' => config('filesystems.disks.digitalocean'),
+                                                    'trace' => $e->getTraceAsString()
+                                                ]);
+                                                
+                                                // Mostrar notificación de error con más detalles
+                                                \Filament\Notifications\Notification::make()
+                                                    ->title('Error al subir archivo')
+                                                    ->body('Error: ' . $e->getMessage())
+                                                    ->danger()
+                                                    ->send();
+                                                
+                                                // Limpiar el estado del archivo
+                                                $state = null;
+                                            }
+                                        }
+                                    })
+                            ])
+                            ->columns(2)
+                            ->columnSpanFull()
+                            ->defaultItems(1)
+                            ->addActionLabel('Agregar Documento')
+                            ->collapsible()
+                            ->itemLabel(fn (array $state): ?string => 
+                                \App\Models\Typedocument::find($state['typedocument_id'])?->name ?? null
+                            )
+                            ->deleteAction(
+                                fn (Forms\Components\Actions\Action $action) => $action
+                                    ->requiresConfirmation()
+                                    ->modalHeading('Eliminar documento')
+                                    ->modalDescription('¿Estás seguro de que deseas eliminar este documento? Esta acción no se puede deshacer.')
+                                    ->modalSubmitActionLabel('Sí, eliminar')
+                                    ->modalCancelActionLabel('Cancelar')
+                            )
+                            ->reorderable(false)
+                    ])->columns(),
+
                     Section::make('Detalle de horarios (Opcional)')
                     ->description('Utilizado para desglosar los horarios de capacitación de manera detallada.')
                     ->schema([
@@ -211,6 +332,8 @@ class FollowupResource extends Resource
                 
                     ])
                     ->columns(1), 
+
+
                 
 
             ])->columns(2);
