@@ -206,12 +206,25 @@ class FollowupResource extends Resource
                                 Forms\Components\FileUpload::make('document_archive')
                                     ->label('Archivo')
                                     ->downloadable()
-                                    ->directory(fn ($get) => 'documentos/' . ($get('../../id') ?? 'temp'))
+                                    ->directory(fn ($get) => 'documentos/' . ($get('../../followup_id') ?? 'temp'))
                                     ->disk('digitalocean')
                                     ->visibility('public')
                                     ->preserveFilenames()
                                     ->getUploadedFileNameForStorageUsing(
-                                        fn (\Illuminate\Http\UploadedFile $file) => $file->getClientOriginalName()
+                                        function (\Illuminate\Http\UploadedFile $file, $get) {
+                                            $followupId = $get('../../followup_id') ?? 'temp';
+                                            $typedocumentId = $get('typedocument_id');
+                                            $typedocumentName = '';
+                                            if ($typedocumentId) {
+                                                $typedocument = \App\Models\Typedocument::find($typedocumentId);
+                                                $typedocumentName = $typedocument ? $typedocument->name : 'tipo';
+                                            } else {
+                                                $typedocumentName = 'tipo';
+                                            }
+                                            // Sanitizar el nombre del tipo de documento para evitar caracteres raros
+                                            $typedocumentName = preg_replace('/[^A-Za-z0-9_\-]/', '', str_replace(' ', '_', $typedocumentName));
+                                            return $followupId . '_' . $typedocumentName . '_' . $file->getClientOriginalName();
+                                        }
                                     )
                                     ->acceptedFileTypes([
                                         'application/pdf',
@@ -228,80 +241,6 @@ class FollowupResource extends Resource
                                     ->columnSpan(1)
                                     ->moveFiles()
                                     ->storeFileNamesIn('original_filename')
-                                    // ->afterStateUpdated(function ($state, $record) {
-                                    //     if ($state) {
-                                    //         try {
-                                    //             if (!$state->isValid()) {
-                                    //                 throw new \Exception('El archivo no es válido o está corrupto');
-                                    //             }
-                                    //             if (!Storage::disk('digitalocean')->exists('documentos')) {
-                                    //                 Storage::disk('digitalocean')->makeDirectory('documentos');
-                                    //             }
-                                    //             $fileContent = file_get_contents($state->getRealPath());
-                                    //             if ($fileContent === false) {
-                                    //                 throw new \Exception('No se pudo leer el contenido del archivo');
-                                    //             }
-                                    //             $fileName = $record ? 
-                                    //                 $record->id . '_' . $state->getClientOriginalName() : 
-                                    //                 'temp_' . time() . '_' . $state->getClientOriginalName();
-                                    //             $path = Storage::disk('digitalocean')->put('documentos/' . $fileName, $fileContent);
-                                    //             if (!$path) {
-                                    //                 throw new \Exception('La operación de subida falló sin error específico');
-                                    //             }
-                                    //             \Illuminate\Support\Facades\Log::info('File uploaded successfully', [
-                                    //                 'path' => $path,
-                                    //                 'record' => $record ? $record->id : 'temp',
-                                    //                 'file_name' => $fileName,
-                                    //                 'file_size' => $state->getSize(),
-                                    //                 'mime_type' => $state->getMimeType()
-                                    //             ]);
-                                    //         } catch (\Exception $e) {
-                                    //             \Illuminate\Support\Facades\Log::error('File upload failed', [
-                                    //                 'error' => $e->getMessage(),
-                                    //                 'file_name' => $state->getClientOriginalName(),
-                                    //                 'file_size' => $state->getSize(),
-                                    //                 'mime_type' => $state->getMimeType(),
-                                    //                 'record' => $record ? $record->id : 'temp',
-                                    //                 'disk_config' => config('filesystems.disks.digitalocean'),
-                                    //                 'trace' => $e->getTraceAsString()
-                                    //             ]);
-                                    //             \Filament\Notifications\Notification::make()
-                                    //                 ->title('Error al subir archivo')
-                                    //                 ->body('Error: ' . $e->getMessage())
-                                    //                 ->danger()
-                                    //                 ->duration(10000)
-                                    //                 ->persistent()
-                                    //                 ->actions([
-                                    //                     \Filament\Notifications\Actions\Action::make('Ver detalles')
-                                    //                         ->button()
-                                    //                         ->color('danger')
-                                    //                         ->action(function () use ($e) {
-                                    //                             \Filament\Notifications\Notification::make()
-                                    //                                 ->title('Detalles del error')
-                                    //                                 ->body(function () use ($e) {
-                                    //                                     $errorDetails = [
-                                    //                                         'Mensaje' => $e->getMessage(),
-                                    //                                         'Archivo' => $e->getFile(),
-                                    //                                         'Línea' => $e->getLine(),
-                                    //                                         'Stack Trace' => $e->getTraceAsString()
-                                    //                                     ];
-                                    //                                     $html = '<div style="max-height: 400px; overflow-y: auto; font-family: monospace; white-space: pre-wrap;">';
-                                    //                                     foreach ($errorDetails as $key => $value) {
-                                    //                                         $html .= "<strong>{$key}:</strong>\n{$value}\n\n";
-                                    //                                     }
-                                    //                                     $html .= '</div>';
-                                    //                                     return $html;
-                                    //                                 })
-                                    //                                 ->danger()
-                                    //                                 ->persistent()
-                                    //                                 ->send();
-                                    //                         }),
-                                    //                 ])
-                                    //                 ->send();
-                                    //             $state = null;
-                                    //         }
-                                    //     }
-                                    // })
                             ])
                             ->columns(2)
                             ->columnSpanFull()
