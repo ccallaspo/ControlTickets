@@ -237,8 +237,8 @@ class FollowupResource extends Resource
                                                     throw new \Exception('El archivo no es válido o está corrupto');
                                                 }
 
-                                                // Obtener el ID del followup
-                                                $followupId = $record ? $record->id : 'temp_' . time();
+                                                // Obtener el ID del followup desde el contexto del formulario
+                                                $followupId = $record->followup_id ?? 'temp_' . time();
                                                 $followupFolder = 'documentos/' . $followupId;
 
                                                 // Verificar que el disco está configurado y crear directorios si no existen
@@ -278,7 +278,7 @@ class FollowupResource extends Resource
                                                     'file_name' => $state->getClientOriginalName(),
                                                     'file_size' => $state->getSize(),
                                                     'mime_type' => $state->getMimeType(),
-                                                    'followup_id' => $record ? $record->id : 'temp',
+                                                    'followup_id' => $record ? $record->followup_id : 'temp',
                                                     'disk_config' => config('filesystems.disks.digitalocean'),
                                                     'trace' => $e->getTraceAsString()
                                                 ]);
