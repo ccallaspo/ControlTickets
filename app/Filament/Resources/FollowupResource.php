@@ -242,9 +242,6 @@ class FollowupResource extends Resource
                                                 $followupFolder = 'documentos/' . $followupId;
 
                                                 // Verificar que el disco está configurado y crear directorios si no existen
-                                                if (!Storage::disk('digitalocean')->exists('documentos')) {
-                                                    Storage::disk('digitalocean')->makeDirectory('documentos');
-                                                }
                                                 if (!Storage::disk('digitalocean')->exists($followupFolder)) {
                                                     Storage::disk('digitalocean')->makeDirectory($followupFolder);
                                                 }
@@ -264,6 +261,9 @@ class FollowupResource extends Resource
                                                 if (!$path) {
                                                     throw new \Exception('La operación de subida falló sin error específico');
                                                 }
+
+                                                // Actualizar el estado con la ruta correcta para la base de datos
+                                                $state->setPath($followupFolder . '/' . $fileName);
                                                 
                                                 \Illuminate\Support\Facades\Log::info('File uploaded successfully', [
                                                     'path' => $path,
