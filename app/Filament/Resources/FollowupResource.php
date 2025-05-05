@@ -241,10 +241,7 @@ class FollowupResource extends Resource
                                                 $followupId = $record ? $record->id : 'temp_' . time();
                                                 $followupFolder = 'documentos/' . $followupId;
 
-                                                // Verificar que el disco está configurado y crear directorios si no existen
-                                                if (!Storage::disk('digitalocean')->exists('documentos')) {
-                                                    Storage::disk('digitalocean')->makeDirectory('documentos');
-                                                }
+                                                // Verificar y crear el directorio específico del followup
                                                 if (!Storage::disk('digitalocean')->exists($followupFolder)) {
                                                     Storage::disk('digitalocean')->makeDirectory($followupFolder);
                                                 }
@@ -266,19 +263,15 @@ class FollowupResource extends Resource
                                                 }
 
                                                 // Actualizar el estado con la ruta correcta para la base de datos
-                                                $databasePath = $followupFolder . '/' . $fileName;
+                                                $state->setPath($followupFolder . '/' . $fileName);
                                                 
                                                 \Illuminate\Support\Facades\Log::info('File uploaded successfully', [
                                                     'path' => $path,
                                                     'followup_id' => $followupId,
                                                     'file_name' => $fileName,
                                                     'file_size' => $state->getSize(),
-                                                    'mime_type' => $state->getMimeType(),
-                                                    'database_path' => $databasePath
+                                                    'mime_type' => $state->getMimeType()
                                                 ]);
-
-                                                // Actualizar el estado del archivo con la ruta correcta
-                                                $state->setPath($databasePath);
                                             } catch (\Exception $e) {
                                                 \Illuminate\Support\Facades\Log::error('File upload failed', [
                                                     'error' => $e->getMessage(),
