@@ -206,13 +206,13 @@ class FollowupResource extends Resource
                                 Forms\Components\FileUpload::make('document_archive')
                                     ->label('Archivo')
                                     ->downloadable()
-                                    ->directory(fn ($get) => 'documentos/' . ($get('../../followup_id') ?? 'temp'))
+                                    ->directory(fn ($get) => 'documentos/' . ($get('../../followup_id') ?? $get('../../id') ?? 'temp'))
                                     ->disk('digitalocean')
                                     ->visibility('public')
                                     ->preserveFilenames()
                                     ->getUploadedFileNameForStorageUsing(
                                         function (\Illuminate\Http\UploadedFile $file, $get) {
-                                            $followupId = $get('../../followup_id') ?? 'temp';
+                                            $followupId = $get('../../followup_id') ?? $get('../../id') ?? 'temp';
                                             $typedocumentId = $get('typedocument_id');
                                             $typedocumentName = '';
                                             if ($typedocumentId) {
@@ -221,7 +221,6 @@ class FollowupResource extends Resource
                                             } else {
                                                 $typedocumentName = 'tipo';
                                             }
-                                            // Sanitizar el nombre del tipo de documento para evitar caracteres raros
                                             $typedocumentName = preg_replace('/[^A-Za-z0-9_\-]/', '', str_replace(' ', '_', $typedocumentName));
                                             return $followupId . '_' . $typedocumentName . '_' . $file->getClientOriginalName();
                                         }
