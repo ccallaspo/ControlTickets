@@ -263,7 +263,7 @@ class FollowupResource extends Resource
                                                 }
 
                                                 // Actualizar el estado con la ruta correcta para la base de datos
-                                                $state->setPath($followupFolder . '/' . $fileName);
+                                                $state->path = $followupFolder . '/' . $fileName;
                                                 
                                                 \Illuminate\Support\Facades\Log::info('File uploaded successfully', [
                                                     'path' => $path,
