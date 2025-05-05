@@ -237,11 +237,14 @@ class FollowupResource extends Resource
                                                     throw new \Exception('El archivo no es válido o está corrupto');
                                                 }
 
-                                                // Obtener el ID del followup desde el contexto del formulario
-                                                $followupId = $record->followup_id ?? 'temp_' . time();
+                                                // Obtener el ID del followup
+                                                $followupId = $record ? $record->id : 'temp_' . time();
                                                 $followupFolder = 'documentos/' . $followupId;
 
                                                 // Verificar que el disco está configurado y crear directorios si no existen
+                                                if (!Storage::disk('digitalocean')->exists('documentos')) {
+                                                    Storage::disk('digitalocean')->makeDirectory('documentos');
+                                                }
                                                 if (!Storage::disk('digitalocean')->exists($followupFolder)) {
                                                     Storage::disk('digitalocean')->makeDirectory($followupFolder);
                                                 }
@@ -263,22 +266,26 @@ class FollowupResource extends Resource
                                                 }
 
                                                 // Actualizar el estado con la ruta correcta para la base de datos
-                                                $state->path = $followupFolder . '/' . $fileName;
+                                                $databasePath = $followupFolder . '/' . $fileName;
                                                 
                                                 \Illuminate\Support\Facades\Log::info('File uploaded successfully', [
                                                     'path' => $path,
                                                     'followup_id' => $followupId,
                                                     'file_name' => $fileName,
                                                     'file_size' => $state->getSize(),
-                                                    'mime_type' => $state->getMimeType()
+                                                    'mime_type' => $state->getMimeType(),
+                                                    'database_path' => $databasePath
                                                 ]);
+
+                                                // Actualizar el estado del archivo con la ruta correcta
+                                                $state->setPath($databasePath);
                                             } catch (\Exception $e) {
                                                 \Illuminate\Support\Facades\Log::error('File upload failed', [
                                                     'error' => $e->getMessage(),
                                                     'file_name' => $state->getClientOriginalName(),
                                                     'file_size' => $state->getSize(),
                                                     'mime_type' => $state->getMimeType(),
-                                                    'followup_id' => $record ? $record->followup_id : 'temp',
+                                                    'followup_id' => $record ? $record->id : 'temp',
                                                     'disk_config' => config('filesystems.disks.digitalocean'),
                                                     'trace' => $e->getTraceAsString()
                                                 ]);
