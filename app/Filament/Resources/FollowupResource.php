@@ -205,7 +205,8 @@ class FollowupResource extends Resource
                                 
                                 Forms\Components\FileUpload::make('document_archive')
                                     ->label('Archivo')
-                                    ->downloadable()
+                                    ->openable()
+                                    //->downloadable()
                                     ->directory(fn ($get) => 'documentos/' . ($get('../../followup_id') ?? $get('../../id') ?? 'temp'))
                                     ->disk('digitalocean')
                                     ->visibility('public')

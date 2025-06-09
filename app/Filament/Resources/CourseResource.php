@@ -64,8 +64,7 @@ class CourseResource extends Resource
                         Forms\Components\TextInput::make('hour')
                             ->label('Horas')
                             ->maxLength(255)
-                            ->suffix('Horas')
-                            ->numeric(),
+                            ->suffix('Horas'),
                         Forms\Components\TextInput::make('unit_value')
                             ->label('Valor Unitario')
                             ->numeric(),
