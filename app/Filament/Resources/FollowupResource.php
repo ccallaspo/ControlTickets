@@ -409,5 +409,6 @@ class FollowupResource extends Resource
             'view' => Pages\ViewFollowup::route('/{record}'),
             'edit' => Pages\EditFollowup::route('/{record}/edit'),
         ];
+        
     }
 }
