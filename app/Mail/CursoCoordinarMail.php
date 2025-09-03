@@ -32,7 +32,7 @@ class CursoCoordinarMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Notificación - Coordinar Curso',
+            subject: 'Notificación - Coordinar Curso ',
         );
     }
 
