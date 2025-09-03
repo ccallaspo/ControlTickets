@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Mail\CotizacionAprobadaMail;
 use App\Mail\CursoAgendadoMail;
+use App\Mail\CursoCoordinarMail;
 use App\Mail\CursoFinalizadoMail;
 use App\Mail\CursoMatriculadoMail;
 use App\Mail\DjOtecMail;
@@ -54,6 +55,13 @@ class FollowupObserver
             Mail::to($administrativo)
                 ->cc($cotizador)
                 ->cc($ccRecipients)->send(new CotizacionAprobadaMail($data, $myuser));
+        }
+
+        if ($event->name == 'Coordinar Curso') {
+
+            $ccRecipients = [$cotizador, $solicitante];
+            Mail::to($administrativo)
+                ->cc($ccRecipients)->send(new CursoCoordinarMail($data, $myuser));
         }
 
         if ($event->name == 'Curso agendado') {

@@ -5,6 +5,8 @@ namespace App\Filament\Resources\FollowupResource\Pages;
 use App\Filament\Resources\FollowupResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Actions\ExportAction;
+use App\Filament\Exports\FollowupExporter; // Asegúrate de usar la nueva ruta
 
 class ListFollowups extends ListRecords
 {
@@ -14,7 +16,11 @@ class ListFollowups extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-            ->label('Crear Ticket'),
+                ->label('Crear Ticket'),
+            
+            // Usa la nueva clase de exportador
+            ExportAction::make()
+                ->exporter(FollowupExporter::class),
         ];
     }
 }

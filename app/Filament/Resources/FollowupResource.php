@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Exports\FollowupsBulkExport;
 use App\Filament\Resources\FollowupResource\Pages;
 use App\Filament\Resources\FollowupResource\RelationManagers;
 use App\Models\Event;
@@ -24,6 +25,8 @@ use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Facades\Storage;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+
 
 use function Laravel\Prompts\select;
 
@@ -32,7 +35,7 @@ class FollowupResource extends Resource
     protected static ?string $model = Followup::class;
 
     protected static ?string $navigationIcon = 'heroicon-m-shield-check';
-    
+
     // protected static ?string $slug = 'tickets'; traduce las rutas
 
     protected static ?string $navigationLabel = 'Tickets';
@@ -183,14 +186,14 @@ class FollowupResource extends Resource
                                     ->disk('public')
                                     ->visibility('public')
                                     ->visible(fn($get) => Auth::user()->email !== 'soporte@otecproyecta.cl'),
-                                    
+
 
                             ])
                             ->columns(3)
 
                     ])->columns(),
 
-                    Section::make('Carga de Documentos')
+                Section::make('Carga de Documentos')
                     ->description('Gestión de documentos del curso')
                     ->schema([
                         Forms\Components\Repeater::make('documents')
@@ -202,12 +205,12 @@ class FollowupResource extends Resource
                                     ->options(\App\Models\Typedocument::pluck('name', 'id'))
                                     ->required()
                                     ->columnSpan(1),
-                                
+
                                 Forms\Components\FileUpload::make('document_archive')
                                     ->label('Archivo')
                                     ->openable()
                                     //->downloadable()
-                                    ->directory(fn ($get) => 'documentos/' . ($get('../../followup_id') ?? $get('../../id') ?? 'temp'))
+                                    ->directory(fn($get) => 'documentos/' . ($get('../../followup_id') ?? $get('../../id') ?? 'temp'))
                                     ->disk('digitalocean')
                                     ->visibility('public')
                                     ->preserveFilenames()
@@ -247,11 +250,12 @@ class FollowupResource extends Resource
                             ->defaultItems(1)
                             ->addActionLabel('Agregar Documento')
                             ->collapsible()
-                            ->itemLabel(fn (array $state): ?string => 
+                            ->itemLabel(
+                                fn(array $state): ?string =>
                                 \App\Models\Typedocument::find($state['typedocument_id'])?->name ?? null
                             )
                             ->deleteAction(
-                                fn (Forms\Components\Actions\Action $action) => $action
+                                fn(Forms\Components\Actions\Action $action) => $action
                                     ->requiresConfirmation()
                                     ->modalHeading('Eliminar documento')
                                     ->modalDescription('¿Estás seguro de que deseas eliminar este documento? Esta acción no se puede deshacer.')
@@ -261,10 +265,10 @@ class FollowupResource extends Resource
                             ->reorderable(false)
                     ])->columns(),
 
-                    Section::make('Detalle de horarios (Opcional)')
+                Section::make('Detalle de horarios (Opcional)')
                     ->description('Utilizado para desglosar los horarios de capacitación de manera detallada.')
                     ->schema([
-                
+
                         Repeater::make('week')
                             ->schema([
                                 Forms\Components\DatePicker::make('day')
@@ -277,15 +281,15 @@ class FollowupResource extends Resource
                                     ->label('Hora Termino')
                                     ->seconds(false),
                             ])
-                            ->columns(3)  
+                            ->columns(3)
                             ->label('Horario.')
-                            ->columnSpan(2),  
-                
+                            ->columnSpan(2),
+
                     ])
-                    ->columns(1), 
+                    ->columns(1),
 
 
-                
+
 
             ])->columns(2);
     }
@@ -385,11 +389,23 @@ class FollowupResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('upload_documents')
+                    ->label('Subir Documentos')
+                    ->color('primary')
+                    ->icon('heroicon-o-document-plus')
+                    ->modalHeading('Cargar Documentos')
+                    ->form(fn(\Filament\Forms\Form $form, \Illuminate\Database\Eloquent\Model $record): \Filament\Forms\Form => $form->schema(
+                        static::getDocumentosFormSchema()
+                    ))
+                    ->action(function (array $data, \Illuminate\Database\Eloquent\Model $record): void {
+                        // No necesitas lógica de guardado aquí,
+                        // el repeater con 'relationship' se encarga de todo.
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    // Tables\Actions\DeleteBulkAction::make(),
-                    ExportBulkAction::make()
+                    Tables\Actions\DeleteBulkAction::make(),
+
                 ]),
             ]);
     }
@@ -409,6 +425,80 @@ class FollowupResource extends Resource
             'view' => Pages\ViewFollowup::route('/{record}'),
             'edit' => Pages\EditFollowup::route('/{record}/edit'),
         ];
-        
     }
+
+
+    protected static function getDocumentosFormSchema(): array
+{
+    return [
+        Forms\Components\Repeater::make('documents')
+            ->label('Documentos')
+            ->relationship()
+            ->schema([
+                Forms\Components\Select::make('typedocument_id')
+                    ->label('Tipo de Documento')
+                    ->options(\App\Models\Typedocument::pluck('name', 'id'))
+                    ->required()
+                    ->columnSpan(1),
+                Forms\Components\FileUpload::make('document_archive')
+                    ->label('Archivo')
+                    ->openable()
+                    // Verificación si el registro existe o es nulo
+                    ->directory(function ($record, Forms\Get $get) {
+                        $followupId = $record?->id ?? $get('../../id') ?? 'temp';
+                        return 'documentos/' . $followupId;
+                    })
+                    ->disk('digitalocean')
+                    ->visibility('public')
+                    ->preserveFilenames()
+                    ->getUploadedFileNameForStorageUsing(
+                        function (\Illuminate\Http\UploadedFile $file, $get, $livewire, $record) {
+                            $followupId = $record?->id ?? $get('../../id') ?? 'temp';
+                            $typedocumentId = $get('typedocument_id');
+                            $typedocumentName = '';
+                            if ($typedocumentId) {
+                                $typedocument = \App\Models\Typedocument::find($typedocumentId);
+                                $typedocumentName = $typedocument ? $typedocument->name : 'tipo';
+                            } else {
+                                $typedocumentName = 'tipo';
+                            }
+                            $typedocumentName = preg_replace('/[^A-Za-z0-9_\-]/', '', str_replace(' ', '_', $typedocumentName));
+                            return $followupId . '_' . $typedocumentName . '_' . $file->getClientOriginalName();
+                        }
+                    )
+                    ->acceptedFileTypes([
+                        'application/pdf',
+                        'application/msword',
+                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                        'application/vnd.ms-excel',
+                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        'image/jpeg',
+                        'image/png'
+                    ])
+                    ->maxSize(10240) // 10MB
+                    ->helperText('Formatos permitidos: PDF, Word, Excel, JPG, PNG. Tamaño máximo: 10MB')
+                    ->required()
+                    ->columnSpan(1)
+                    ->moveFiles()
+                    ->storeFileNamesIn('original_filename'),
+            ])
+            ->columns(2)
+            ->columnSpanFull()
+            ->defaultItems(1)
+            ->addActionLabel('Agregar Documento')
+            ->collapsible()
+            ->itemLabel(
+                fn(array $state): ?string => \App\Models\Typedocument::find($state['typedocument_id'])?->name ?? null
+            )
+            ->deleteAction(
+                fn(Forms\Components\Actions\Action $action) => $action
+                    ->requiresConfirmation()
+                    ->modalHeading('Eliminar documento')
+                    ->modalDescription('¿Estás seguro de que deseas eliminar este documento? Esta acción no se puede deshacer.')
+                    ->modalSubmitActionLabel('Sí, eliminar')
+                    ->modalCancelActionLabel('Cancelar')
+            )
+            ->reorderable(false)
+    ];
+}
 }
