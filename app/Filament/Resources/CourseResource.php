@@ -37,11 +37,11 @@ class CourseResource extends Resource
                     ->description('Maestro de cursos.')
                     ->schema([
                         Forms\Components\TextInput::make('cod_sence')
-                            ->label('Código / Sence')
+                            ->label('Código Sence')
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('name')
-                            ->label('Curso')
+                            ->label('Nombre del Curso')
                             ->required()
                             ->maxLength(255)
                             ->autocapitalize(),

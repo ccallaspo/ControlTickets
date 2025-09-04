@@ -84,7 +84,7 @@ class FollowupResource extends Resource
                             ->default($myuser),
 
                         Forms\Components\Select::make('task_id')
-                            ->label('Tipo de Proceso')
+                            ->label('Proceso')
                             ->options(Task::all()->pluck('name', 'id'))
                             ->reactive()
                             ->required()
@@ -97,7 +97,7 @@ class FollowupResource extends Resource
                                 $taskId = $get('task_id');
                                 if ($taskId) {
                                     return Event::where('task_id', $taskId)
-                                        ->orderBy('order')
+                                        ->orderBy('name', 'asc')
                                         ->pluck('name', 'id');
                                 }
                                 return [];
@@ -148,7 +148,7 @@ class FollowupResource extends Resource
                             ->label('Nombre de curso')
                             ->maxLength(255),
                         Forms\Components\TextInput::make('id_sence')
-                            ->label('ID Sence')
+                            ->label('Código ID')
                             ->maxLength(255),
                         Forms\Components\Select::make('modalily')
                             ->label('Modalidad')
@@ -203,7 +203,7 @@ class FollowupResource extends Resource
                                 Forms\Components\Select::make('typedocument_id')
                                     ->label('Tipo de Documento')
                                     ->options(\App\Models\Typedocument::pluck('name', 'id'))
-                                    ->required()
+                                   // ->required()
                                     ->columnSpan(1),
 
                                 Forms\Components\FileUpload::make('document_archive')
@@ -238,9 +238,9 @@ class FollowupResource extends Resource
                                         'image/jpeg',
                                         'image/png'
                                     ])
-                                    ->maxSize(10240) // 10MB
-                                    ->helperText('Formatos permitidos: PDF, Word, Excel, JPG, PNG. Tamaño máximo: 10MB')
-                                    ->required()
+                                    ->maxSize(30720) // 30MB
+                                    ->helperText('Formatos permitidos: PDF, Word, Excel, JPG, PNG. Tamaño máximo: 30MB')
+                                    //->required()
                                     ->columnSpan(1)
                                     ->moveFiles()
                                     ->storeFileNamesIn('original_filename')
@@ -336,6 +336,7 @@ class FollowupResource extends Resource
                         'DJ OTEC generada' => 'DJ OTEC generada',
                         'DJs generadas' => 'DJs generadas',
                         'Por facturar' => 'Por facturar',
+                        'Coordinar Curso' => 'Coordinar Curso',
                         default => $state,
                     })
                     ->color(fn(string $state): string => match ($state) {
@@ -348,6 +349,7 @@ class FollowupResource extends Resource
                         'DJ OTEC generada' => 'success',
                         'DJs generadas' => 'success',
                         'Por facturar' => 'warning',
+                        'Coordinar Curso' => 'danger',
                         default => 'warning',
                     }),
 
@@ -390,7 +392,8 @@ class FollowupResource extends Resource
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('upload_documents')
-                    ->label('Subir Documentos')
+                    ->label('')
+                    ->tooltip('Subir Archivos')
                     ->color('primary')
                     ->icon('heroicon-o-document-plus')
                     ->modalHeading('Cargar Documentos')
@@ -405,6 +408,7 @@ class FollowupResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    ExportBulkAction::make()
 
                 ]),
             ]);
