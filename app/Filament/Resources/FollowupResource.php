@@ -479,8 +479,8 @@ class FollowupResource extends Resource
                         'image/jpeg',
                         'image/png'
                     ])
-                    ->maxSize(10240) // 10MB
-                    ->helperText('Formatos permitidos: PDF, Word, Excel, JPG, PNG. Tamaño máximo: 10MB')
+                    ->maxSize(30720) 
+                    ->helperText('Formatos permitidos: PDF, Word, Excel, JPG, PNG. Tamaño máximo: 30MB')
                     ->required()
                     ->columnSpan(1)
                     ->moveFiles()
