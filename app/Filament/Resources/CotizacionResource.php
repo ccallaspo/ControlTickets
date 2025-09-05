@@ -47,25 +47,12 @@ class CotizacionResource extends Resource
 
         $prefix = 'OT/';
 
-        // Consulta el último registro cuyo nombre sigue el formato OT/
-        $latestName = Cotizacion::where('name', 'like', $prefix . '%')
-            ->orderBy('id', 'desc')
-            ->value('name');
+        // Sugerencia "best effort" (SIN bloqueo)
+        $latestNumber = Cotizacion::where('name', 'like', $prefix . '%')
+            ->selectRaw("MAX(CAST(SUBSTRING_INDEX(name, '/', -1) AS UNSIGNED)) as max_num")
+            ->value('max_num');
 
-        // Inicializa el nuevo número
-        $newNumber = 1;
-
-        if ($latestName) {
-            // Extrae la parte numérica del último nombre
-            preg_match('/' . preg_quote($prefix, '/') . '(\d+)$/', $latestName, $matches);
-            if (!empty($matches[1])) {
-                // Incrementa el número del último registro
-                $newNumber = intval($matches[1]) + 1;
-            }
-        }
-
-        // Genera el nuevo nombre
-        $newName = $prefix . $newNumber;
+        $suggestedName = $prefix . ((int) $latestNumber + 1 ?: 1);
 
         return $form
             ->schema([
@@ -73,8 +60,9 @@ class CotizacionResource extends Resource
                     ->description('')
                     ->schema([
                         Forms\Components\TextInput::make('name')
-                            ->label('Nombre')
-                            ->default(fn() => $newName),
+                            ->label('ID Cotización')
+                            ->default(fn() => $suggestedName),
+                           // ->hint('Id'),
                         Forms\Components\Select::make('customer_id')
                             ->relationship('customer', 'name')
                             ->searchable()
@@ -115,7 +103,7 @@ class CotizacionResource extends Resource
                         Forms\Components\Hidden::make('author')
                             ->default($myuser),
                         Forms\Components\Toggle::make('grup')
-                        ->label('Programa'),
+                            ->label('Programa'),
                     ])->columns(3),
 
 
