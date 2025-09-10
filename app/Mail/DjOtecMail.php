@@ -31,7 +31,7 @@ class DjOtecMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Notificación - DJ OTEC generada',
+            subject: 'Generar DJ',
         );
     }
 

@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Mail\CotizacionAprobadaMail;
 use App\Mail\CursoAgendadoMail;
 use App\Mail\CursoCoordinarMail;
+use App\Mail\CursoEnProcesoMail;
 use App\Mail\CursoFinalizadoMail;
 use App\Mail\CursoMatriculadoMail;
 use App\Mail\DjOtecMail;
@@ -50,12 +51,22 @@ class FollowupObserver
         $cotizador = 'contacto@otecproyecta.cl';
 
 
-        if ($event->name == 'Cotización aprobada') {
-            $ccRecipients = [$cotizador, $solicitante];
-            Mail::to($administrativo)
-                ->cc($cotizador)
-                ->cc($ccRecipients)->send(new CotizacionAprobadaMail($data, $myuser));
-        }
+        // if ($event->name == 'Cotización aprobada') {
+        //     $ccRecipients = [$cotizador, $solicitante];
+        //     Mail::to($administrativo)
+        //         ->cc($cotizador)
+        //         ->cc($ccRecipients)->send(new CotizacionAprobadaMail($data, $myuser));
+        // }
+
+        
+        // if ($event->name == 'Curso agendado') {
+
+        //     $ccRecipients = [$cotizador, $solicitante];
+        //     Mail::to($soporte)
+        //         ->cc($ccRecipients)->send(new CursoAgendadoMail($data, $myuser));
+        // }
+
+
 
         if ($event->name == 'Coordinar Curso') {
 
@@ -64,44 +75,33 @@ class FollowupObserver
                 ->cc($ccRecipients)->send(new CursoCoordinarMail($data, $myuser));
         }
 
-        if ($event->name == 'Curso agendado') {
 
+        if ($event->name == 'Matricular Curso') {
             $ccRecipients = [$cotizador, $solicitante];
             Mail::to($soporte)
-                ->cc($ccRecipients)->send(new CursoAgendadoMail($data, $myuser));
-        }
-
-        if ($event->name == 'Curso matriculado') {
-            $ccRecipients = [$cotizador, $solicitante];
-            Mail::to($administrativo)
                 ->cc($cotizador)
                 ->cc($ccRecipients)->send(new CursoMatriculadoMail($data, $myuser));
         }
 
-        if ($event->name == 'Curso finalizado') {
+        if ($event->name == 'Curso Finalizado') {
             $ccRecipients = [$soporte, $solicitante];
             Mail::to($cotizador)
                 ->cc($ccRecipients)
                 ->send(new CursoFinalizadoMail($data, $myuser));
         }
 
-        if ($event->name == 'DJ OTEC generada') {
+        if ($event->name == 'Generar DJ') {
             $ccRecipients = [$cotizador, $solicitante];
             Mail::to($administrativo)
                 ->cc($ccRecipients)->send(new DjOtecMail($data, $myuser));
         }
 
-        if ($event->name == 'DJs generadas') {
-            $ccRecipients = [$cotizador, $solicitante];
-            Mail::to($facturador)
-                ->cc($ccRecipients)->send(new DjParticipanteMail($data, $myuser));
+
+         if ($event->name == 'Por Facturar') {
+             Mail::to($cotizador)
+                 ->cc($solicitante)->send(new PorFacturarMail($data, $myuser));
         }
 
-        if ($event->name == 'Facturado') {
-
-            Mail::to($cotizador)
-                ->cc($solicitante)->send(new PorFacturarMail($data, $myuser));
-        }
     }
 
     /**

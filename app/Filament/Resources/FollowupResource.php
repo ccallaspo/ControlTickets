@@ -203,7 +203,7 @@ class FollowupResource extends Resource
                                 Forms\Components\Select::make('typedocument_id')
                                     ->label('Tipo de Documento')
                                     ->options(\App\Models\Typedocument::pluck('name', 'id'))
-                                   // ->required()
+                                    // ->required()
                                     ->columnSpan(1),
 
                                 Forms\Components\FileUpload::make('document_archive')
@@ -327,29 +327,23 @@ class FollowupResource extends Resource
                         !empty($record->event->icono) ? $record->event->icono : null
                     )
                     ->formatStateUsing(fn(string $state): string => match ($state) {
-                        'Cotización enviada' => 'Cotización enviada',
-                        'Cotización aprobada' => 'Cotización aprobada',
-                        'Curso agendado' => 'Curso agendado',
-                        'Curso matriculado' => 'Curso matriculado',
-                        'Curso en proceso' => 'Curso en proceso',
-                        'Curso finalizado' => 'Curso finalizado',
-                        'DJ OTEC generada' => 'DJ OTEC generada',
-                        'DJs generadas' => 'DJs generadas',
-                        'Por facturar' => 'Por facturar',
+                        'Cotización Enviada' => 'Cotización Enviada',
                         'Coordinar Curso' => 'Coordinar Curso',
+                        'Matricular Curso' => 'Matricular Curso',
+                        'Curso en Proceso' => 'Curso en Proceso',
+                        'Curso Finalizado' => 'Curso Finalizado',
+                        'Generar DJ' => 'Generar DJ',
+                        'Por Facturar' => 'Por Facturar',
                         default => $state,
                     })
                     ->color(fn(string $state): string => match ($state) {
-                        'Cotización enviada' => 'danger',
-                        'Cotización aprobada' => 'success',
-                        'Curso agendado' => 'primary',
-                        'Curso matriculado' => 'info',
-                        'Curso en proceso' => 'primary',
-                        'Curso finalizado' => 'success',
-                        'DJ OTEC generada' => 'success',
-                        'DJs generadas' => 'success',
-                        'Por facturar' => 'warning',
+                        'Cotización Enviada' => 'danger',
                         'Coordinar Curso' => 'danger',
+                        'Matricular Curso' => 'info',
+                        'Curso en Proceso' => 'primary',
+                        'Curso Finalizado' => 'success',
+                        'Generar DJ' => 'success',
+                        'Por Facturar' => 'warning',
                         default => 'warning',
                     }),
 
@@ -433,76 +427,76 @@ class FollowupResource extends Resource
 
 
     protected static function getDocumentosFormSchema(): array
-{
-    return [
-        Forms\Components\Repeater::make('documents')
-            ->label('Documentos')
-            ->relationship()
-            ->schema([
-                Forms\Components\Select::make('typedocument_id')
-                    ->label('Tipo de Documento')
-                    ->options(\App\Models\Typedocument::pluck('name', 'id'))
-                    ->required()
-                    ->columnSpan(1),
-                Forms\Components\FileUpload::make('document_archive')
-                    ->label('Archivo')
-                    ->openable()
-                    // Verificación si el registro existe o es nulo
-                    ->directory(function ($record, Forms\Get $get) {
-                        $followupId = $record?->id ?? $get('../../id') ?? 'temp';
-                        return 'documentos/' . $followupId;
-                    })
-                    ->disk('digitalocean')
-                    ->visibility('public')
-                    ->preserveFilenames()
-                    ->getUploadedFileNameForStorageUsing(
-                        function (\Illuminate\Http\UploadedFile $file, $get, $livewire, $record) {
+    {
+        return [
+            Forms\Components\Repeater::make('documents')
+                ->label('Documentos')
+                ->relationship()
+                ->schema([
+                    Forms\Components\Select::make('typedocument_id')
+                        ->label('Tipo de Documento')
+                        ->options(\App\Models\Typedocument::pluck('name', 'id'))
+                        ->required()
+                        ->columnSpan(1),
+                    Forms\Components\FileUpload::make('document_archive')
+                        ->label('Archivo')
+                        ->openable()
+                        // Verificación si el registro existe o es nulo
+                        ->directory(function ($record, Forms\Get $get) {
                             $followupId = $record?->id ?? $get('../../id') ?? 'temp';
-                            $typedocumentId = $get('typedocument_id');
-                            $typedocumentName = '';
-                            if ($typedocumentId) {
-                                $typedocument = \App\Models\Typedocument::find($typedocumentId);
-                                $typedocumentName = $typedocument ? $typedocument->name : 'tipo';
-                            } else {
-                                $typedocumentName = 'tipo';
+                            return 'documentos/' . $followupId;
+                        })
+                        ->disk('digitalocean')
+                        ->visibility('public')
+                        ->preserveFilenames()
+                        ->getUploadedFileNameForStorageUsing(
+                            function (\Illuminate\Http\UploadedFile $file, $get, $livewire, $record) {
+                                $followupId = $record?->id ?? $get('../../id') ?? 'temp';
+                                $typedocumentId = $get('typedocument_id');
+                                $typedocumentName = '';
+                                if ($typedocumentId) {
+                                    $typedocument = \App\Models\Typedocument::find($typedocumentId);
+                                    $typedocumentName = $typedocument ? $typedocument->name : 'tipo';
+                                } else {
+                                    $typedocumentName = 'tipo';
+                                }
+                                $typedocumentName = preg_replace('/[^A-Za-z0-9_\-]/', '', str_replace(' ', '_', $typedocumentName));
+                                return $followupId . '_' . $typedocumentName . '_' . $file->getClientOriginalName();
                             }
-                            $typedocumentName = preg_replace('/[^A-Za-z0-9_\-]/', '', str_replace(' ', '_', $typedocumentName));
-                            return $followupId . '_' . $typedocumentName . '_' . $file->getClientOriginalName();
-                        }
-                    )
-                    ->acceptedFileTypes([
-                        'application/pdf',
-                        'application/msword',
-                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                        'application/vnd.ms-excel',
-                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                        'image/jpeg',
-                        'image/png'
-                    ])
-                    ->maxSize(30720) 
-                    ->helperText('Formatos permitidos: PDF, Word, Excel, JPG, PNG. Tamaño máximo: 30MB')
-                    ->required()
-                    ->columnSpan(1)
-                    ->moveFiles()
-                    ->storeFileNamesIn('original_filename'),
-            ])
-            ->columns(2)
-            ->columnSpanFull()
-            ->defaultItems(1)
-            ->addActionLabel('Agregar Documento')
-            ->collapsible()
-            ->itemLabel(
-                fn(array $state): ?string => \App\Models\Typedocument::find($state['typedocument_id'])?->name ?? null
-            )
-            ->deleteAction(
-                fn(Forms\Components\Actions\Action $action) => $action
-                    ->requiresConfirmation()
-                    ->modalHeading('Eliminar documento')
-                    ->modalDescription('¿Estás seguro de que deseas eliminar este documento? Esta acción no se puede deshacer.')
-                    ->modalSubmitActionLabel('Sí, eliminar')
-                    ->modalCancelActionLabel('Cancelar')
-            )
-            ->reorderable(false)
-    ];
-}
+                        )
+                        ->acceptedFileTypes([
+                            'application/pdf',
+                            'application/msword',
+                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                            'application/vnd.ms-excel',
+                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                            'image/jpeg',
+                            'image/png'
+                        ])
+                        ->maxSize(30720)
+                        ->helperText('Formatos permitidos: PDF, Word, Excel, JPG, PNG. Tamaño máximo: 30MB')
+                        ->required()
+                        ->columnSpan(1)
+                        ->moveFiles()
+                        ->storeFileNamesIn('original_filename'),
+                ])
+                ->columns(2)
+                ->columnSpanFull()
+                ->defaultItems(1)
+                ->addActionLabel('Agregar Documento')
+                ->collapsible()
+                ->itemLabel(
+                    fn(array $state): ?string => \App\Models\Typedocument::find($state['typedocument_id'])?->name ?? null
+                )
+                ->deleteAction(
+                    fn(Forms\Components\Actions\Action $action) => $action
+                        ->requiresConfirmation()
+                        ->modalHeading('Eliminar documento')
+                        ->modalDescription('¿Estás seguro de que deseas eliminar este documento? Esta acción no se puede deshacer.')
+                        ->modalSubmitActionLabel('Sí, eliminar')
+                        ->modalCancelActionLabel('Cancelar')
+                )
+                ->reorderable(false)
+        ];
+    }
 }

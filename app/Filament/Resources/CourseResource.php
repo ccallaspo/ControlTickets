@@ -50,6 +50,7 @@ class CourseResource extends Resource
 
                         Forms\Components\Select::make('modality')
                             ->label('Modalidad')
+                            ->required()
                             ->options(function () {
                                 return \App\Models\Modalidades::orderBy('name', 'asc')->pluck('name', 'name');
                             }),

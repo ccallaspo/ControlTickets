@@ -31,7 +31,7 @@ class CursoFinalizadoMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Notificación - Curso finalizado',
+            subject: 'Curso Finalizado',
         );
     }
 

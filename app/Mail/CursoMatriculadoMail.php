@@ -31,7 +31,7 @@ class CursoMatriculadoMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Notificación - Curso matriculado',
+            subject: 'Matricular Curso',
         );
     }
 

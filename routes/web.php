@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CotizacionController;
 use App\Http\Controllers\InvitacionesController;
 use App\Http\Controllers\PdfController;
 use Illuminate\Support\Facades\Route;
@@ -32,3 +33,7 @@ Route::get('/pdf', function () {
 });
 
 Route::get('/import-emails/{id}', [InvitacionesController::class, 'readEmails'])->name('enviar.invitaciones');
+
+Route::get('/cotizacion/{cotizacion}/clonar', [CotizacionController::class, 'clonar'])
+    ->name('cotizacion.clonar')
+    ->middleware(['auth']);

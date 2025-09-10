@@ -18,7 +18,7 @@ class TypedocumentsResource extends Resource
 {
     protected static ?string $model = Typedocuments::class;
 
-    protected static ?string $navigationIcon = 'heroicon-m-arrow-path-rounded-square';
+    protected static ?string $navigationIcon = 'heroicon-o-document';
     protected static ?string $navigationGroup = 'Configuración';
     protected static ?string $navigationLabel = 'Tipos de Documentos';
     public static ?string $pluralModelLabel = 'Tipos de Documentos';

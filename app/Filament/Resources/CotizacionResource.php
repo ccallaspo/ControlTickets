@@ -27,6 +27,8 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Mail;
+use Filament\Tables\Actions\Action;
+
 
 
 class CotizacionResource extends Resource
@@ -62,7 +64,7 @@ class CotizacionResource extends Resource
                         Forms\Components\TextInput::make('name')
                             ->label('ID Cotización')
                             ->default(fn() => $suggestedName),
-                           // ->hint('Id'),
+                        // ->hint('Id'),
                         Forms\Components\Select::make('customer_id')
                             ->relationship('customer', 'name')
                             ->searchable()
@@ -278,6 +280,12 @@ class CotizacionResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Action::make('Clonar')
+                    ->icon('heroicon-o-document-duplicate')
+                    ->color('success')
+                    ->tooltip('Clonar cotización')
+                    ->url(fn(Cotizacion $record): string => route('cotizacion.clonar', $record))
+                    ->openUrlInNewTab(false),
                 Tables\Actions\Action::make('Descargar')
                     ->icon('heroicon-m-arrow-down-tray')
                     ->tooltip('Descargar cotización')

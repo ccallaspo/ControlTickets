@@ -253,25 +253,28 @@
                 
 
                 
-                                <div class="timeline-item current">
+                                <div class="timeline-item completed">
                     <div class="timeline-icon-wrapper">
-                        <span class="timeline-icon current"></span>
+                        <span class="timeline-icon completed"></span>
                     </div>
-                    <div class="timeline-text current">
+                    <div class="timeline-text completed">
                         <h3>Matricular Curso</h3>
                     </div>
                 </div>
                 
        
                 
-                <div class="timeline-item pending">
+                <div class="timeline-item current">
                     <div class="timeline-icon-wrapper">
-                        <span class="timeline-icon pending"></span>
+                        <span class="timeline-icon current"></span>
                     </div>
-                    <div class="timeline-text pending">
+                    <div class="timeline-text current">
                         <h3>Curso en Proceso</h3>
                     </div>
                 </div>
+                
+
+                
                 <div class="timeline-item pending">
                     <div class="timeline-icon-wrapper">
                         <span class="timeline-icon pending"></span>

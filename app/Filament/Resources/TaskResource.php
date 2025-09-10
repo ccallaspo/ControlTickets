@@ -20,7 +20,7 @@ class TaskResource extends Resource
 {
     protected static ?string $model = Task::class;
     
-    protected static ?string $navigationIcon = 'heroicon-m-arrow-path-rounded-square';
+    protected static ?string $navigationIcon = 'heroicon-o-cog';
     protected static ?string $navigationGroup = 'Configuración';
     protected static ?string $navigationLabel = 'Procesos';
     public static ?string $pluralModelLabel = 'Procesos';
