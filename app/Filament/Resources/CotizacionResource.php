@@ -273,19 +273,23 @@ class CotizacionResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-            ])->defaultSort('name', 'desc')
+            ])->defaultSort('id', 'desc')
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Action::make('Clonar')
-                    ->icon('heroicon-o-document-duplicate')
-                    ->color('success')
-                    ->tooltip('Clonar cotización')
-                    ->url(fn(Cotizacion $record): string => route('cotizacion.clonar', $record))
-                    ->openUrlInNewTab(false),
+                // Envuelve las acciones en un grupo
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Action::make('Duplicar')
+                        ->icon('heroicon-o-document-duplicate')
+                        ->color('success')
+                        ->tooltip('Duplicar cotización')
+                        ->url(fn(Cotizacion $record): string => route('cotizacion.clonar', $record))
+                        ->openUrlInNewTab(false),
+                
+                // Mantén las acciones fuera del grupo si quieres que aparezcan directamente en la tabla
                 Tables\Actions\Action::make('Descargar')
                     ->icon('heroicon-m-arrow-down-tray')
                     ->tooltip('Descargar cotización')
@@ -296,7 +300,6 @@ class CotizacionResource extends Resource
                     ->icon('heroicon-o-rocket-launch')
                     ->tooltip('Enviar cotización')
                     ->action(function ($record, array $data) {
-                        // Llamar al controlador para enviar el PDF por correo
                         return redirect()->route('send.pdf', [
                             'record' => $record,
                             'emails' => collect($data['emails'])->pluck('email')->toArray(),
@@ -324,7 +327,7 @@ class CotizacionResource extends Resource
                     ])
                     ->modalHeading('Enviar Cotización')
                     ->modalButton('Enviar'),
-
+]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

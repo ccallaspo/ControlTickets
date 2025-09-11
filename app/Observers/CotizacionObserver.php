@@ -40,7 +40,7 @@ class CotizacionObserver
            // $proced = Task::where('name', 'Cotización con franquicia')->firstOrFail();
             //dd($proced);
 
-            $event = Event::where('name', 'Cotización generada')
+            $event = Event::where('name', 'Cotización Enviada')
                 ->firstOrFail();
 
             Followup::create([

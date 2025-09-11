@@ -30,7 +30,7 @@ public function clonar(Cotizacion $cotizacion)
 
             // Lógica para éxito
             Notification::make()
-                ->title('Cotización clonada con éxito')
+                ->title('Cotización duplicada con éxito')
                 ->body("La cotización #{$cotizacion->name} ha sido clonada como #{$newCotizacion->name}.")
                 ->success()
                 ->sendToDatabase(auth()->user());
@@ -41,7 +41,7 @@ public function clonar(Cotizacion $cotizacion)
         } catch (\Exception $e) {
             // Lógica para error
             Notification::make()
-                ->title('Error al clonar la cotización')
+                ->title('Error al duplicar la cotización')
                 ->body('Ocurrió un error inesperado. Por favor, inténtalo de nuevo.')
                 ->danger()
                 ->sendToDatabase(auth()->user());

@@ -383,11 +383,12 @@ class FollowupResource extends Resource
                     ->relationship('event', 'name')
             ])
             ->actions([
+                Tables\Actions\ActionGroup::make([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('upload_documents')
-                    ->label('')
-                    ->tooltip('Subir Archivos')
+                    ->label('Subir Documento')
+                    ->tooltip('Subir Documento')
                     ->color('primary')
                     ->icon('heroicon-o-document-plus')
                     ->modalHeading('Cargar Documentos')
@@ -398,6 +399,7 @@ class FollowupResource extends Resource
                         // No necesitas lógica de guardado aquí,
                         // el repeater con 'relationship' se encarga de todo.
                     }),
+                    ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
