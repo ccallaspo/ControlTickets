@@ -158,11 +158,13 @@ class CotizacionResource extends Resource
                 Section::make('Detalles del Curso')
                     ->description('')
                     ->schema([
-
-
                         Forms\Components\Select::make('course_id')
                             ->label('Curso')
-                            ->options(Course::all()->pluck('name', 'id'))
+                            ->options(
+                                Course::all()->mapWithKeys(function ($course) {
+                                    return [$course->id => $course->name . ' - ' . $course->modality];
+                                })
+                            )
                             ->reactive()
                             ->searchable()
                             ->preload()
@@ -267,7 +269,7 @@ class CotizacionResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->color(fn(string $state): string => match ($state) {
-                        default => 'secondary',
+                        default => 'danger',
                     }),
                 Tables\Columns\TextColumn::make('author')
                     ->size('sm')

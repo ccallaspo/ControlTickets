@@ -31,7 +31,7 @@ class TaskTypeOverview extends BaseWidget
         ->join('tasks', 'followups.task_id', '=', 'tasks.id')
         ->join('events', 'followups.event_id', '=', 'events.id')
         ->select(DB::raw('COUNT(*) as count'))
-        ->where('events.name', 'Cotización aprobada')
+        ->where('events.name', 'Curso en Proceso')
         ->first();
     
         $count_end = $terminado_count->count;
@@ -40,7 +40,7 @@ class TaskTypeOverview extends BaseWidget
         ->join('tasks', 'followups.task_id', '=', 'tasks.id')
         ->join('events', 'followups.event_id', '=', 'events.id')
         ->select(DB::raw('COUNT(*) as count'))
-        ->where('events.name', 'Cotización aprobada')
+        ->where('events.name', 'Por Facturar')
         ->first();
     
         $facturado_end = $facturado_count->count;
@@ -61,12 +61,12 @@ class TaskTypeOverview extends BaseWidget
             ->color('danger'),
 
             stat::make('', $count_end)
-            ->description('Cotizaciones Aprobadas')
+            ->description('Cursos en Proceso')
             ->descriptionIcon('heroicon-o-check-badge', IconPosition::Before)
             ->color('success'),         
             
             stat::make('', $facturado_end)
-            ->description('Cotizaciones Facturadas')
+            ->description('Cursos Facturados')
             ->descriptionIcon('heroicon-o-currency-dollar', IconPosition::Before)
             ->color('warning'),        
 
