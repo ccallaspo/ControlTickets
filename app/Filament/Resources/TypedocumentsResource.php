@@ -20,8 +20,8 @@ class TypedocumentsResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document';
     protected static ?string $navigationGroup = 'Configuración';
-    protected static ?string $navigationLabel = 'Tipos de Documentos';
-    public static ?string $pluralModelLabel = 'Tipos de Documentos';
+    protected static ?string $navigationLabel = 'Documentos';
+    public static ?string $pluralModelLabel = 'Documentos';
     protected static ?int $navigationSort = 6;
 
     public static function form(Form $form): Form

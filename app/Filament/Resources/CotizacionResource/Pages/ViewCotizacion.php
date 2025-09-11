@@ -13,11 +13,14 @@ class ViewCotizacion extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            Actions\EditAction::make()
+                ->label('Editar')
+                ->color('warning')
+                ->icon('heroicon-m-wrench-screwdriver'),
             Actions\Action::make('download')
-            ->label('Descargar')
-            ->url(fn($record) => route('pdf.download', $record->id))
-            ->openUrlInNewTab(true)
+                ->label('Descargar')
+                ->url(fn($record) => route('pdf.download', $record->id))
+                ->openUrlInNewTab(true)
         ];
     }
 

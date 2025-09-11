@@ -16,10 +16,15 @@ class ListFollowups extends ListRecords
     {
         return [
             Actions\CreateAction::make()
+                ->color('success')
+                ->icon('heroicon-o-plus')
                 ->label('Crear Ticket'),
-            
+
             // Usa la nueva clase de exportador
             ExportAction::make()
+                ->label('Exportar Tickets')
+                ->color('danger')
+                ->icon('heroicon-o-arrow-down-tray')
                 ->exporter(FollowupExporter::class),
         ];
     }

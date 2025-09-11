@@ -303,16 +303,17 @@ class FollowupResource extends Resource
                 Tables\Columns\TextColumn::make('id')
                     ->sortable()
                     ->hidden(),
-                Tables\Columns\TextColumn::make('name')
-                    ->label('SYC')
+                Tables\Columns\TextColumn::make('id_sence')
+                    ->label('Código ID')
+                    ->size('sm')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
-
                 Tables\Columns\TextColumn::make('referent')
-                    ->label('Ref. Cotización')
+                    ->label('Cotización')
                     ->sortable()
                     ->size('sm')
+                    ->toggleable(isToggledHiddenByDefault: false)
                     ->extraAttributes(['style' => 'width: 1px;'])
                     ->searchable(),
 
@@ -359,6 +360,7 @@ class FollowupResource extends Resource
                     ->sortable()
                     ->size('sm')
                     ->wrap()
+                    ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('author')
                     ->label('Creado por')
@@ -384,22 +386,22 @@ class FollowupResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('upload_documents')
-                    ->label('Subir Documento')
-                    ->tooltip('Subir Documento')
-                    ->color('primary')
-                    ->icon('heroicon-o-document-plus')
-                    ->modalHeading('Cargar Documentos')
-                    ->form(fn(\Filament\Forms\Form $form, \Illuminate\Database\Eloquent\Model $record): \Filament\Forms\Form => $form->schema(
-                        static::getDocumentosFormSchema()
-                    ))
-                    ->action(function (array $data, \Illuminate\Database\Eloquent\Model $record): void {
-                        // No necesitas lógica de guardado aquí,
-                        // el repeater con 'relationship' se encarga de todo.
-                    }),
-                    ]),
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\Action::make('upload_documents')
+                        ->label('Subir Documento')
+                        ->tooltip('Subir Documento')
+                        ->color('primary')
+                        ->icon('heroicon-o-document-plus')
+                        ->modalHeading('Cargar Documentos')
+                        ->form(fn(\Filament\Forms\Form $form, \Illuminate\Database\Eloquent\Model $record): \Filament\Forms\Form => $form->schema(
+                            static::getDocumentosFormSchema()
+                        ))
+                        ->action(function (array $data, \Illuminate\Database\Eloquent\Model $record): void {
+                            // No necesitas lógica de guardado aquí,
+                            // el repeater con 'relationship' se encarga de todo.
+                        }),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

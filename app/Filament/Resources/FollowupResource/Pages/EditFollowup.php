@@ -10,14 +10,18 @@ class EditFollowup extends EditRecord
 {
     protected static string $resource = FollowupResource::class;
 
-    protected function getRedirectUrl(): string {
+    protected function getRedirectUrl(): string
+    {
         return $this->getResource()::getUrl('index');
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make(),
+            Actions\ViewAction::make()
+                ->color('primary')
+                ->label('Ver')
+                ->icon('heroicon-o-eye'),
             // Actions\DeleteAction::make(),
         ];
     }

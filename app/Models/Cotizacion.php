@@ -24,7 +24,8 @@ class Cotizacion extends Model
         'add_course_id',
         'content',
         'costs',
-        'type'
+        'type',
+        'activity_id'
     ];
 
     protected $casts = [
@@ -32,7 +33,7 @@ class Cotizacion extends Model
         'thour' => 'json',
         'tpart' => 'json',
         'vunit' => 'json',
-        'costs' => 'json',        
+        'costs' => 'json',
     ];
 
     public function customer(): BelongsTo
@@ -43,5 +44,10 @@ class Cotizacion extends Model
     public function course(): BelongsTo
     {
         return $this->BelongsTo(Course::class);
+    }
+
+    public function activity(): BelongsTo
+    {
+        return $this->belongsTo(Activity::class);
     }
 }

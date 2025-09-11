@@ -281,7 +281,7 @@
                 @if($cotizacion->grup === true || $cotizacion->grup === 'true')
                 Modalidad {{ $course->modality }}
                 @else
-                Curso modalidad {{ $course->modality }}
+                {{ $cotizacion->activity->name }} modalidad {{ $course->modality }}
                 @endif
             </h4>
 

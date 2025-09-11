@@ -104,9 +104,15 @@ class CotizacionResource extends Resource
                             ])->required(),
                         Forms\Components\Hidden::make('author')
                             ->default($myuser),
+                        Forms\Components\Select::make('activity_id')
+                            ->label('Tipo de Actividad')
+                            ->relationship('activity', 'name')
+                            ->required()
+                            ->default(1)
+                            ->preload(),
                         Forms\Components\Toggle::make('grup')
                             ->label('Programa'),
-                    ])->columns(3),
+                    ])->columns(4),
 
 
                 Repeater::make('costs')
@@ -231,6 +237,12 @@ class CotizacionResource extends Resource
                     ->size('sm')
                     ->sortable()
                     ->searchable(),
+                Tables\Columns\TextColumn::make('activity.name')
+                    ->label('Actividad')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->size('sm')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('course.cod_sence')
                     ->label('Código')
                     ->size('sm')
@@ -288,46 +300,46 @@ class CotizacionResource extends Resource
                         ->tooltip('Duplicar cotización')
                         ->url(fn(Cotizacion $record): string => route('cotizacion.clonar', $record))
                         ->openUrlInNewTab(false),
-                
-                // Mantén las acciones fuera del grupo si quieres que aparezcan directamente en la tabla
-                Tables\Actions\Action::make('Descargar')
-                    ->icon('heroicon-m-arrow-down-tray')
-                    ->tooltip('Descargar cotización')
-                    ->url(fn($record) => route('pdf.download', $record->id))
-                    ->openUrlInNewTab(true),
 
-                Tables\Actions\Action::make('Enviar')
-                    ->icon('heroicon-o-rocket-launch')
-                    ->tooltip('Enviar cotización')
-                    ->action(function ($record, array $data) {
-                        return redirect()->route('send.pdf', [
-                            'record' => $record,
-                            'emails' => collect($data['emails'])->pluck('email')->toArray(),
-                        ]);
-                    })
-                    ->form([
-                        Repeater::make('emails')
-                            ->label('Correo electrónico')
-                            ->schema([
-                                TextInput::make('email')
-                                    ->label('Destinatario')
-                                    ->required()
-                                    ->email()
-                                    ->validationMessages([
-                                        'email' => 'El correo electrónico ingresado no es válido. Por favor, verifica el formato.',
-                                        'required' => 'El campo correo electrónico es obligatorio.',
-                                    ])
-                                    ->dehydrateStateUsing(fn($state) => trim($state)),
-                            ])
-                            ->default(fn($record) => [
-                                ['email' => isset($record->customer->email) ? trim($record->customer->email) : '']
-                            ]) // Limpia espacios al cargar
-                            ->minItems(1)
-                            ->collapsible(),
-                    ])
-                    ->modalHeading('Enviar Cotización')
-                    ->modalButton('Enviar'),
-]),
+                    // Mantén las acciones fuera del grupo si quieres que aparezcan directamente en la tabla
+                    Tables\Actions\Action::make('Descargar')
+                        ->icon('heroicon-m-arrow-down-tray')
+                        ->tooltip('Descargar cotización')
+                        ->url(fn($record) => route('pdf.download', $record->id))
+                        ->openUrlInNewTab(true),
+
+                    Tables\Actions\Action::make('Enviar')
+                        ->icon('heroicon-o-rocket-launch')
+                        ->tooltip('Enviar cotización')
+                        ->action(function ($record, array $data) {
+                            return redirect()->route('send.pdf', [
+                                'record' => $record,
+                                'emails' => collect($data['emails'])->pluck('email')->toArray(),
+                            ]);
+                        })
+                        ->form([
+                            Repeater::make('emails')
+                                ->label('Correo electrónico')
+                                ->schema([
+                                    TextInput::make('email')
+                                        ->label('Destinatario')
+                                        ->required()
+                                        ->email()
+                                        ->validationMessages([
+                                            'email' => 'El correo electrónico ingresado no es válido. Por favor, verifica el formato.',
+                                            'required' => 'El campo correo electrónico es obligatorio.',
+                                        ])
+                                        ->dehydrateStateUsing(fn($state) => trim($state)),
+                                ])
+                                ->default(fn($record) => [
+                                    ['email' => isset($record->customer->email) ? trim($record->customer->email) : '']
+                                ]) // Limpia espacios al cargar
+                                ->minItems(1)
+                                ->collapsible(),
+                        ])
+                        ->modalHeading('Enviar Cotización')
+                        ->modalButton('Enviar'),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -13,8 +13,11 @@ class EditCotizacion extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
+            Actions\ViewAction::make()
+                ->color('primary')
+                ->icon('heroicon-o-eye')
+                ->label('Ver'),
+            // Actions\DeleteAction::make(),
         ];
     }
     public function getHeading(): string
@@ -22,7 +25,8 @@ class EditCotizacion extends EditRecord
         return 'Editar Cotización';
     }
 
-    protected function getRedirectUrl(): string {
+    protected function getRedirectUrl(): string
+    {
         return $this->getResource()::getUrl('index');
     }
 }

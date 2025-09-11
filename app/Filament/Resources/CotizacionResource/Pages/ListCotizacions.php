@@ -14,7 +14,9 @@ class ListCotizacions extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-            ->label('Crear Cotización'),
+                ->label('Crear Cotización')
+                ->color('success')
+                ->icon('heroicon-o-plus'),
         ];
     }
 }
