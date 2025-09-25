@@ -64,12 +64,13 @@ class FollowupResource extends Resource
         $newName = $prefix . $newNumber;
         return $form
             ->schema([
-       Section::make(fn ($record) =>
-        'Seguimiento y control' . ($record && $record->cotizacion?->customer?->name
-            ? ' : ' . $record->cotizacion->customer->name
-            : '')
-    )
-    ->description('')
+                Section::make(
+                    fn($record) =>
+                    'Seguimiento y control' . ($record && $record->cotizacion?->customer?->name
+                        ? ' : ' . $record->cotizacion->customer->name
+                        : '')
+                )
+                    ->description('')
                     ->schema([
                         Forms\Components\Hidden::make('active')
                             ->label('Anular')
@@ -325,7 +326,7 @@ class FollowupResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
-                    
+
                 Tables\Columns\TextColumn::make('cotizacion_id')
                     ->label('Cotización')
                     ->getStateUsing(fn($record) => $record->cotizacion?->name ?? $record->referent)
@@ -374,13 +375,28 @@ class FollowupResource extends Resource
                     ->size('sm')
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('cotizacion.customer.name')
+                // Tables\Columns\TextColumn::make('cotizacion.customer.name')
+                //     ->label('Cliente')
+                //     ->sortable()
+                //     ->size('sm')
+                //     ->wrap()
+                //     ->toggleable(isToggledHiddenByDefault: false)
+                //     ->searchable(),
+
+                Tables\Columns\TextColumn::make('cliente')
                     ->label('Cliente')
-                    ->sortable()
+                    ->getStateUsing(
+                        fn(Followup $record) =>
+                        $record->cotizacion?->customer?->name
+                            ?? $record->customer?->name
+                            ?? '-'
+                    )
+                    ->sortable(false)
                     ->size('sm')
                     ->wrap()
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
+
                 Tables\Columns\TextColumn::make('author')
                     ->label('Creado por')
                     ->sortable()
