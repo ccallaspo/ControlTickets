@@ -18,6 +18,7 @@ class Followup extends Model
         'author',
         'referent',
         'event_id',
+        'cotizacion_id',
         'task_id',
         'customer_id',
         'active',
@@ -36,7 +37,7 @@ class Followup extends Model
     ];
 
     protected $casts = [
-        'week' => 'json',    
+        'week' => 'json',
     ];
 
     public function note(): HasMany
@@ -63,6 +64,12 @@ class Followup extends Model
     {
         return $this->BelongsTo(Customer::class);
     }
+
+    public function cotizacion(): BelongsTo
+    {
+        return $this->belongsTo(Cotizacion::class);
+    }
+
 
     public function scopeRestrictedForSupportUser($query)
     {

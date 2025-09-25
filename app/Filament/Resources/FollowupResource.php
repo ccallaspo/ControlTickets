@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Exports\FollowupsBulkExport;
 use App\Filament\Resources\FollowupResource\Pages;
 use App\Filament\Resources\FollowupResource\RelationManagers;
+use App\Models\Cotizacion;
 use App\Models\Event;
 use App\Models\Followup;
 use App\Models\Task;
@@ -63,8 +64,12 @@ class FollowupResource extends Resource
         $newName = $prefix . $newNumber;
         return $form
             ->schema([
-                Section::make('Seguimiento y control')
-                    ->description('')
+       Section::make(fn ($record) =>
+        'Seguimiento y control' . ($record && $record->cotizacion?->customer?->name
+            ? ' : ' . $record->cotizacion->customer->name
+            : '')
+    )
+    ->description('')
                     ->schema([
                         Forms\Components\Hidden::make('active')
                             ->label('Anular')
@@ -75,9 +80,20 @@ class FollowupResource extends Resource
                             ->readonly()
                             ->default($newName),
 
-                        Forms\Components\TextInput::make('referent')
-                            ->label('Ref. Cotizacion')
-                            ->maxLength(255),
+                        // Forms\Components\TextInput::make('referent')
+                        //     ->label('Cotizacion')
+                        //     ->maxLength(255),
+
+                        Forms\Components\Select::make('cotizacion_id')
+                            ->label('Cotización')
+                            ->relationship(
+                                name: 'cotizacion',
+                                titleAttribute: 'name',
+                                modifyQueryUsing: fn($query) => $query->orderBy('id', 'desc')
+                            )
+                            ->searchable()
+                            ->preload(),
+
 
 
                         Forms\Components\Hidden::make('author')
@@ -105,34 +121,34 @@ class FollowupResource extends Resource
                             ->reactive()
                             ->disabled(fn(callable $get) => !$get('task_id')),
 
-                        Forms\Components\Select::make('customer_id')
-                            ->relationship('customer', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->label('Cliente')
-                            ->createOptionForm([
+                        // Forms\Components\Select::make('customer_id')
+                        //     ->relationship('customer', 'name')
+                        //     ->searchable()
+                        //     ->preload()
+                        //     ->label('Cliente')
+                        //     ->createOptionForm([
 
-                                Forms\Components\Hidden::make('active')
-                                    ->label('Anular')
-                                    ->default('Si'),
-                                Forms\Components\TextInput::make('rut')
-                                    ->maxLength(255),
-                                Forms\Components\TextInput::make('name')
-                                    ->label('Empresa')
-                                    ->required()
-                                    ->maxLength(255),
-                                Forms\Components\TextInput::make('represent')
-                                    ->label('Contacto')
-                                    ->maxLength(255),
-                                Forms\Components\TextInput::make('phone')
-                                    ->label('Telefono')
-                                    ->maxLength(255),
-                                Forms\Components\TextInput::make('email')
-                                    ->label('Correo Electronico')
-                                    ->maxLength(255),
-                                Forms\Components\Hidden::make('author')
-                                    ->default($myuser),
-                            ]),
+                        //         Forms\Components\Hidden::make('active')
+                        //             ->label('Anular')
+                        //             ->default('Si'),
+                        //         Forms\Components\TextInput::make('rut')
+                        //             ->maxLength(255),
+                        //         Forms\Components\TextInput::make('name')
+                        //             ->label('Empresa')
+                        //             ->required()
+                        //             ->maxLength(255),
+                        //         Forms\Components\TextInput::make('represent')
+                        //             ->label('Contacto')
+                        //             ->maxLength(255),
+                        //         Forms\Components\TextInput::make('phone')
+                        //             ->label('Telefono')
+                        //             ->maxLength(255),
+                        //         Forms\Components\TextInput::make('email')
+                        //             ->label('Correo Electronico')
+                        //             ->maxLength(255),
+                        //         Forms\Components\Hidden::make('author')
+                        //             ->default($myuser),
+                        //     ]),
                     ])->columns(4),
 
 
@@ -309,13 +325,16 @@ class FollowupResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
-                Tables\Columns\TextColumn::make('referent')
+                    
+                Tables\Columns\TextColumn::make('cotizacion_id')
                     ->label('Cotización')
+                    ->getStateUsing(fn($record) => $record->cotizacion?->name ?? $record->referent)
                     ->sortable()
                     ->size('sm')
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->extraAttributes(['style' => 'width: 1px;'])
                     ->searchable(),
+
 
                 Tables\Columns\TextColumn::make('event.name')
                     ->label('Estado')
@@ -355,7 +374,7 @@ class FollowupResource extends Resource
                     ->size('sm')
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('customer.name')
+                Tables\Columns\TextColumn::make('cotizacion.customer.name')
                     ->label('Cliente')
                     ->sortable()
                     ->size('sm')
