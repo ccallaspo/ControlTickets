@@ -388,14 +388,18 @@ class FollowupResource extends Resource
                     ->getStateUsing(
                         fn(Followup $record) =>
                         $record->cotizacion?->customer?->name
-                            ?? $record->customer?->name
+                            ?? $record->customer?->name 
                             ?? '-'
                     )
                     ->sortable(false)
                     ->size('sm')
                     ->wrap()
                     ->toggleable(isToggledHiddenByDefault: false)
-                    ->searchable(),
+                    ->searchable(query: function (Builder $query, string $search): Builder { 
+                        return $query->whereHas('cotizacion.customer', function (Builder $query) use ($search) {
+                            $query->where('name', 'like', "%{$search}%");
+                        });
+                    }),
 
                 Tables\Columns\TextColumn::make('author')
                     ->label('Creado por')
