@@ -327,6 +327,15 @@ class FollowupResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
 
+                // Tables\Columns\TextColumn::make('cotizacion_id')
+                //     ->label('Cotización')
+                //     ->getStateUsing(fn($record) => $record->cotizacion?->name ?? $record->referent)
+                //     ->sortable()
+                //     ->size('sm')
+                //     ->toggleable(isToggledHiddenByDefault: false)
+                //     ->extraAttributes(['style' => 'width: 1px;'])
+                //     ->searchable(),
+
                 Tables\Columns\TextColumn::make('cotizacion_id')
                     ->label('Cotización')
                     ->getStateUsing(fn($record) => $record->cotizacion?->name ?? $record->referent)
@@ -334,8 +343,15 @@ class FollowupResource extends Resource
                     ->size('sm')
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->extraAttributes(['style' => 'width: 1px;'])
-                    ->searchable(),
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        // Limpia la búsqueda para obtener solo el número
+                        $search = str_replace('OT/', '', $search);
 
+                        // Revisa en la relación de cotizaciones Y en la columna 'referent'
+                        return $query->whereHas('cotizacion', function (Builder $query) use ($search) {
+                            $query->where('name', 'like', "%{$search}%");
+                        })->orWhere('referent', 'like', "%{$search}%");
+                    }),
 
                 Tables\Columns\TextColumn::make('event.name')
                     ->label('Estado')
@@ -388,14 +404,14 @@ class FollowupResource extends Resource
                     ->getStateUsing(
                         fn(Followup $record) =>
                         $record->cotizacion?->customer?->name
-                            ?? $record->customer?->name 
+                            ?? $record->customer?->name
                             ?? '-'
                     )
                     ->sortable(false)
                     ->size('sm')
                     ->wrap()
                     ->toggleable(isToggledHiddenByDefault: false)
-                    ->searchable(query: function (Builder $query, string $search): Builder { 
+                    ->searchable(query: function (Builder $query, string $search): Builder {
                         return $query->whereHas('cotizacion.customer', function (Builder $query) use ($search) {
                             $query->where('name', 'like', "%{$search}%");
                         });
