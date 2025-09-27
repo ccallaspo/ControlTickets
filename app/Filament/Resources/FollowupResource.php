@@ -414,6 +414,8 @@ class FollowupResource extends Resource
                     ->searchable(query: function (Builder $query, string $search): Builder {
                         return $query->whereHas('cotizacion.customer', function (Builder $query) use ($search) {
                             $query->where('name', 'like', "%{$search}%");
+                        })->orWhereHas('customer', function (Builder $query) use ($search) {
+                            $query->where('name', 'like', "%{$search}%");
                         });
                     }),
 
