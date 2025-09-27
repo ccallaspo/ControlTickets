@@ -31,7 +31,7 @@ class FollowupExporter extends Exporter
             ExportColumn::make('doc_oc')->label('Doc. OC')->formatStateUsing(fn ($state) => $state ?? ''), // Nuevo campo
             ExportColumn::make('cod_sence_course')->label('Código Sence Curso')->formatStateUsing(fn ($state) => $state ?? ''),
             ExportColumn::make('name_course')->label('Nombre Curso')->formatStateUsing(fn ($state) => $state ?? ''),
-            ExportColumn::make('id_sence')->label('ID Sence')->formatStateUsing(fn ($state) => $state ?? ''),
+            ExportColumn::make('id_sence')->label('Código ID')->formatStateUsing(fn ($state) => $state ?? ''),
             ExportColumn::make('modalily')->label('Modalidad')->formatStateUsing(fn ($state) => $state ?? ''),
             ExportColumn::make('doc_participant')->label('Doc. Participante')->formatStateUsing(fn ($state) => $state ?? ''), // Nuevo campo
             ExportColumn::make('h_star')->label('Hora Inicio')->formatStateUsing(fn ($state) => $state ?? ''), // Nuevo campo

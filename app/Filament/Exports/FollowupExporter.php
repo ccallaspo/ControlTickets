@@ -23,15 +23,15 @@ class FollowupExporter extends Exporter
             // Campos directos de la tabla 'followups'
             ExportColumn::make('id')->label('ID Ticket'),
             ExportColumn::make('active')->label('Activo'), // Nuevo campo
-            ExportColumn::make('name')->label('Nombre SYC'),
+            ExportColumn::make('name')->label('SYC'),
             ExportColumn::make('description')->label('Descripción')->formatStateUsing(fn ($state) => $state ?? ''), // Nuevo campo
             ExportColumn::make('author')->label('Autor'),
-            ExportColumn::make('referent')->label('Ref. Cotización')->formatStateUsing(fn ($state) => $state ?? ''),
+            ExportColumn::make('referent')->label('Cotización')->formatStateUsing(fn ($state) => $state ?? ''),
             ExportColumn::make('n_hours')->label('N° Horas')->formatStateUsing(fn ($state) => $state ?? ''),
             ExportColumn::make('doc_oc')->label('Doc. OC')->formatStateUsing(fn ($state) => $state ?? ''), // Nuevo campo
             ExportColumn::make('cod_sence_course')->label('Código Sence Curso')->formatStateUsing(fn ($state) => $state ?? ''),
             ExportColumn::make('name_course')->label('Nombre Curso')->formatStateUsing(fn ($state) => $state ?? ''),
-            ExportColumn::make('id_sence')->label('ID Sence')->formatStateUsing(fn ($state) => $state ?? ''),
+            ExportColumn::make('id_sence')->label('Código ID')->formatStateUsing(fn ($state) => $state ?? ''),
             ExportColumn::make('modalily')->label('Modalidad')->formatStateUsing(fn ($state) => $state ?? ''),
             ExportColumn::make('doc_participant')->label('Doc. Participante')->formatStateUsing(fn ($state) => $state ?? ''), // Nuevo campo
             ExportColumn::make('h_star')->label('Hora Inicio')->formatStateUsing(fn ($state) => $state ?? ''), // Nuevo campo
