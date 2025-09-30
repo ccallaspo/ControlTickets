@@ -319,7 +319,7 @@ class FollowupResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->sortable()
-                    ->hidden(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('id_sence')
                     ->label('Código ID')
                     ->size('sm')
