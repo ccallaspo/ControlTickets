@@ -2,11 +2,18 @@
     "private": true,
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "tw:init": "tailwindcss init -p"
     },
     "devDependencies": {
+        "@tailwindcss/forms": "^0.5.10",
+        "@tailwindcss/typography": "^0.5.19",
+        "autoprefixer": "^10.4.22",
         "axios": "^1.1.2",
         "laravel-vite-plugin": "^0.7.2",
+        "postcss": "^8.5.6",
+        "postcss-nesting": "^13.0.2",
+        "tailwindcss": "^3.4.18",
         "vite": "^4.0.0"
     },
     "dependencies": {

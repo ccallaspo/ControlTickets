@@ -1,0 +1,427 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+
+/* Estilos para badges personalizados con fondo de color y texto/iconos blancos */
+/* NO aplicar background transparente aquí - dejar que el estilo inline lo maneje */
+.custom-badge-colored,
+.custom-badge-colored.fi-badge,
+span.custom-badge-colored,
+div.custom-badge-colored {
+    color: #ffffff !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    box-shadow: none !important;
+}
+
+/* Eliminar cualquier fondo blanco o capa interna */
+.custom-badge-colored::before,
+.custom-badge-colored::after,
+.custom-badge-colored.fi-badge::before,
+.custom-badge-colored.fi-badge::after {
+    display: none !important;
+    background: none !important;
+    content: none !important;
+}
+
+/* Eliminar fondos blancos de elementos internos del badge */
+.custom-badge-colored .fi-badge-label,
+.custom-badge-colored .fi-badge-icon-wrapper,
+.custom-badge-colored .fi-badge-icon,
+.custom-badge-colored .fi-icon,
+.custom-badge-colored [class*="bg-white"],
+.custom-badge-colored [class*="bg-gray-50"],
+.custom-badge-colored [class*="bg-gray-100"],
+.custom-badge-colored.fi-badge .fi-badge-label,
+.custom-badge-colored.fi-badge .fi-badge-icon-wrapper,
+.custom-badge-colored.fi-badge .fi-badge-icon,
+.custom-badge-colored.fi-badge .fi-icon,
+/* Eliminar fondos de cualquier elemento hijo que no tenga el style inline */
+.custom-badge-colored > *:not([style*="background-color"]),
+.custom-badge-colored.fi-badge > *:not([style*="background-color"]) {
+    background-color: transparent !important;
+    background: none !important;
+    box-shadow: none !important;
+}
+
+/* Sobrescribir todas las clases de color de Tailwind y Filament para texto */
+.custom-badge-colored.text-gray-600,
+.custom-badge-colored.text-gray-400,
+.custom-badge-colored.text-gray-500,
+.custom-badge-colored.text-gray-700,
+.custom-badge-colored.text-custom-500,
+.custom-badge-colored.text-custom-600,
+.custom-badge-colored.dark\:text-gray-400,
+.custom-badge-colored.dark\:text-gray-500,
+.custom-badge-colored.fi-badge.text-gray-600,
+.custom-badge-colored.fi-badge.text-gray-500,
+.custom-badge-colored.fi-badge.text-gray-400 {
+    color: #ffffff !important;
+}
+
+/* Sobrescribir clases de fondo de Tailwind/Filament - solo si NO tiene style inline */
+.custom-badge-colored.fi-badge:not([style*="background-color"]),
+.custom-badge-colored:not([style*="background-color"]) {
+    background-color: transparent !important;
+    background: none !important;
+}
+
+/* Iconos del badge - todos los elementos de icono */
+.custom-badge-colored .fi-badge-icon,
+.custom-badge-colored .fi-icon,
+.custom-badge-colored .fi-icon-btn-icon,
+.custom-badge-colored.fi-badge .fi-badge-icon,
+.custom-badge-colored.fi-badge .fi-icon,
+.custom-badge-colored [class*="icon"],
+.custom-badge-colored [class*="Icon"] {
+    color: #ffffff !important;
+}
+
+/* SVG dentro del badge - forzar color blanco en todos los SVGs */
+.custom-badge-colored svg,
+.custom-badge-colored svg *,
+.custom-badge-colored .fi-badge-icon svg,
+.custom-badge-colored .fi-badge-icon svg *,
+.custom-badge-colored .fi-icon svg,
+.custom-badge-colored .fi-icon svg *,
+.custom-badge-colored.fi-badge svg,
+.custom-badge-colored.fi-badge svg *,
+.custom-badge-colored [class*="icon"] svg,
+.custom-badge-colored [class*="icon"] svg * {
+    color: #ffffff !important;
+    fill: #ffffff !important;
+    stroke: #ffffff !important;
+}
+
+/* Elementos SVG específicos - todas las formas SVG */
+.custom-badge-colored svg path,
+.custom-badge-colored svg circle,
+.custom-badge-colored svg rect,
+.custom-badge-colored svg line,
+.custom-badge-colored svg polyline,
+.custom-badge-colored svg polygon,
+.custom-badge-colored svg ellipse,
+.custom-badge-colored svg g,
+.custom-badge-colored .fi-badge-icon svg path,
+.custom-badge-colored .fi-badge-icon svg circle,
+.custom-badge-colored .fi-badge-icon svg rect,
+.custom-badge-colored .fi-badge-icon svg line,
+.custom-badge-colored .fi-icon svg path,
+.custom-badge-colored .fi-icon svg circle,
+.custom-badge-colored .fi-icon svg rect,
+.custom-badge-colored .fi-icon svg line,
+.custom-badge-colored.fi-badge svg path,
+.custom-badge-colored.fi-badge svg circle,
+.custom-badge-colored.fi-badge svg rect,
+.custom-badge-colored.fi-badge svg line,
+.custom-badge-colored.fi-badge svg g {
+    stroke: #ffffff !important;
+    fill: #ffffff !important;
+    color: #ffffff !important;
+}
+
+/* Asegurar que todo el texto sea blanco y centrado */
+.custom-badge-colored span,
+.custom-badge-colored div,
+.custom-badge-colored p,
+.custom-badge-colored label,
+.custom-badge-colored.fi-badge span,
+.custom-badge-colored.fi-badge div,
+.custom-badge-colored.fi-badge > *,
+.custom-badge-colored .fi-badge-label {
+    color: #ffffff !important;
+    text-align: center !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background-color: transparent !important;
+    background: none !important;
+}
+
+/* Forzar todos los elementos hijos directos e indirectos a ser blancos y sin fondo */
+.custom-badge-colored *,
+.custom-badge-colored.fi-badge *,
+.custom-badge-colored .fi-badge-icon *,
+.custom-badge-colored .fi-icon * {
+    color: #ffffff !important;
+}
+
+/* Eliminar fondos blancos de todos los elementos hijos - selectores más específicos */
+.custom-badge-colored *:not([style*="background-color"]),
+.custom-badge-colored.fi-badge *:not([style*="background-color"]),
+.custom-badge-colored [class*="fi-"]:not([style*="background-color"]) {
+    background-color: transparent !important;
+    background: none !important;
+}
+
+/* Asegurar que los iconos Heroicons también sean blancos */
+.custom-badge-colored [class^="heroicon"],
+.custom-badge-colored [class*="heroicon"] svg,
+.custom-badge-colored [class^="heroicon"] svg path,
+.custom-badge-colored [class*="heroicon"] svg path {
+    fill: #ffffff !important;
+    stroke: #ffffff !important;
+    color: #ffffff !important;
+}
+
+/* Sobrescribir clases específicas de Filament/Tailwind que agregan fondo blanco/gris */
+/* Solo aplicar si el elemento tiene style inline con background-color */
+.custom-badge-colored[style*="background-color"].fi-badge.bg-white,
+.custom-badge-colored[style*="background-color"].fi-badge[class*="bg-white"],
+.custom-badge-colored[style*="background-color"].fi-badge[class*="bg-gray-50"],
+.custom-badge-colored[style*="background-color"].fi-badge[class*="bg-gray-100"],
+.custom-badge-colored[style*="background-color"][class*="bg-white"],
+.custom-badge-colored[style*="background-color"][class*="bg-gray-50"],
+.custom-badge-colored[style*="background-color"][class*="bg-gray-100"] {
+    background-image: none !important;
+    background: inherit !important;
+}
+
+/* Para elementos SIN style inline, eliminar cualquier fondo blanco/gris */
+.custom-badge-colored:not([style*="background-color"]).fi-badge.bg-white,
+.custom-badge-colored:not([style*="background-color"]).fi-badge[class*="bg-white"],
+.custom-badge-colored:not([style*="background-color"]).fi-badge[class*="bg-gray-50"],
+.custom-badge-colored:not([style*="background-color"]).fi-badge[class*="bg-gray-100"],
+.custom-badge-colored:not([style*="background-color"])[class*="bg-white"],
+.custom-badge-colored:not([style*="background-color"])[class*="bg-gray-50"],
+.custom-badge-colored:not([style*="background-color"])[class*="bg-gray-100"] {
+    background-color: transparent !important;
+    background: none !important;
+}
+
+/* Asegurar que el estilo inline de background-color se respete - NO sobrescribir si tiene style inline */
+[class*="custom-badge-colored"]:not([style*="background-color"]) {
+    background-color: transparent !important;
+    background: none !important;
+}
+
+/* Regla final para eliminar cualquier sombra o borde que cree apariencia de capa */
+.custom-badge-colored,
+.custom-badge-colored *,
+.custom-badge-colored.fi-badge,
+.custom-badge-colored.fi-badge * {
+    box-shadow: none !important;
+    filter: none !important;
+}
+
+/* Sobrescribir TODAS las clases de fondo de Tailwind/Filament en el badge principal */
+/* Esta regla tiene alta especificidad para sobrescribir clases como bg-gray-50, bg-white, etc. */
+.custom-badge-colored[style*="background-color"].fi-badge[class*="bg-"],
+.custom-badge-colored[style*="background-color"][class*="bg-"] {
+    background-image: none !important;
+    background-attachment: inherit !important;
+    background-position: inherit !important;
+    background-repeat: inherit !important;
+    background-size: inherit !important;
+    background-clip: inherit !important;
+    background-origin: inherit !important;
+}
+
+/* NOTA: El estilo inline con !important ya tiene máxima prioridad, no necesitamos sobrescribirlo aquí */
+/* Solo necesitamos eliminar fondos de elementos hijos */
+
+/* REGLAS AGRESIVAS PARA TEXTO E ICONOS BLANCOS - Estas reglas tienen máxima prioridad */
+.custom-badge-white-text,
+.custom-badge-white-text * {
+    --tw-text-opacity: 1 !important;
+    color: #ffffff !important;
+    color: rgb(255 255 255 / var(--tw-text-opacity)) !important;
+}
+
+/* Forzar TODOS los SVG a ser blancos */
+.custom-badge-white-text svg,
+.custom-badge-white-text svg *,
+.custom-badge-white-text svg path,
+.custom-badge-white-text svg circle,
+.custom-badge-white-text svg rect,
+.custom-badge-white-text svg line,
+.custom-badge-white-text svg polyline,
+.custom-badge-white-text svg polygon,
+.custom-badge-white-text svg ellipse,
+.custom-badge-white-text svg g,
+.custom-badge-white-text svg use,
+/* Con text-gray-950 */
+.custom-badge-white-text.text-gray-950 svg,
+.custom-badge-white-text.text-gray-950 svg *,
+.custom-badge-white-text.text-gray-950 svg path,
+[data-badge-color].custom-badge-white-text.text-gray-950 svg,
+[data-badge-color].custom-badge-white-text.text-gray-950 svg *,
+[data-badge-color].custom-badge-white-text.text-gray-950 svg path {
+    fill: #ffffff !important;
+    stroke: #ffffff !important;
+    color: #ffffff !important;
+    --tw-text-opacity: 1 !important;
+}
+
+/* Forzar TODOS los elementos de texto a ser blancos */
+.custom-badge-white-text span,
+.custom-badge-white-text div,
+.custom-badge-white-text p,
+.custom-badge-white-text label,
+.custom-badge-white-text td,
+.custom-badge-white-text > *,
+.custom-badge-white-text .fi-column-label,
+.custom-badge-white-text .fi-badge-label,
+/* Con text-gray-950 */
+.custom-badge-white-text.text-gray-950 span,
+.custom-badge-white-text.text-gray-950 div,
+.custom-badge-white-text.text-gray-950 p,
+.custom-badge-white-text.text-gray-950 label,
+.custom-badge-white-text.text-gray-950 > *,
+[data-badge-color].custom-badge-white-text.text-gray-950,
+[data-badge-color].custom-badge-white-text.text-gray-950 span,
+[data-badge-color].custom-badge-white-text.text-gray-950 div,
+[data-badge-color].custom-badge-white-text.text-gray-950 > * {
+    color: #ffffff !important;
+    --tw-text-opacity: 1 !important;
+    color: rgb(255 255 255 / var(--tw-text-opacity)) !important;
+}
+
+/* Forzar TODOS los iconos a ser blancos */
+.custom-badge-white-text .fi-icon,
+.custom-badge-white-text .fi-badge-icon,
+.custom-badge-white-text .fi-column-icon,
+.custom-badge-white-text [class*="icon"],
+.custom-badge-white-text [class*="Icon"],
+.custom-badge-white-text [class*="heroicon"] {
+    color: #ffffff !important;
+}
+
+/* Regla final ultra-agresiva para asegurar que TODO sea blanco */
+.custom-badge-white-text,
+.custom-badge-white-text *:not(style):not(script) {
+    color: #ffffff !important;
+}
+
+.custom-badge-white-text svg * {
+    fill: #ffffff !important;
+    stroke: #ffffff !important;
+}
+
+/* Reglas usando data-attribute para máxima especificidad */
+[data-badge-color].custom-badge-white-text,
+[data-badge-color].custom-badge-white-text * {
+    --tw-text-opacity: 1 !important;
+    color: #ffffff !important;
+    color: rgb(255 255 255 / var(--tw-text-opacity)) !important;
+}
+
+[data-badge-color].custom-badge-white-text svg,
+[data-badge-color].custom-badge-white-text svg *,
+[data-badge-color].custom-badge-white-text svg path,
+[data-badge-color].custom-badge-white-text svg circle,
+[data-badge-color].custom-badge-white-text svg rect,
+[data-badge-color].custom-badge-white-text svg line,
+[data-badge-color].custom-badge-white-text svg polyline,
+[data-badge-color].custom-badge-white-text svg polygon,
+[data-badge-color].custom-badge-white-text svg ellipse,
+[data-badge-color].custom-badge-white-text svg g,
+[data-badge-color].custom-badge-white-text svg use {
+    fill: #ffffff !important;
+    stroke: #ffffff !important;
+    color: #ffffff !important;
+}
+
+/* Sobrescribir cualquier clase de color de Filament/Tailwind */
+[data-badge-color].custom-badge-white-text.text-gray-600,
+[data-badge-color].custom-badge-white-text.text-gray-400,
+[data-badge-color].custom-badge-white-text.text-gray-500,
+[data-badge-color].custom-badge-white-text.text-gray-700,
+[data-badge-color].custom-badge-white-text.text-gray-800,
+[data-badge-color].custom-badge-white-text.text-gray-900,
+[data-badge-color].custom-badge-white-text.text-gray-950,
+[data-badge-color].custom-badge-white-text[class*="text-gray"],
+[data-badge-color].custom-badge-white-text[class*="text-custom"] {
+    color: #ffffff !important;
+    --tw-text-opacity: 1 !important;
+}
+
+/* Sobrescribir text-gray-950 específicamente (alta especificidad) - Esta es la regla clave */
+.text-gray-950.custom-badge-white-text,
+.text-gray-950[data-badge-color].custom-badge-white-text,
+.text-gray-950.custom-badge-colored,
+.text-gray-950[data-badge-color].custom-badge-colored,
+.custom-badge-white-text.text-gray-950,
+[data-badge-color].custom-badge-white-text.text-gray-950,
+.custom-badge-colored.text-gray-950,
+[data-badge-color].custom-badge-colored.text-gray-950 {
+    --tw-text-opacity: 1 !important;
+    color: #ffffff !important;
+    color: rgb(255 255 255 / var(--tw-text-opacity)) !important;
+}
+
+/* Sobrescribir text-gray-950 en todos los elementos hijos también */
+.text-gray-950.custom-badge-white-text *,
+.text-gray-950[data-badge-color].custom-badge-white-text *,
+.custom-badge-white-text.text-gray-950 *,
+[data-badge-color].custom-badge-white-text.text-gray-950 * {
+    --tw-text-opacity: 1 !important;
+    color: #ffffff !important;
+    color: rgb(255 255 255 / var(--tw-text-opacity)) !important;
+}
+
+/* SVG dentro de elementos con text-gray-950 */
+.text-gray-950.custom-badge-white-text svg,
+.text-gray-950.custom-badge-white-text svg *,
+.text-gray-950.custom-badge-white-text svg path,
+[data-badge-color].custom-badge-white-text.text-gray-950 svg,
+[data-badge-color].custom-badge-white-text.text-gray-950 svg *,
+[data-badge-color].custom-badge-white-text.text-gray-950 svg path {
+    --tw-text-opacity: 1 !important;
+    fill: #ffffff !important;
+    fill: rgb(255 255 255 / var(--tw-text-opacity)) !important;
+    stroke: #ffffff !important;
+    stroke: rgb(255 255 255 / var(--tw-text-opacity)) !important;
+    color: #ffffff !important;
+}
+
+/* Sobrescribir variable CSS de Tailwind para texto */
+.custom-badge-white-text,
+[data-badge-color].custom-badge-white-text,
+.custom-badge-white-text *,
+[data-badge-color].custom-badge-white-text * {
+    --tw-text-opacity: 1 !important;
+    color: rgb(255 255 255 / var(--tw-text-opacity)) !important;
+}
+
+/* Forzar iconos específicos de Filament */
+[data-badge-color].custom-badge-white-text .fi-icon svg,
+[data-badge-color].custom-badge-white-text .fi-badge-icon svg,
+[data-badge-color].custom-badge-white-text .fi-column-icon svg,
+[data-badge-color].custom-badge-white-text .fi-icon svg *,
+[data-badge-color].custom-badge-white-text .fi-badge-icon svg *,
+[data-badge-color].custom-badge-white-text .fi-column-icon svg *,
+/* Sobrescribir SVG cuando hay text-gray-950 */
+.custom-badge-white-text.text-gray-950 svg,
+.custom-badge-white-text.text-gray-950 svg *,
+[data-badge-color].custom-badge-white-text.text-gray-950 svg,
+[data-badge-color].custom-badge-white-text.text-gray-950 svg * {
+    fill: #ffffff !important;
+    stroke: #ffffff !important;
+    color: #ffffff !important;
+    --tw-text-opacity: 1 !important;
+}
+
+/* Reglas específicas para elementos de tabla de Filament */
+td .custom-badge-white-text,
+td [data-badge-color].custom-badge-white-text,
+.fi-table-cell .custom-badge-white-text,
+.fi-table-cell [data-badge-color].custom-badge-white-text {
+    color: #ffffff !important;
+}
+
+td .custom-badge-white-text svg,
+td [data-badge-color].custom-badge-white-text svg,
+.fi-table-cell .custom-badge-white-text svg,
+.fi-table-cell [data-badge-color].custom-badge-white-text svg,
+td .custom-badge-white-text svg *,
+td [data-badge-color].custom-badge-white-text svg *,
+.fi-table-cell .custom-badge-white-text svg *,
+.fi-table-cell [data-badge-color].custom-badge-white-text svg * {
+    fill: #ffffff !important;
+    stroke: #ffffff !important;
+    color: #ffffff !important;
+}

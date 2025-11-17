@@ -37,9 +37,10 @@ class Seguimiento extends BaseWidget
                     ->label('Creado por')
                     ->sortable()
                     ->searchable(),
+                    
                 Tables\Columns\TextColumn::make('event.name')
                     ->label('Estado')
-                    ->badge()
+                    ->width('100px')
                     ->searchable()
                     ->sortable()
                     ->icon(
@@ -47,28 +48,39 @@ class Seguimiento extends BaseWidget
                         !empty($record->event->icono) ? $record->event->icono : null
                     )
                     ->formatStateUsing(fn(string $state): string => match ($state) {
-                        'Cotización enviada' => 'Cotización enviada',
-                        'Cotización aprobada' => 'Cotización aprobada',
-                        'Curso agendado' => 'Curso agendado',
-                        'Curso matriculado' => 'Curso matriculado',
-                        'Curso en proceso' => 'Curso en proceso',
-                        'Curso finalizado' => 'Curso finalizado',
-                        'DJ OTEC generada' => 'DJ OTEC generada',
-                        'DJs generadas' => 'DJs generadas',
-                        'Por facturar' => 'Por facturar',
+                        'Cotización Enviada' => 'Cotización Enviada',
+                        'Coordinar Curso' => 'Coordinar Curso',
+                        'Matricular Curso' => 'Matricular Curso',
+                        'Curso en Proceso' => 'Curso en Proceso',
+                        'Curso Finalizado' => 'Curso Finalizado',
+                        'Generar DJ' => 'Generar DJ',
+                        'Por Facturar' => 'Por Facturar',
                         default => $state,
                     })
-                    ->color(fn(string $state): string => match ($state) {
-                        'Cotización enviada' => 'danger',
-                        'Cotización aprobada' => 'success',
-                        'Curso agendado' => 'primary',
-                        'Curso matriculado' => 'info',
-                        'Curso en proceso' => 'primary',
-                        'Curso finalizado' => 'success',
-                        'DJ OTEC generada' => 'success',
-                        'DJs generadas' => 'success',
-                        'Por facturar' => 'warning',
-                        default => 'warning',
+                    ->color('white')
+                    ->extraAttributes(function (Followup $record) {
+                        $color = $record->event?->description;
+                        if (!$color) {
+                            return [];
+                        }
+                        return [
+                            'style' => "
+                                background-color: {$color} !important;
+                                border-color: {$color} !important;
+                                color: #ffffff !important;
+                                padding: 0.375rem 0.75rem !important;
+                                border-radius: 0.375rem !important;
+                                font-weight: 500 !important;
+                                display: inline-flex !important;
+                                align-items: center !important;
+                                justify-content: center !important;
+                                gap: 0.375rem !important;
+                                white-space: nowrap !important;
+                                text-align: center !important;
+                                min-width: fit-content !important;
+                            ",
+                            'class' => 'custom-badge-colored'
+                        ];
                     }),
 
                 Tables\Columns\TextColumn::make('name_course')

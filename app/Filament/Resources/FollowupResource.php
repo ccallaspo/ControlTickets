@@ -184,7 +184,7 @@ class FollowupResource extends Resource
                         Forms\Components\DatePicker::make('f_end')
                             ->label('Fecha Termino'),
 
-                        Forms\Components\Fieldset::make('Subir Participantes y Orden de compra')
+                      /*   Forms\Components\Fieldset::make('Subir Participantes y Orden de compra')
                             ->schema([
                                 Forms\Components\FileUpload::make('doc_participant')
                                     ->label('Cargar Participantes')
@@ -206,7 +206,7 @@ class FollowupResource extends Resource
 
 
                             ])
-                            ->columns(3)
+                            ->columns(3) */
 
                     ])->columns(),
 
@@ -357,9 +357,10 @@ class FollowupResource extends Resource
                 Tables\Columns\TextColumn::make('event.name')
                     ->label('Estado')
                     ->size('sm')
-                    ->badge()
+                //    ->badge()
                     ->searchable()
                     ->sortable()
+                    ->width('100px')
                     ->icon(
                         fn(Followup $record): ?string =>
                         !empty($record->event->icono) ? $record->event->icono : null
@@ -374,15 +375,30 @@ class FollowupResource extends Resource
                         'Por Facturar' => 'Por Facturar',
                         default => $state,
                     })
-                    ->color(fn(string $state): string => match ($state) {
-                        'Cotización Enviada' => 'danger',
-                        'Coordinar Curso' => 'danger',
-                        'Matricular Curso' => 'info',
-                        'Curso en Proceso' => 'primary',
-                        'Curso Finalizado' => 'success',
-                        'Generar DJ' => 'success',
-                        'Por Facturar' => 'warning',
-                        default => 'warning',
+                    ->color('white')
+                    ->extraAttributes(function (Followup $record) {
+                        $color = $record->event?->description;
+                        if (!$color) {
+                            return [];
+                        }
+                        return [
+                            'style' => "
+                                background-color: {$color} !important;
+                                border-color: {$color} !important;
+                                color: #ffffff !important;
+                                padding: 0.375rem 0.75rem !important;
+                                border-radius: 0.375rem !important;
+                                font-weight: 500 !important;
+                                display: inline-flex !important;
+                                align-items: center !important;
+                                justify-content: center !important;
+                                gap: 0.375rem !important;
+                                white-space: nowrap !important;
+                                text-align: center !important;
+                                min-width: fit-content !important;
+                            ",
+                            'class' => 'custom-badge-colored'
+                        ];
                     }),
 
                 Tables\Columns\TextColumn::make('name_course')

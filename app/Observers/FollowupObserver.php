@@ -59,12 +59,13 @@ class FollowupObserver
         // }
 
         
-        // if ($event->name == 'Curso agendado') {
+         if ($event->name == 'Actualización') {
 
-        //     $ccRecipients = [$cotizador, $solicitante];
-        //     Mail::to($soporte)
-        //         ->cc($ccRecipients)->send(new CursoAgendadoMail($data, $myuser));
-        // }
+             $ccRecipients = [$cotizador, $solicitante];
+             Mail::to($soporte)
+                 ->cc($cotizador)
+                 ->cc($administrativo)->send(new CursoAgendadoMail($data, $myuser));
+         }
 
 
 
