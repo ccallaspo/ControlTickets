@@ -66,7 +66,7 @@ class FollowupObserver
                 //  ->cc($solicitante)
                 //  ->cc($administrativo)
                 ->send(new CursoActualizacionMail($data, $myuser));
-            dd($data);
+          //  dd($data);
         }
 
 
