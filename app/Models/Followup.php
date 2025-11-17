@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * @property array $changes Array adjuntado por el Observer con los campos modificados.
+ */
+
 class Followup extends Model
 {
     use HasFactory;
@@ -35,7 +39,7 @@ class Followup extends Model
         'n_hours',
         'doc_oc',
     ];
-
+  
     protected $casts = [
         'week' => 'json',
     ];

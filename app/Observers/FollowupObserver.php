@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Mail\CotizacionAprobadaMail;
+use App\Mail\CursoActualizacionMail;
 use App\Mail\CursoAgendadoMail;
 use App\Mail\CursoCoordinarMail;
 use App\Mail\CursoEnProcesoMail;
@@ -42,6 +43,12 @@ class FollowupObserver
         //data original
         $event = Event::findOrFail($followup->event_id);
         $data = $followup;
+        // dd($data);
+
+        $changes = $followup->getDirty();
+        $relevantChanges = array_diff_key($changes, array_flip(['updated_at']));
+        $data->changes = $relevantChanges;
+
         $myuser = auth()->user();
 
         $solicitante = auth()->user()->email;
@@ -51,21 +58,16 @@ class FollowupObserver
         $cotizador = 'contacto@otecproyecta.cl';
 
 
-        // if ($event->name == 'Cotización aprobada') {
-        //     $ccRecipients = [$cotizador, $solicitante];
-        //     Mail::to($administrativo)
-        //         ->cc($cotizador)
-        //         ->cc($ccRecipients)->send(new CotizacionAprobadaMail($data, $myuser));
-        // }
+        if ($event->name == 'Cotización actualizada') {
 
-        
-         if ($event->name == 'Actualización') {
-
-             $ccRecipients = [$cotizador, $solicitante];
-             Mail::to($soporte)
-                 ->cc($cotizador)
-                 ->cc($administrativo)->send(new CursoAgendadoMail($data, $myuser));
-         }
+            $ccRecipients = [$cotizador,$solicitante,$administrativo,$soporte];
+            Mail::to($solicitante)
+               ->cc($ccRecipients)
+                //  ->cc($solicitante)
+                //  ->cc($administrativo)
+                ->send(new CursoActualizacionMail($data, $myuser));
+            dd($data);
+        }
 
 
 
@@ -98,11 +100,10 @@ class FollowupObserver
         }
 
 
-         if ($event->name == 'Por Facturar') {
-             Mail::to($cotizador)
-                 ->cc($solicitante)->send(new PorFacturarMail($data, $myuser));
+        if ($event->name == 'Por Facturar') {
+            Mail::to($cotizador)
+                ->cc($solicitante)->send(new PorFacturarMail($data, $myuser));
         }
-
     }
 
     /**

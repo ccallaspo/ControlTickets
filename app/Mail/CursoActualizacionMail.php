@@ -42,7 +42,7 @@ class CursoActualizacionMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mails.curso_actualizacion',
+            view: 'mails.curso_actualizado',
             with: [
                 'data' => $this->data,
                 'myuser' => $this->myuser,
