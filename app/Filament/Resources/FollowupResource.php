@@ -154,7 +154,7 @@ class FollowupResource extends Resource
 
 
 
-                Section::make('Agendar Curso')
+                Section::make('Curso Cotizado')
                     ->description('Información del curso y participantes.')
                     ->schema([
                         Forms\Components\TextInput::make('cod_sence_course')
@@ -184,7 +184,7 @@ class FollowupResource extends Resource
                         Forms\Components\DatePicker::make('f_end')
                             ->label('Fecha Termino'),
 
-                      /*   Forms\Components\Fieldset::make('Subir Participantes y Orden de compra')
+                        /*   Forms\Components\Fieldset::make('Subir Participantes y Orden de compra')
                             ->schema([
                                 Forms\Components\FileUpload::make('doc_participant')
                                     ->label('Cargar Participantes')
@@ -209,6 +209,95 @@ class FollowupResource extends Resource
                             ->columns(3) */
 
                     ])->columns(),
+
+               Forms\Components\Group::make()
+    ->schema([
+        Forms\Components\Section::make('Datos de Ejecución (Operaciones)')
+            ->description('Active esta opción para generar los datos operativos.')
+            
+            // --- AQUÍ AGREGAMOS EL BOTÓN DE LIMPIAR ---
+            ->headerActions([
+                Forms\Components\Actions\Action::make('limpiar_datos')
+                    ->label('Limpiar formulario')
+                    ->icon('heroicon-m-trash') // Icono de basura
+                    ->color('danger')          // Color rojo para indicar precaución
+                    ->tooltip('Borrar todos los campos de ejecución')
+                    ->requiresConfirmation()   // Pide confirmación para no borrar por error
+                    ->modalHeading('¿Limpiar datos de ejecución?')
+                    ->modalDescription('Se borrarán los datos de esta sección para que puedas escribirlos desde cero. Los datos cotizados no se verán afectados.')
+                    ->visible(fn (Forms\Get $get) => $get('has_execution_data')) // Solo visible si el toggle está activo
+                    ->action(function (Forms\Set $set) {
+                        // Seteamos a null todos los campos 'exec_'
+                        $set('exec_cod_sence_course', null);
+                        $set('exec_name_course', null);
+                        $set('exec_id_sence', null);
+                        $set('exec_modalily', null);
+                        $set('exec_f_star', null);
+                        $set('exec_f_end', null);
+                        
+                        // Opcional: Notificar al usuario que se limpió
+                        \Filament\Notifications\Notification::make()
+                            ->title('Campos limpiados')
+                            ->success()
+                            ->send();
+                    }),
+            ])
+            // -----------------------------------------
+
+            ->schema([
+                Forms\Components\Toggle::make('has_execution_data')
+                    ->label('Habilitar Curso en Ejecución')
+                    ->onColor('success')
+                    ->offColor('gray')
+                    ->default(false)
+                    ->live()
+                    ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
+                        if ($state) {
+                            // Copia los datos si se activa
+                            $set('exec_cod_sence_course', $get('cod_sence_course'));
+                            $set('exec_name_course', $get('name_course'));
+                            $set('exec_id_sence', $get('id_sence'));
+                            $set('exec_modalily', $get('modalily'));
+                            $set('exec_f_star', $get('f_star'));
+                            $set('exec_f_end', $get('f_end'));
+                        }
+                    }),
+
+                Forms\Components\Group::make()
+                    ->visible(fn (Forms\Get $get) => $get('has_execution_data'))
+                    ->schema([
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('exec_cod_sence_course')
+                                    ->label('Código Sence (Ejecución)')
+                                    ->maxLength(255),
+
+                                Forms\Components\TextInput::make('exec_name_course')
+                                    ->label('Nombre de curso (Ejecución)')
+                                    ->required(fn (Forms\Get $get) => $get('has_execution_data'))
+                                    ->maxLength(255),
+
+                                Forms\Components\TextInput::make('exec_id_sence')
+                                    ->label('Código ID (Ejecución)')
+                                    ->maxLength(255),
+
+                                Forms\Components\Select::make('exec_modalily')
+                                    ->label('Modalidad (Ejecución)')
+                                    ->options(function () {
+                                        return \App\Models\Modalidades::orderBy('name', 'asc')->pluck('name', 'name');
+                                    }),
+
+                                Forms\Components\DatePicker::make('exec_f_star')
+                                    ->label('Fecha Inicio (Ejecución)')
+                                    ->required(fn (Forms\Get $get) => $get('has_execution_data')),
+
+                                Forms\Components\DatePicker::make('exec_f_end')
+                                    ->label('Fecha Termino (Ejecución)')
+                                    ->required(fn (Forms\Get $get) => $get('has_execution_data')),
+                            ]),
+                    ]),
+            ]),
+    ])->columnSpanFull(),
 
                 Section::make('Carga de Documentos')
                     ->description('Gestión de documentos del curso')
@@ -357,7 +446,7 @@ class FollowupResource extends Resource
                 Tables\Columns\TextColumn::make('event.name')
                     ->label('Estado')
                     ->size('sm')
-                //    ->badge()
+                    //    ->badge()
                     ->searchable()
                     ->sortable()
                     ->width('100px')

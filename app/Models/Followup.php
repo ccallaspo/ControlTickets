@@ -38,8 +38,16 @@ class Followup extends Model
         'f_end',
         'n_hours',
         'doc_oc',
+//add execution data
+        'has_execution_data',
+        'exec_cod_sence_course',
+        'exec_name_course',
+        'exec_id_sence',
+        'exec_modalily',
+        'exec_f_star',
+        'exec_f_end',
     ];
-  
+
     protected $casts = [
         'week' => 'json',
     ];

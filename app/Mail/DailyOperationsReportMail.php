@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class DailyCourseReportMail extends Mailable
+class DailyOperationsReportMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -31,7 +31,8 @@ class DailyCourseReportMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Reporte Diario de Cursos - Facturación',
+            // CAMBIO 1: Asunto específico para operaciones
+            subject: 'Reporte Diario de Cursos - Operaciones',
         );
     }
 
@@ -41,7 +42,8 @@ class DailyCourseReportMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mails.report_course',
+            // CAMBIO 2: Apunta a la nueva vista que creamos en el paso anterior
+            view: 'mails.report_course_operations', 
             with: [
                 'coursesStartingToday' => $this->coursesStartingToday,
                 'coursesEndingToday' => $this->coursesEndingToday,
@@ -51,8 +53,6 @@ class DailyCourseReportMail extends Mailable
 
     /**
      * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
     public function attachments(): array
     {

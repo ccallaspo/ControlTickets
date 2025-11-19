@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporte Diario de Cursos</title>
+    <title>Reporte Diario de Cursos - Facturación</title>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -166,7 +166,7 @@
     <div class="container">
         <div class="header">
             <img src="https://otecproyecta.cl/wp-content/uploads/2024/02/logo-sin-fondo.002.png" alt="Logo OTEC Proyecta">
-            <h1>Reporte Diario de Cursos</h1>
+            <h1>Reporte Diario de Cursos - Facturación</h1>
             <h1>{{ \Carbon\Carbon::now()->format('d-m-Y') }}</h1>
 
         </div>
