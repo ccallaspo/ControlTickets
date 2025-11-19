@@ -39,7 +39,7 @@ class SendDailyCourseReport extends Command
         $coursesEndingToday = Followup::whereDate('f_end', $today)->get();
 
         // Usuario al que se enviará el correo
-        $recipients = ['contacto@otecproyecta.cl', 'soporte@otecproyecta.cl', 'coordinacion@otecproyecta.cl']; 
+        $recipients = ['contacto@otecproyecta.cl', 'soporte@otecproyecta.cl']; 
 
         // Usuario en copia oculta
         $bccRecipient = 'cafutrille@gmail.com';
