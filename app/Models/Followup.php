@@ -46,6 +46,7 @@ class Followup extends Model
         'exec_modalily',
         'exec_f_star',
         'exec_f_end',
+        'exec_n_hours',
     ];
 
     protected $casts = [

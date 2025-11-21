@@ -154,7 +154,8 @@ class FollowupResource extends Resource
 
 
 
-                Section::make('Curso Cotizado')
+                // ...
+                Section::make('Financiamiento')
                     ->description('Información del curso y participantes.')
                     ->schema([
                         Forms\Components\TextInput::make('cod_sence_course')
@@ -164,68 +165,55 @@ class FollowupResource extends Resource
                         Forms\Components\TextInput::make('name_course')
                             ->label('Nombre de curso')
                             ->maxLength(255),
+
                         Forms\Components\TextInput::make('id_sence')
                             ->label('Código ID')
                             ->maxLength(255),
+
                         Forms\Components\Select::make('modalily')
                             ->label('Modalidad')
                             ->options(function () {
                                 return \App\Models\Modalidades::orderBy('name', 'asc')->pluck('name', 'name');
                             }),
 
-                        /*                         Forms\Components\TimePicker::make('h_star')
-                            ->label('Horario de Inicio')
-                            ->seconds(false),
-                        Forms\Components\TimePicker::make('h_end')
-                            ->label('Horario de Termino')
-                            ->seconds(false), */
-                        Forms\Components\DatePicker::make('f_star')
-                            ->label('Fecha Inicio'),
-                        Forms\Components\DatePicker::make('f_end')
-                            ->label('Fecha Termino'),
-
-                        /*   Forms\Components\Fieldset::make('Subir Participantes y Orden de compra')
+                        // --- Grupo para Fechas y Horas (3 columnas forzadas) ---
+                        Forms\Components\Group::make()
+                            // Esto asegura que el grupo ocupe todo el ancho disponible si la sección padre tiene más de una columna
+                            ->columnSpanFull()
                             ->schema([
-                                Forms\Components\FileUpload::make('doc_participant')
-                                    ->label('Cargar Participantes')
-                                    ->downloadable()
-                                    ->directory('agenda/participantes')
-                                    ->disk('public')
-                                    ->visibility('public'),
+                                Forms\Components\DatePicker::make('f_star')
+                                    ->label('Fecha Inicio'),
+
+                                Forms\Components\DatePicker::make('f_end')
+                                    ->label('Fecha Termino'),
+
                                 Forms\Components\TextInput::make('n_hours')
-                                    ->label('Número de horas')
+                                    ->label('N° Horas')
+                                    ->numeric()
                                     ->maxLength(255),
-
-                                Forms\Components\FileUpload::make('doc_oc')
-                                    ->label('Cargar OC')
-                                    ->downloadable()
-                                    ->directory('agenda/oc')
-                                    ->disk('public')
-                                    ->visibility('public')
-                                    ->visible(fn($get) => Auth::user()->email !== 'soporte@otecproyecta.cl'),
-
-
                             ])
-                            ->columns(3) */
+                            ->columns(3),
 
-                    ])->columns(),
+                    ])
+                    // La sección padre sigue en 2 columnas (por ejemplo, Codigo Sence y Nombre de curso)
+                    ->columns(2),
 
-               Forms\Components\Group::make()
+                Forms\Components\Group::make()
     ->schema([
         Forms\Components\Section::make('Datos de Ejecución (Operaciones)')
             ->description('Active esta opción para generar los datos operativos.')
-            
+
             // --- AQUÍ AGREGAMOS EL BOTÓN DE LIMPIAR ---
             ->headerActions([
                 Forms\Components\Actions\Action::make('limpiar_datos')
                     ->label('Limpiar formulario')
                     ->icon('heroicon-m-trash') // Icono de basura
-                    ->color('danger')          // Color rojo para indicar precaución
+                    ->color('danger') // Color rojo para indicar precaución
                     ->tooltip('Borrar todos los campos de ejecución')
-                    ->requiresConfirmation()   // Pide confirmación para no borrar por error
+                    ->requiresConfirmation()  // Pide confirmación para no borrar por error
                     ->modalHeading('¿Limpiar datos de ejecución?')
                     ->modalDescription('Se borrarán los datos de esta sección para que puedas escribirlos desde cero. Los datos cotizados no se verán afectados.')
-                    ->visible(fn (Forms\Get $get) => $get('has_execution_data')) // Solo visible si el toggle está activo
+                    ->visible(fn(Forms\Get $get) => $get('has_execution_data')) // Solo visible si el toggle está activo
                     ->action(function (Forms\Set $set) {
                         // Seteamos a null todos los campos 'exec_'
                         $set('exec_cod_sence_course', null);
@@ -234,6 +222,7 @@ class FollowupResource extends Resource
                         $set('exec_modalily', null);
                         $set('exec_f_star', null);
                         $set('exec_f_end', null);
+                        $set('exec_n_hours', null); // Limpiamos el nuevo campo
                         
                         // Opcional: Notificar al usuario que se limpió
                         \Filament\Notifications\Notification::make()
@@ -260,12 +249,15 @@ class FollowupResource extends Resource
                             $set('exec_modalily', $get('modalily'));
                             $set('exec_f_star', $get('f_star'));
                             $set('exec_f_end', $get('f_end'));
+                            $set('exec_n_hours', $get('n_hours')); 
                         }
                     }),
 
                 Forms\Components\Group::make()
-                    ->visible(fn (Forms\Get $get) => $get('has_execution_data'))
+                    ->visible(fn(Forms\Get $get) => $get('has_execution_data'))
                     ->schema([
+                        
+                        // GRUPO 1: CÓDIGOS Y MODALIDAD (Mantiene el Grid de 2 columnas)
                         Forms\Components\Grid::make(2)
                             ->schema([
                                 Forms\Components\TextInput::make('exec_cod_sence_course')
@@ -274,7 +266,7 @@ class FollowupResource extends Resource
 
                                 Forms\Components\TextInput::make('exec_name_course')
                                     ->label('Nombre de curso (Ejecución)')
-                                    ->required(fn (Forms\Get $get) => $get('has_execution_data'))
+                                    ->required(fn(Forms\Get $get) => $get('has_execution_data'))
                                     ->maxLength(255),
 
                                 Forms\Components\TextInput::make('exec_id_sence')
@@ -286,17 +278,31 @@ class FollowupResource extends Resource
                                     ->options(function () {
                                         return \App\Models\Modalidades::orderBy('name', 'asc')->pluck('name', 'name');
                                     }),
-
+                            ]),
+                            
+                        // GRUPO 2: FECHAS Y HORAS (NUEVO - Forzamos 3 columnas)
+                        Forms\Components\Group::make()
+                            ->schema([
                                 Forms\Components\DatePicker::make('exec_f_star')
                                     ->label('Fecha Inicio (Ejecución)')
-                                    ->required(fn (Forms\Get $get) => $get('has_execution_data')),
+                                    ->required(fn(Forms\Get $get) => $get('has_execution_data')),
 
                                 Forms\Components\DatePicker::make('exec_f_end')
                                     ->label('Fecha Termino (Ejecución)')
-                                    ->required(fn (Forms\Get $get) => $get('has_execution_data')),
-                            ]),
+                                    ->required(fn(Forms\Get $get) => $get('has_execution_data')),
+                                    
+                                Forms\Components\TextInput::make('exec_n_hours')
+                                    ->label('N° Horas (Ejecución)')
+                                    ->numeric()
+                                    ->required(fn(Forms\Get $get) => $get('has_execution_data'))
+                                    ->maxLength(255),
+
+                            ])
+                            ->columns(3) // Distribuye los 3 campos en una sola fila
+                            ->columnSpanFull(), // Asegura que este grupo ocupe todo el ancho del contenedor
+                            
                     ]),
-            ]),
+            ])
     ])->columnSpanFull(),
 
                 Section::make('Carga de Documentos')
