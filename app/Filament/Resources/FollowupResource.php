@@ -564,11 +564,43 @@ class FollowupResource extends Resource
                         ->icon('heroicon-o-document-plus')
                         ->modalHeading('Cargar Documentos')
                         ->form(fn(\Filament\Forms\Form $form, \Illuminate\Database\Eloquent\Model $record): \Filament\Forms\Form => $form->schema(
-                            static::getDocumentosFormSchema()
+                            static::getDocumentosFormSchemaForModal($record)
                         ))
                         ->action(function (array $data, \Illuminate\Database\Eloquent\Model $record): void {
-                            // No necesitas lógica de guardado aquí,
-                            // el repeater con 'relationship' se encarga de todo.
+                            // Procesar cada documento del repeater y agregarlo al followup
+                            if (isset($data['documents']) && is_array($data['documents'])) {
+                                $documentsCreated = 0;
+                                foreach ($data['documents'] as $documentData) {
+                                    // Normalizar el valor del archivo (puede ser array o string)
+                                    $documentArchive = $documentData['document_archive'] ?? null;
+                                    if (is_array($documentArchive)) {
+                                        $documentArchive = !empty($documentArchive) ? $documentArchive[0] : null;
+                                    }
+                                    
+                                    if (!empty($documentArchive) && !empty($documentData['typedocument_id'])) {
+                                        \App\Models\Document::create([
+                                            'followup_id' => $record->id,
+                                            'typedocument_id' => $documentData['typedocument_id'],
+                                            'document_archive' => $documentArchive,
+                                        ]);
+                                        $documentsCreated++;
+                                    }
+                                }
+                                
+                                if ($documentsCreated > 0) {
+                                    \Filament\Notifications\Notification::make()
+                                        ->title('Documentos agregados exitosamente')
+                                        ->body($documentsCreated . ' documento(s) agregado(s).')
+                                        ->success()
+                                        ->send();
+                                } else {
+                                    \Filament\Notifications\Notification::make()
+                                        ->title('No se agregaron documentos')
+                                        ->body('Asegúrate de seleccionar el tipo de documento y subir un archivo.')
+                                        ->warning()
+                                        ->send();
+                                }
+                            }
                         }),
                 ]),
             ])
@@ -670,6 +702,80 @@ class FollowupResource extends Resource
                         ->modalCancelActionLabel('Cancelar')
                 )
                 ->reorderable(false)
+        ];
+    }
+
+    protected static function getDocumentosFormSchemaForModal($record): array
+    {
+        return [
+            Forms\Components\Repeater::make('documents')
+                ->label('Documentos')
+                ->schema([
+                    Forms\Components\Select::make('typedocument_id')
+                        ->label('Tipo de Documento')
+                        ->options(\App\Models\Typedocument::pluck('name', 'id'))
+                        ->required()
+                        ->columnSpan(1),
+                    Forms\Components\FileUpload::make('document_archive')
+                        ->label('Archivo')
+                        ->openable()
+                        ->directory('documentos/' . $record->id)
+                        ->disk('digitalocean')
+                        ->visibility('public')
+                        ->preserveFilenames(false)
+                        ->getUploadedFileNameForStorageUsing(
+                            function (\Illuminate\Http\UploadedFile $file, Forms\Get $get) use ($record) {
+                                $followupId = $record->id;
+                                $typedocumentId = $get('typedocument_id');
+                                $typedocumentName = '';
+                                if ($typedocumentId) {
+                                    $typedocument = \App\Models\Typedocument::find($typedocumentId);
+                                    $typedocumentName = $typedocument ? $typedocument->name : 'tipo';
+                                } else {
+                                    $typedocumentName = 'tipo';
+                                }
+                                // Sanitizar nombre del tipo de documento
+                                $typedocumentName = preg_replace('/[^A-Za-z0-9_\-]/', '', str_replace(' ', '_', $typedocumentName));
+                                
+                                // Obtener y sanitizar el nombre original del archivo
+                                $originalName = $file->getClientOriginalName();
+                                $pathInfo = pathinfo($originalName);
+                                $fileName = $pathInfo['filename'] ?? 'archivo';
+                                $extension = $pathInfo['extension'] ?? '';
+                                
+                                // Sanitizar el nombre del archivo (remover espacios y caracteres especiales)
+                                $fileName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $fileName);
+                                $fileName = preg_replace('/_+/', '_', $fileName); // Reemplazar múltiples guiones bajos por uno
+                                $sanitizedFileName = $fileName . (!empty($extension) ? '.' . $extension : '');
+                                
+                                return $followupId . '_' . $typedocumentName . '_' . $sanitizedFileName;
+                            }
+                        )
+                        ->acceptedFileTypes([
+                            'application/pdf',
+                            'application/msword',
+                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                            'application/vnd.ms-excel',
+                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                            'image/jpeg',
+                            'image/png'
+                        ])
+                        ->maxSize(30720)
+                        ->helperText('Formatos permitidos: PDF, Word, Excel, JPG, PNG. Tamaño máximo: 30MB')
+                        ->required()
+                        ->columnSpan(1)
+                        ->moveFiles()
+                        ->storeFileNamesIn('original_filename'),
+                ])
+                ->columns(2)
+                ->columnSpanFull()
+                ->defaultItems(1)
+                ->addActionLabel('Agregar Documento')
+                ->collapsible()
+                ->itemLabel(
+                    fn(array $state): ?string => \App\Models\Typedocument::find($state['typedocument_id'] ?? null)?->name ?? 'Nuevo documento'
+                )
+                ->reorderable(false),
         ];
     }
 }
