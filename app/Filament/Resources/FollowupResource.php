@@ -311,6 +311,18 @@ class FollowupResource extends Resource
                         Forms\Components\Repeater::make('documents')
                             ->label('Documentos')
                             ->relationship()
+                            ->mutateRelationshipDataBeforeFillUsing(function (array $data, $record): array {
+                                // Asegurar que la ruta del archivo sea correcta cuando se carga desde la relación
+                                if (isset($data['document_archive']) && !empty($data['document_archive'])) {
+                                    $filePath = $data['document_archive'];
+                                    // Si la ruta no incluye el directorio completo, construirla
+                                    if ($record && !str_starts_with($filePath, 'documentos/')) {
+                                        $followupId = $record->followup_id ?? 'temp';
+                                        $data['document_archive'] = 'documentos/' . $followupId . '/' . $filePath;
+                                    }
+                                }
+                                return $data;
+                            })
                             ->schema([
                                 Forms\Components\Select::make('typedocument_id')
                                     ->label('Tipo de Documento')
@@ -321,14 +333,14 @@ class FollowupResource extends Resource
                                 Forms\Components\FileUpload::make('document_archive')
                                     ->label('Archivo')
                                     ->openable()
-                                    //->downloadable()
+                                    ->downloadable()
                                     ->directory(fn($get) => 'documentos/' . ($get('../../followup_id') ?? $get('../../id') ?? 'temp'))
                                     ->disk('digitalocean')
                                     ->visibility('public')
-                                    ->preserveFilenames()
+                                    ->preserveFilenames(false)
                                     ->getUploadedFileNameForStorageUsing(
-                                        function (\Illuminate\Http\UploadedFile $file, $get) {
-                                            $followupId = $get('../../followup_id') ?? $get('../../id') ?? 'temp';
+                                        function (\Illuminate\Http\UploadedFile $file, $get, $record) {
+                                            $followupId = $record?->id ?? $get('../../followup_id') ?? $get('../../id') ?? 'temp';
                                             $typedocumentId = $get('typedocument_id');
                                             $typedocumentName = '';
                                             if ($typedocumentId) {
@@ -337,8 +349,21 @@ class FollowupResource extends Resource
                                             } else {
                                                 $typedocumentName = 'tipo';
                                             }
+                                            // Sanitizar nombre del tipo de documento
                                             $typedocumentName = preg_replace('/[^A-Za-z0-9_\-]/', '', str_replace(' ', '_', $typedocumentName));
-                                            return $followupId . '_' . $typedocumentName . '_' . $file->getClientOriginalName();
+                                            
+                                            // Obtener y sanitizar el nombre original del archivo
+                                            $originalName = $file->getClientOriginalName();
+                                            $pathInfo = pathinfo($originalName);
+                                            $fileName = $pathInfo['filename'] ?? 'archivo';
+                                            $extension = $pathInfo['extension'] ?? '';
+                                            
+                                            // Sanitizar el nombre del archivo (remover espacios y caracteres especiales)
+                                            $fileName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $fileName);
+                                            $fileName = preg_replace('/_+/', '_', $fileName); // Reemplazar múltiples guiones bajos por uno
+                                            $sanitizedFileName = $fileName . (!empty($extension) ? '.' . $extension : '');
+                                            
+                                            return $followupId . '_' . $typedocumentName . '_' . $sanitizedFileName;
                                         }
                                     )
                                     ->acceptedFileTypes([
@@ -359,12 +384,12 @@ class FollowupResource extends Resource
                             ])
                             ->columns(2)
                             ->columnSpanFull()
-                            ->defaultItems(1)
+                            ->defaultItems(0)
                             ->addActionLabel('Agregar Documento')
                             ->collapsible()
                             ->itemLabel(
                                 fn(array $state): ?string =>
-                                \App\Models\Typedocument::find($state['typedocument_id'])?->name ?? null
+                                \App\Models\Typedocument::find($state['typedocument_id'] ?? null)?->name ?? 'Sin tipo'
                             )
                             ->deleteAction(
                                 fn(Forms\Components\Actions\Action $action) => $action
