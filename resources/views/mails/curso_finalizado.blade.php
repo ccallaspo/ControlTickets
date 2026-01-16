@@ -280,7 +280,7 @@
                         <span class="timeline-icon current"></span>
                     </div>
                     <div class="timeline-text current">
-                        <h3>Curso fFinalizado</h3>
+                        <h3>Curso Finalizado</h3>
                     </div>
                 </div>
                 <div class="timeline-item pending">

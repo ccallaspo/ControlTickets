@@ -373,10 +373,14 @@ class FollowupResource extends Resource
                                         'application/vnd.ms-excel',
                                         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                                         'image/jpeg',
-                                        'image/png'
+                                        'image/png',
+                                        'application/zip',
+                                        'application/x-zip-compressed',
+                                        'application/x-rar-compressed',
+                                        'application/vnd.rar'
                                     ])
-                                    ->maxSize(30720) // 30MB
-                                    ->helperText('Formatos permitidos: PDF, Word, Excel, JPG, PNG. Tamaño máximo: 30MB')
+                                    ->maxSize(1048576) // 1GB
+                                    ->helperText('Formatos permitidos: PDF, Word, Excel, JPG, PNG, ZIP, RAR. Tamaño máximo: 1GB')
                                     //->required()
                                     ->columnSpan(1)
                                     ->moveFiles()
@@ -701,10 +705,14 @@ class FollowupResource extends Resource
                             'application/vnd.ms-excel',
                             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                             'image/jpeg',
-                            'image/png'
+                            'image/png',
+                            'application/zip',
+                            'application/x-zip-compressed',
+                            'application/x-rar-compressed',
+                            'application/vnd.rar'
                         ])
-                        ->maxSize(30720)
-                        ->helperText('Formatos permitidos: PDF, Word, Excel, JPG, PNG. Tamaño máximo: 30MB')
+                        ->maxSize(1048576)
+                        ->helperText('Formatos permitidos: PDF, Word, Excel, JPG, PNG, ZIP, RAR. Tamaño máximo: 1GB')
                         ->required()
                         ->columnSpan(1)
                         ->moveFiles()
@@ -783,10 +791,14 @@ class FollowupResource extends Resource
                             'application/vnd.ms-excel',
                             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                             'image/jpeg',
-                            'image/png'
+                            'image/png',
+                            'application/zip',
+                            'application/x-zip-compressed',
+                            'application/x-rar-compressed',
+                            'application/vnd.rar'
                         ])
-                        ->maxSize(30720)
-                        ->helperText('Formatos permitidos: PDF, Word, Excel, JPG, PNG. Tamaño máximo: 30MB')
+                        ->maxSize(1048576)
+                        ->helperText('Formatos permitidos: PDF, Word, Excel, JPG, PNG, ZIP, RAR. Tamaño máximo: 1GB')
                         ->required()
                         ->columnSpan(1)
                         ->moveFiles()
