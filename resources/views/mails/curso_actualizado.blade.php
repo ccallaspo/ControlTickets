@@ -216,7 +216,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="{{ asset('img/cotizacion_v2/logo_proyecta_v2.png') }}" alt="Logo OTEC Proyecta">
+            <img src="https://controlproyecta.cl/img/cotizacion_v2/logo_proyecta_v2.png" alt="Logo OTEC Proyecta">
             <h1>⚠️ Ticket Actualizado y en Revisión ⚠️</h1>
             <p>Se ha realizado una actualización en el curso. Por favor, revise los detalles.</p>
         </div>

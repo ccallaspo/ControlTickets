@@ -167,7 +167,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="{{ asset('img/cotizacion_v2/logo_proyecta_v2.png') }}" alt="Logo OTEC Proyecta">
+            <img src="https://controlproyecta.cl/img/cotizacion_v2/logo_proyecta_v2.png" alt="Logo OTEC Proyecta">
             <h1>Reporte Diario de Cursos - Facturación</h1>
             <h1>{{ \Carbon\Carbon::now()->format('d-m-Y') }}</h1>
 

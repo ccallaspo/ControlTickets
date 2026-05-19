@@ -217,7 +217,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="{{ asset('img/cotizacion_v2/logo_proyecta_v2.png') }}" alt="Logo OTEC Proyecta">
+            <img src="https://controlproyecta.cl/img/cotizacion_v2/logo_proyecta_v2.png" alt="Logo OTEC Proyecta">
             <h1>Estado del Ticket</h1>
             <p>Actualización sobre el progreso de su servicio.</p>
         </div>
