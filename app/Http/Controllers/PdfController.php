@@ -18,12 +18,20 @@ class PdfController extends Controller
      */
     public function download($id)
     {
+        return $this->streamCotizacionPdf($id, 'pdf.cotizacion');
+    }
 
-        $cotizacion = Cotizacion::findOrFail($id);
+    public function downloadV2($id)
+    {
+        return $this->streamCotizacionPdf($id, 'pdf.cotizacion_v2_0', true);
+    }
+
+    private function streamCotizacionPdf(int|string $id, string $view, bool $utf8 = false)
+    {
+        $cotizacion = Cotizacion::with(['customer', 'activity'])->findOrFail($id);
         $course = Course::findOrFail($cotizacion->course_id);
         $addCourse = AddCourse::findOrFail($cotizacion->add_course_id);
         $costs = is_string($cotizacion->costs) ? json_decode($cotizacion->costs, true) : $cotizacion->costs;
-
 
         $data = [
             'cotizacion' => $cotizacion,
@@ -32,18 +40,15 @@ class PdfController extends Controller
             'costs' => $costs,
         ];
 
-        //dd($costs);
-        //$pdf = PDF::loadView('pdf.cotizacion', $data)->setPaper('letter');
-        $pdf = PDF::loadView('pdf.cotizacion', $data)
-        ->setPaper('letter')
-        ->setOption('encoding', 'UTF-8');
-    
+        $pdf = PDF::loadView($view, $data)->setPaper('letter');
+
+        if ($utf8) {
+            $pdf->setOption('encoding', 'UTF-8');
+        }
 
         $fileName = 'cotizacion_' . $cotizacion->name . '.pdf';
 
-
         return $pdf->stream($fileName);
-        //return $pdf->download($fileName);
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -64,7 +69,7 @@ class PdfController extends Controller
         ];
 
         // Generar el PDF
-        $pdf = PDF::loadView('pdf.cotizacion', $data)->setPaper('letter');
+        $pdf = PDF::loadView('pdf.cotizacion_v2', $data)->setPaper('letter');
 
         // Ruta donde se guardará el PDF en storage/app/public/agenda/oc/
         $directory = storage_path('uploads/agenda/coti');

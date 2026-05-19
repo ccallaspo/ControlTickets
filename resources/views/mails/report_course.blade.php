@@ -34,7 +34,9 @@
         }
 
         .header img {
-            max-width: 100px;
+            max-width: 220px;
+            width: 100%;
+            height: auto;
             margin-bottom: 15px;
         }
 
@@ -165,7 +167,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="https://otecproyecta.cl/wp-content/uploads/2024/02/logo-sin-fondo.002.png" alt="Logo OTEC Proyecta">
+            <img src="{{ asset('img/cotizacion_v2/logo_proyecta_v2.png') }}" alt="Logo OTEC Proyecta">
             <h1>Reporte Diario de Cursos - Facturación</h1>
             <h1>{{ \Carbon\Carbon::now()->format('d-m-Y') }}</h1>
 

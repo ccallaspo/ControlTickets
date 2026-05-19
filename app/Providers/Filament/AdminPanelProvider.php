@@ -35,7 +35,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->brandName('OTEC Proyecta')
-            ->brandLogo(asset('img/logo_proyecta_blanco.png'))
+            ->brandLogo(asset('img/cotizacion_v2/logo_proyecta_v2.png'))
             ->brandLogoHeight('4rem')
             ->favicon(asset('img/favi.png'))
             ->colors([

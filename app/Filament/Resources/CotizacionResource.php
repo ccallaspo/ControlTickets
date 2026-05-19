@@ -314,6 +314,13 @@ class CotizacionResource extends Resource
                         ->url(fn($record) => route('pdf.download', $record->id))
                         ->openUrlInNewTab(true),
 
+                    Tables\Actions\Action::make('Descargar 2.0')
+                        ->label('Descargar 2.0')
+                        ->icon('heroicon-m-arrow-down-tray')
+                        ->tooltip('Descargar cotización (formato 2.0)')
+                        ->url(fn($record) => route('pdf.download.v2', $record->id))
+                        ->openUrlInNewTab(true),
+
                     Tables\Actions\Action::make('Enviar')
                         ->icon('heroicon-o-rocket-launch')
                         ->tooltip('Enviar cotización')

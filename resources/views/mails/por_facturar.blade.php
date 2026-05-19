@@ -32,7 +32,9 @@
             border-bottom: 1px solid #e0e6ef;
         }
         .header img {
-            max-width: 100px;
+            max-width: 220px;
+            width: 100%;
+            height: auto;
             margin-bottom: 15px;
         }
         .header h1 {
@@ -215,7 +217,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="https://otecproyecta.cl/wp-content/uploads/2024/02/logo-sin-fondo.002.png" alt="Logo OTEC Proyecta">
+            <img src="{{ asset('img/cotizacion_v2/logo_proyecta_v2.png') }}" alt="Logo OTEC Proyecta">
             <h1>Estado del Ticket</h1>
             <p>Actualización sobre el progreso de su servicio.</p>
         </div>

@@ -26,6 +26,7 @@ Route::get('/', function () {
 
 
 Route::get('/download-pdf/{id}', [PdfController::class, 'download'])->name('pdf.download');
+Route::get('/download-pdf-v2/{id}', [PdfController::class, 'downloadV2'])->name('pdf.download.v2');
 Route::get('/send-pdf/{record}', [PdfController::class, 'sendPdf'])->name('send.pdf');
 
 Route::get('/pdf', function () {
