@@ -1,0 +1,28 @@
+---
+description: Zonas editables del PDF cotización v2.0 (cotizacion_v2_0.blade.php)
+globs: resources/views/pdf/cotizacion_v2_0.blade.php
+alwaysApply: false
+---
+
+# PDF Cotización v2.0 — páginas protegidas
+
+En `resources/views/pdf/cotizacion_v2_0.blade.php`:
+
+## No modificar (salvo petición explícita del usuario)
+
+1. **Primera página** — `.pdf-page-cover` (sin `.pdf-page-closing`)
+   - Fondo `portada_v2.jpg`, metadatos de cotización, bloque del curso, pie SENCE
+   - Estilos: `.first-page-background`, `.cover-*`, `.pdf-page-cover` base
+
+2. **Última página** — `.pdf-page-cover.pdf-page-closing`
+   - Mismo fondo `portada_v2.jpg` + bloque `.closing-page-contact`
+   - Estilos: `.pdf-page-closing`, `.closing-page-contact*`
+
+## Editable por defecto
+
+- **Páginas interiores** — todo dentro de `.pdf-body-content`:
+  - Encabezado interior (barra, logo, código cotización)
+  - Alcances del curso, Inversión, Medios de Pago, Franquicia Sence (condicional)
+  - Estilos bajo el comentario `EDITABLE: páginas interiores` en el `<style>`
+
+Al pedir cambios al PDF v2.0, limitar el diff a `.pdf-body-content` y sus reglas CSS asociadas.

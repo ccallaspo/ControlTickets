@@ -9,6 +9,7 @@ use App\Models\Cotizacion;
 use App\Models\Event;
 use App\Models\Followup;
 use App\Models\Task;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
@@ -76,9 +77,7 @@ class FollowupResource extends Resource
                             ->label('Anular')
                             ->default('Si'),
 
-                        Forms\Components\TextInput::make('name')
-                            ->label('SYC')
-                            ->readonly()
+                        Forms\Components\Hidden::make('name')
                             ->default($newName),
 
                         // Forms\Components\TextInput::make('referent')
@@ -121,6 +120,18 @@ class FollowupResource extends Resource
                             })
                             ->reactive()
                             ->disabled(fn(callable $get) => !$get('task_id')),
+
+                        Forms\Components\Select::make('ejecutivo_id')
+                            ->label('Coordinadora')
+                            ->relationship(
+                                name: 'ejecutivo',
+                                titleAttribute: 'name',
+                                modifyQueryUsing: fn($query) => $query
+                                    ->role('Administrativo')
+                                    ->orderBy('name', 'asc')
+                            )
+                            ->searchable()
+                            ->preload(),
 
                         // Forms\Components\Select::make('customer_id')
                         //     ->relationship('customer', 'name')
@@ -439,7 +450,11 @@ class FollowupResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->query(Followup::query()->restrictedForSupportUser())
+            ->query(
+                Followup::query()
+                    ->restrictedForSupportUser()
+                    ->with(['ejecutivo', 'event', 'cotizacion.customer'])
+            )
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->sortable()
@@ -476,6 +491,26 @@ class FollowupResource extends Resource
                         return $query->whereHas('cotizacion', function (Builder $query) use ($search) {
                             $query->where('name', 'like', "%{$search}%");
                         })->orWhere('referent', 'like', "%{$search}%");
+                    }),
+
+                Tables\Columns\TextColumn::make('ejecutivo.name')
+                    ->label('Coordinadora')
+                    ->size('sm')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->getStateUsing(function (Followup $record): string {
+                        $name = $record->ejecutivo?->name;
+
+                        if (!$name) {
+                            return '-';
+                        }
+
+                        return strtok($name, ' ') ?: $name;
+                    })
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->whereHas('ejecutivo', function (Builder $query) use ($search) {
+                            $query->where('name', 'like', "%{$search}%");
+                        });
                     }),
 
                 Tables\Columns\TextColumn::make('event.name')

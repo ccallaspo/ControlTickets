@@ -7,6 +7,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Aptos:wght@400&display=swap" rel="stylesheet">
 
     <title>OTEC PROYECTA</title>
+    {{--
+        PDF Cotización v2.0 — zonas de edición
+        - PROTEGIDO: primera página (.pdf-page-cover sin .pdf-page-closing)
+        - PROTEGIDO: última página (.pdf-page-cover.pdf-page-closing + .closing-page-contact)
+        - EDITABLE: .pdf-body-content (páginas entre la primera y la última)
+    --}}
     <style>
         @page {
             margin: 0;
@@ -33,6 +39,8 @@
             box-sizing: border-box;
             z-index: 1;
         }
+
+        /* === PROTEGIDO: estilos página 1 (portada) y página final — no modificar === */
 
         .first-page-background {
             position: absolute;
@@ -327,6 +335,10 @@
             color: #ffffff !important;
         }
 
+        /* === FIN ZONA PROTEGIDA (portada + cierre) === */
+
+        /* === EDITABLE: páginas interiores (.pdf-body-content) === */
+
         .pdf-body-content {
             padding-top: 0;
             padding-left: 58px;
@@ -334,19 +346,59 @@
             box-sizing: border-box;
         }
 
-        .inner-page-header {
+        .inner-page-header-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
             width: 100%;
-            margin-bottom: 8px;
+            z-index: 1000;
+        }
+
+        .inner-page-top-bar {
+            width: 100%;
+            height: 14px;
+            background-color: #1c1c1c;
+            margin: 0;
             padding: 0;
+            line-height: 0;
+            font-size: 0;
+        }
+
+        .inner-page-top-bar img {
+            width: 100%;
+            height: 14px;
+            display: block;
+            margin: 0;
+            padding: 0;
+        }
+
+        .inner-page-header-inner {
+            background-color: #ffffff;
+            padding: 14px 58px 16px;
             box-sizing: border-box;
         }
 
-        .inner-page-header-bar {
-            width: 100%;
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 0 0 22px 0;
+        .inner-page-main {
+            padding-top: 102px;
+        }
+
+        /* Espacio bajo el header fijo por sección (no separación entre páginas) */
+        .inner-page-main > .description-curso {
+            padding-top: 10px;
+        }
+
+        .inner-page-main > .investment-curso.page-break-before {
+            padding-top: 48px;
+            margin-top: 0;
+        }
+
+        .inner-page-main > .payments {
+            padding-top: 24px;
+        }
+
+        .inner-page-main > .franquicia-sence {
+            padding-top: 24px;
         }
 
         table.inner-page-header-row {
@@ -354,7 +406,7 @@
             max-width: 100%;
             table-layout: fixed;
             border-collapse: collapse;
-            margin: 0 0 28px 0 !important;
+            margin: 0 !important;
             border-radius: 0 !important;
             box-shadow: none !important;
             overflow: visible !important;
@@ -389,13 +441,13 @@
             max-width: 68px;
             height: auto;
             display: block;
-            padding-top: 20px;
+            padding-top: 0;
         }
 
         .inner-page-header-cotizacion {
             color: #001642;
             font-family: Arial, Helvetica, sans-serif;
-            font-size: 11px;
+            font-size: 13px;
             font-weight: bold;
             font-style: normal;
             text-transform: uppercase;
@@ -602,17 +654,6 @@
             break-before: avoid-page;
         }
 
-        .objetivo-especifico-text {
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 16px;
-            font-style: normal !important;
-            color: #2C3E50 !important;
-            text-align: justify;
-            line-height: 1.5;
-            margin-top: 12px;
-            margin-bottom: 12px;
-        }
-
         .text-add {
             font-family: Arial, Helvetica, sans-serif;
             font-size: 16px;
@@ -673,7 +714,7 @@
         }
 
         .investment-curso {
-            margin-top: 8px;
+            margin-top: 0;
         }
 
         .investment-curso table.investment-table {
@@ -690,11 +731,11 @@
         }
 
         .investment-curso table.investment-table thead {
-            background-color: #fa4c02;
+            background-color: #9acbeb;
         }
 
         .investment-curso table.investment-table thead th {
-            background-color: #fa4c02 !important;
+            background-color: #9acbeb !important;
             color: #ffffff !important;
             font-weight: bold;
             font-style: normal;
@@ -750,7 +791,7 @@
         }
 
         .payments {
-            margin-top: 32px;
+            margin-top: 0;
         }
 
         .payments .payments-intro {
@@ -783,11 +824,11 @@
         }
 
         .payments table.payments-table thead {
-            background-color: #fa4c02;
+            background-color: #9acbeb;
         }
 
         .payments table.payments-table thead th {
-            background-color: #fa4c02 !important;
+            background-color: #9acbeb !important;
             color: #ffffff !important;
             font-weight: bold;
             font-style: normal;
@@ -837,7 +878,7 @@
         }
 
         .franquicia-sence {
-            margin-top: 32px;
+            margin-top: 0;
         }
 
         .franquicia-sence .franquicia-text {
@@ -860,6 +901,7 @@
 </head>
 
 <body>
+    {{-- PROTEGIDO: página 1 (portada) — no modificar --}}
     <div class="pdf-page-cover">
         <div class="first-page-background">
             <img src="{{ public_path('img/cotizacion_v2/portada_v2.jpg') }}" alt="">
@@ -906,44 +948,43 @@
         </div>
     </div>
 
+    {{-- EDITABLE: páginas interiores (entre portada y página final) --}}
     <div class="pdf-body-content">
         @php
             $barraSuperiorPath = public_path('img/cotizacion_v2/barra_superior_v2.png');
             $logoInnerPath = public_path('img/cotizacion_v2/icono_logo.png');
         @endphp
 
-        <header class="inner-page-header">
-            @if(file_exists($barraSuperiorPath))
-                <img src="{{ $barraSuperiorPath }}" alt="" class="inner-page-header-bar">
-            @endif
+        <header class="inner-page-header-fixed">
+            <div class="inner-page-top-bar">
+                @if(file_exists($barraSuperiorPath))
+                    <img src="{{ $barraSuperiorPath }}" alt="">
+                @endif
+            </div>
 
-            <table class="inner-page-header-row">
-                <tr>
-                    <td class="inner-page-header-logo-cell">
-                        @if(file_exists($logoInnerPath))
-                            <img src="{{ $logoInnerPath }}" alt="" class="inner-page-header-logo">
-                        @endif
-                    </td>
-                    <td class="inner-page-header-cotizacion-cell">
-                        <span class="inner-page-header-cotizacion">COTIZACIÓN {{ $cotizacion->name }}</span>
-                    </td>
-                </tr>
-            </table>
+            <div class="inner-page-header-inner">
+                <table class="inner-page-header-row">
+                    <tr>
+                        <td class="inner-page-header-logo-cell">
+                            @if(file_exists($logoInnerPath))
+                                <img src="{{ $logoInnerPath }}" alt="" class="inner-page-header-logo">
+                            @endif
+                        </td>
+                        <td class="inner-page-header-cotizacion-cell">
+                            <span class="inner-page-header-cotizacion">COTIZACIÓN {{ $cotizacion->name }}</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </header>
 
+        <div class="inner-page-main">
         <div class="content-section description-curso">
             @php
             $content = $cotizacion->content;
 
             if (trim(strip_tags((string) $content)) === '') {
                 $content = $addCourse->description ?? '';
-            }
-            $objetivoTexto = 'Al finalizar el curso los participantes estarán en condiciones de manejar en forma segura los distintos tipos de herramientas manuales y eléctricas.';
-            $objetivoHtml = '<p class="objetivo-especifico-text">' . $objetivoTexto . '</p>';
-
-            if (stripos($content, $objetivoTexto) === false) {
-                $pattern = '/(<h[1-6][^>]*>\s*OBJETIVO\s+ESPEC[ÍI]FICO\s*<\/h[1-6]>)/iu';
-                $content = preg_replace($pattern, '$1' . $objetivoHtml, $content, 1);
             }
 
             // Evita duplicar el título fijo "Alcances del Curso"
@@ -1064,8 +1105,11 @@
 
         @endif
 
+        </div>
+
     </div>
 
+    {{-- PROTEGIDO: página final (fondo portada + contacto) — no modificar --}}
     <div class="pdf-page-cover pdf-page-closing">
         <div class="first-page-background">
             <img src="{{ public_path('img/cotizacion_v2/portada_v2.jpg') }}" alt="">

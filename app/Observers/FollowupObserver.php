@@ -40,13 +40,16 @@ class FollowupObserver
      */
     public function updated(Followup $followup): void
     {
-        //data original
-        $event = Event::findOrFail($followup->event_id);
-        $data = $followup;
-        // dd($data);
-
         $changes = $followup->getDirty();
         $relevantChanges = array_diff_key($changes, array_flip(['updated_at']));
+
+        // La asignación de coordinadora se manejará con notificaciones propias más adelante.
+        if (!$this->hasMailTriggeringChanges($relevantChanges)) {
+            return;
+        }
+
+        $event = Event::findOrFail($followup->event_id);
+        $data = $followup;
         $data->changes = $relevantChanges;
 
         $myuser = auth()->user();
@@ -126,5 +129,19 @@ class FollowupObserver
     public function forceDeleted(Followup $followup): void
     {
         //
+    }
+
+    /**
+     * Determina si los cambios del ticket deben disparar los correos automáticos por estado.
+     * Excluye ejecutivo_id (coordinadora), reservado para notificaciones personalizadas.
+     */
+    private function hasMailTriggeringChanges(array $relevantChanges): bool
+    {
+        $mailTriggeringChanges = array_diff_key(
+            $relevantChanges,
+            array_flip(['ejecutivo_id'])
+        );
+
+        return !empty($mailTriggeringChanges);
     }
 }

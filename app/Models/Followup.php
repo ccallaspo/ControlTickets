@@ -22,6 +22,7 @@ class Followup extends Model
         'author',
         'referent',
         'event_id',
+        'ejecutivo_id',
         'cotizacion_id',
         'task_id',
         'customer_id',
@@ -81,6 +82,11 @@ class Followup extends Model
     public function cotizacion(): BelongsTo
     {
         return $this->belongsTo(Cotizacion::class);
+    }
+
+    public function ejecutivo(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'ejecutivo_id');
     }
 
 
