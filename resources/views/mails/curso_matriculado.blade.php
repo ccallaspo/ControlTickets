@@ -226,10 +226,41 @@
        
             
             <div class="service-details">
+                @php
+                    $useExecution = (bool) ($data->has_execution_data ?? false);
+                    $fechaInicioRaw = $useExecution ? ($data->exec_f_star ?? null) : ($data->f_star ?? null);
+                    $modalidad = $useExecution ? ($data->exec_modalily ?? null) : ($data->modalily ?? null);
+                    $horas = $useExecution ? ($data->exec_n_hours ?? null) : ($data->n_hours ?? null);
+
+                    $fechaInicio = null;
+                    if (!blank($fechaInicioRaw)) {
+                        try {
+                            $fechaInicio = \Carbon\Carbon::parse($fechaInicioRaw)->format('d/m/Y');
+                        } catch (\Throwable $e) {
+                            $fechaInicio = null;
+                        }
+                    }
+
+                    if (!blank($horas)) {
+                        $horas = trim((string) $horas);
+                        if (!preg_match('/horas?/iu', $horas)) {
+                            $horas .= ' hrs';
+                        }
+                    }
+
+                    $coordinadoraNombre = $data->ejecutivo?->name;
+                    if ($coordinadoraNombre) {
+                        $coordinadoraNombre = strtok($coordinadoraNombre, ' ') ?: $coordinadoraNombre;
+                    }
+                @endphp
                 <ul>
                     <li><strong>Cotización:</strong> {{ $data->referent ?? 'N/A' }}</li>
                     <li><strong>Curso:</strong> {{ $data->name_course ?? 'N/A' }}</li>
                     <li><strong>Código ID:</strong> {{ $data->id_sence ?? 'N/A' }}</li>
+                    <li><strong>Fecha de inicio:</strong> {{ $fechaInicio ?? 'N/A' }}</li>
+                    <li><strong>Modalidad:</strong> {{ $modalidad ?? 'N/A' }}</li>
+                    <li><strong>N° Horas:</strong> {{ $horas ?? 'N/A' }}</li>
+                    <li><strong>Coordinadora:</strong> {{ $coordinadoraNombre ?? 'N/A' }}</li>
                 </ul>
             </div>
 
