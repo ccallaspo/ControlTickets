@@ -15,7 +15,9 @@ use App\Mail\PorFacturarMail;
 use App\Models\Event;
 use App\Models\Followup;
 use App\Models\Task;
+use App\Models\User;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 
 class FollowupObserver
@@ -53,57 +55,91 @@ class FollowupObserver
         $data->changes = $relevantChanges;
 
         $myuser = auth()->user();
+        if (!$myuser) {
+            return;
+        }
 
-        $solicitante = auth()->user()->email;
-        //  $facturador = 'Christian.lillo@otecproyecta.cl';
-        $coordinadora = 'coordinacion@otecproyecta.cl';
-        $soporte = 'soporte@otecproyecta.cl';
-        $cotizador = 'contacto@otecproyecta.cl';
+        $followup->loadMissing('ejecutivo');
+        $assignedExecutive = $followup->ejecutivo;
+        $assignedExecutiveEmail = $assignedExecutive?->email;
+
+        $isMatricularCurso = $event->name == 'Matricular Curso';
+
+        if (!$isMatricularCurso && empty($assignedExecutiveEmail)) {
+            return;
+        }
+
+        $ccRecipients = $this->buildCcRecipients($assignedExecutiveEmail, $myuser->email);
+
+        $notificationRecipients = collect([$assignedExecutive, $myuser])
+            ->filter()
+            ->unique('id')
+            ->values();
+
+        if ($notificationRecipients->isNotEmpty()) {
+            Notification::make()
+                ->title('Ticket actualizado')
+                ->body("El ticket #{$followup->name} fue actualizado")
+                ->icon('heroicon-m-pencil-square')
+                ->iconColor('info')
+                ->sendToDatabase($notificationRecipients);
+        }
 
 
         if ($event->name == 'Cotización actualizada') {
-
-            $ccRecipients = [$cotizador, $solicitante, $coordinadora, $soporte];
-            Mail::to($solicitante)
+            Mail::to($assignedExecutiveEmail)
                 ->cc($ccRecipients)
-                //  ->cc($solicitante)
-                //  ->cc($coordinadora)
                 ->send(new CursoActualizacionMail($data, $myuser));
-            //  dd($data);
         }
 
 
 
         if ($event->name == 'Coordinar Curso') {
-
-            $ccRecipients = [$coordinadora, $solicitante];
-            Mail::to($ccRecipients)
+            Mail::to($assignedExecutiveEmail)
+                ->cc($ccRecipients)
                 ->send(new CursoCoordinarMail($data, $myuser));
         }
 
 
         if ($event->name == 'Matricular Curso') {
-            $ccRecipients = [$coordinadora, $solicitante, $soporte];
-            Mail::to($ccRecipients)
+            $supportEmails = User::query()
+                ->whereHas('roles', function ($query) {
+                    $query->where('name', 'Soporte');
+                })
+                ->whereNotNull('email')
+                ->pluck('email')
+                ->unique()
+                ->values()
+                ->all();
+
+            if (empty($supportEmails)) {
+                return;
+            }
+
+            $matricularCc = $this->buildCcRecipientsFromMany($supportEmails, $myuser->email);
+
+            Mail::to($supportEmails)
+                ->cc($matricularCc)
                 ->send(new CursoMatriculadoMail($data, $myuser));
         }
 
         if ($event->name == 'Curso Finalizado') {
-            $ccRecipients = [$soporte, $solicitante, $cotizador];
-            Mail::to($ccRecipients)
+            Mail::to($assignedExecutiveEmail)
+                ->cc($ccRecipients)
                 ->send(new CursoFinalizadoMail($data, $myuser));
         }
 
         if ($event->name == 'Generar DJ') {
-            $ccRecipients = [$cotizador, $solicitante, $coordinadora];
-            Mail::to($ccRecipients)
-                ->cc($ccRecipients)->send(new DjOtecMail($data, $myuser));
+            Mail::to($assignedExecutiveEmail)
+                ->cc($ccRecipients)
+                ->send(new DjOtecMail($data, $myuser));
         }
 
 
         if ($event->name == 'Por Facturar') {
-            Mail::to($cotizador)
-                ->cc($solicitante)->send(new PorFacturarMail($data, $myuser));
+            Mail::to($assignedExecutiveEmail)
+                ->cc($ccRecipients)
+                ->send(new PorFacturarMail($data, $myuser));
         }
     }
 
@@ -143,5 +179,29 @@ class FollowupObserver
         );
 
         return !empty($mailTriggeringChanges);
+    }
+
+    /**
+     * Agrega en copia al usuario que actualiza, evitando duplicados.
+     */
+    private function buildCcRecipients(string $primaryEmail, string $actorEmail): array
+    {
+        return collect([$actorEmail])
+            ->filter(fn(string $email) => !empty($primaryEmail) ? $email !== $primaryEmail : true)
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Agrega en copia al usuario que actualiza si no está entre destinatarios.
+     */
+    private function buildCcRecipientsFromMany(array $primaryEmails, string $actorEmail): array
+    {
+        return collect([$actorEmail])
+            ->filter(fn(string $email) => !in_array($email, $primaryEmails, true))
+            ->unique()
+            ->values()
+            ->all();
     }
 }
