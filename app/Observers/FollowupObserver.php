@@ -123,6 +123,12 @@ class FollowupObserver
                 ->send(new CursoMatriculadoMail($data, $myuser));
         }
 
+        if ($event->name == 'Curso en Proceso') {
+            Mail::to($assignedExecutiveEmail)
+                ->cc($ccRecipients)
+                ->send(new CursoEnProcesoMail($data, $myuser));
+        }
+
         if ($event->name == 'Curso Finalizado') {
             Mail::to($assignedExecutiveEmail)
                 ->cc($ccRecipients)
