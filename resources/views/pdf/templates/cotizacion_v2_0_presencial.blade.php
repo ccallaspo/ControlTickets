@@ -11,17 +11,19 @@
     </ol>
     <p>La nota mínima de aprobación es 4, en la escala de 1 a 7 y con un 75% de participación como mínimo.</p>
 
-    <h2>Entregables</h2>
-    <p>Una vez finalizada la capacitación, se le enviará al cliente:</p>
-    <ul>
-        <li>Informe de capacitación</li>
-        <li>Resultados encuesta de satisfacción del participante</li>
-        <li>Certificados de aprobación, los que podrán ser validados a través de nuestra página WEB: https://otecproyecta.cl/</li>
-    </ul>
+    <div class="presencial-block-keep">
+        <h2>Entregables</h2>
+        <p>Una vez finalizada la capacitación, se le enviará al cliente:</p>
+        <ul>
+            <li>Informe de capacitación</li>
+            <li>Resultados encuesta de satisfacción del participante</li>
+            <li>Certificados de aprobación, los que podrán ser validados a través de nuestra página WEB: https://otecproyecta.cl/</li>
+        </ul>
+    </div>
 </div>
 
 <style>
-    /* Presencial: sin header interior (logo / COTIZACIÓN) — márgenes vía @page en cotizacion_v2_0 */
+    /* Presencial: sin header interior (logo / COTIZACIÓN); aire superior vía márgenes de hoja */
     .pdf-body-content-presencial .inner-page-main {
         padding-top: 0;
     }
@@ -34,15 +36,32 @@
         padding-top: 0;
     }
 
+    /* Evita dejar la lista de entregables huérfana al inicio de página */
+    .description-curso-presencial .presencial-block-keep {
+        page-break-inside: avoid;
+    }
+
     /* Contenedor: franjas al borde izquierdo de la hoja; texto con margen 58px */
     .pdf-body-content-presencial {
         padding-left: 0 !important;
     }
 
     .pdf-body-content-presencial .inner-page-main > .investment-curso,
-    .pdf-body-content-presencial .inner-page-main > .payments,
+    .pdf-body-content-presencial .inner-page-main > .payments {
+        padding-left: 0;
+    }
+
     .pdf-body-content-presencial .inner-page-main > .franquicia-sence {
         padding-left: 58px;
+        box-sizing: border-box;
+    }
+
+    .pdf-body-content-presencial .investment-curso > .investment-table,
+    .pdf-body-content-presencial .investment-curso > .investment-footnote,
+    .pdf-body-content-presencial .payments > .payments-intro,
+    .pdf-body-content-presencial .payments > .payments-table-wrap {
+        padding-left: 58px;
+        padding-right: 58px;
         box-sizing: border-box;
     }
 
@@ -52,11 +71,13 @@
     .description-curso-presencial h1:not(.pdf-section-title),
     .description-curso-presencial h2,
     .description-curso-presencial h3,
-    .description-curso-presencial h4 {
+    .description-curso-presencial h4,
+    .pdf-body-content-presencial .investment-curso > h2.pdf-section-title,
+    .pdf-body-content-presencial .payments > h2.pdf-section-title {
         background-color: #14284b !important;
         color: #ffffff !important;
-        font-family: 'Times New Roman', Times, serif;
-        font-size: 16px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 16px !important;
         font-weight: bold;
         font-style: normal;
         text-transform: uppercase;
@@ -76,14 +97,14 @@
     }
 
     .description-curso-presencial p {
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 16px;
-        font-weight: normal;
-        font-style: italic;
+        font-family: Arial, Helvetica, sans-serif !important;
+        font-size: 16px !important;
+        font-weight: normal !important;
+        font-style: italic !important;
         color: #000000 !important;
-        text-align: justify;
-        line-height: 1.5;
-        margin: 0 0 12px 0;
+        text-align: justify !important;
+        line-height: 1.4;
+        margin: 0 0 14px 0;
         padding-left: 14px;
         padding-right: 58px;
         box-sizing: border-box;
@@ -100,13 +121,26 @@
     }
 
     .description-curso-presencial li {
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 16px;
-        font-weight: normal;
-        font-style: italic;
+        font-family: Arial, Helvetica, sans-serif !important;
+        font-size: 16px !important;
+        font-weight: normal !important;
+        font-style: italic !important;
         color: #000000 !important;
-        text-align: justify;
-        line-height: 1.5;
+        text-align: justify !important;
+        line-height: 1.4;
         margin-bottom: 10px;
+    }
+
+    /* Párrafos de Inversión / Medios de pago / Franquicia (mismo estilo) */
+    .pdf-body-content-presencial .investment-curso .investment-footnote,
+    .pdf-body-content-presencial .payments .payments-intro,
+    .pdf-body-content-presencial .franquicia-sence .franquicia-text {
+        font-family: Arial, Helvetica, sans-serif !important;
+        font-size: 16px !important;
+        font-weight: normal !important;
+        font-style: italic !important;
+        color: #000000 !important;
+        text-align: justify !important;
+        line-height: 1.4;
     }
 </style>

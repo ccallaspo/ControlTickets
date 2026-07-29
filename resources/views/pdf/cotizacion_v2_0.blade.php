@@ -16,13 +16,13 @@
     <style>
         @if(($modalityTemplate ?? null) === 'pdf.templates.cotizacion_v2_0_presencial')
         @page {
-            margin-top: 28px;
-            margin-bottom: 28px;
+            margin-top: 5mm;
+            margin-bottom: 14mm;
             margin-left: 0;
             margin-right: 0;
         }
 
-        @page:first {
+        @page :first {
             margin: 0;
         }
         @else
@@ -31,18 +31,17 @@
         }
         @endif
 
-        html,
+        html {
+            width: 100%;
+            height: 100%;
+        }
+
         body {
             width: 100%;
             height: 100%;
             margin: 0;
             padding: 0;
-        }
-
-        body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
             position: relative;
         }
 
@@ -298,6 +297,14 @@
             break-after: auto;
         }
 
+        @if(($modalityTemplate ?? null) === 'pdf.templates.cotizacion_v2_0_presencial')
+        /* Compensa márgenes de páginas interiores para que el cierre quede full-bleed */
+        .pdf-page-cover.pdf-page-closing {
+            margin-top: -5mm;
+            margin-bottom: -14mm;
+        }
+        @endif
+
         /* Portada presencial (documento referencia) */
         .pdf-page-cover-presencial .cover-course-info {
             top: 36%;
@@ -343,19 +350,20 @@
         .closing-page-contact {
             position: absolute;
             left: 52px;
-            bottom: 200px;
+            top: 34%;
+            bottom: auto;
             z-index: 10;
-            width: 58%;
+            width: 72%;
             text-align: left;
             color: #ffffff;
             font-family: Arial, Helvetica, sans-serif;
         }
 
         .closing-page-contact .closing-contact-heading {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: bold;
             font-style: normal;
-            margin: 0 0 18px 0;
+            margin: 0 0 28px 0;
             line-height: 1.25;
             color: #ffffff !important;
         }
@@ -364,30 +372,32 @@
             font-size: 15px;
             font-weight: bold;
             font-style: normal;
-            margin: 0 0 8px 0;
+            margin: 0 0 4px 0;
             line-height: 1.35;
             color: #ffffff !important;
         }
 
         .closing-page-contact p {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: normal;
             font-style: normal;
-            margin: 0 0 6px 0;
-            line-height: 1.4;
+            margin: 0 0 4px 0;
+            line-height: 1.45;
             color: #ffffff !important;
         }
 
         .closing-page-contact .closing-contact-invite {
-            margin-top: 18px;
-            margin-bottom: 6px;
+            margin-top: 28px;
+            margin-bottom: 0;
+            line-height: 1.5;
         }
 
         .closing-page-contact .closing-contact-website {
-            font-size: 14px;
-            font-weight: bold;
+            font-size: inherit;
+            font-weight: normal;
             margin: 0;
-            color: #ffffff !important;
+            color: #fa4c02 !important;
+            text-decoration: underline;
         }
 
         /* === FIN ZONA PROTEGIDA (portada + cierre) === */
@@ -786,11 +796,11 @@
         }
 
         .investment-curso table.investment-table thead {
-            background-color: #9acbeb;
+            background-color: #14284b;
         }
 
         .investment-curso table.investment-table thead th {
-            background-color: #9acbeb !important;
+            background-color: #14284b !important;
             color: #ffffff !important;
             font-weight: bold;
             font-style: normal;
@@ -879,11 +889,11 @@
         }
 
         .payments table.payments-table thead {
-            background-color: #9acbeb;
+            background-color: #14284b;
         }
 
         .payments table.payments-table thead th {
-            background-color: #9acbeb !important;
+            background-color: #14284b !important;
             color: #ffffff !important;
             font-weight: bold;
             font-style: normal;
@@ -1211,8 +1221,10 @@
             <p class="closing-contact-name">Yasna Carreño Cortés</p>
             <p>Directora - (+56) 9 3397 4153</p>
             <p>Email: contacto@otecproyecta.cl</p>
-            <p class="closing-contact-invite">Te invitamos a revisar todas nuestras novedades en</p>
-            <p class="closing-contact-website">otecproyecta.cl</p>
+            <p class="closing-contact-invite">
+                Te invitamos a revisar todas nuestras novedades en
+                <span class="closing-contact-website">www.otecproyecta.cl</span>
+            </p>
         </div>
     </div>
 
