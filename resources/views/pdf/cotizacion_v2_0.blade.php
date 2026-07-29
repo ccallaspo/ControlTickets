@@ -968,6 +968,77 @@
             padding-left: 0;
             padding-right: 0;
         }
+
+        @if(!empty($isBannerPdf))
+        /*
+         * Tablas redondeadas (presencial / asincrónica).
+         * DomPDF: radio en wrapper + celdas esquina (no en <table> colapsada).
+         */
+        .pdf-body-content-presencial .investment-table-wrap,
+        .pdf-body-content-presencial .payments-table-wrap,
+        .pdf-body-content-asincronica .investment-table-wrap,
+        .pdf-body-content-asincronica .payments-table-wrap {
+            border: 1px solid #d1d5db !important;
+            border-radius: 12px !important;
+            overflow: hidden !important;
+            background-color: #ffffff;
+            padding: 0 !important;
+        }
+
+        .pdf-body-content-presencial .investment-table-wrap,
+        .pdf-body-content-asincronica .investment-table-wrap {
+            margin: 0 58px 14px 58px !important;
+            width: auto !important;
+        }
+
+        .pdf-body-content-presencial .payments-table-wrap,
+        .pdf-body-content-asincronica .payments-table-wrap {
+            width: 65% !important;
+            margin: 0 auto 14px auto !important;
+        }
+
+        .pdf-body-content-presencial table.investment-table,
+        .pdf-body-content-presencial table.payments-table,
+        .pdf-body-content-asincronica table.investment-table,
+        .pdf-body-content-asincronica table.payments-table {
+            width: 100% !important;
+            margin: 0 !important;
+            border: none !important;
+            border-radius: 0 !important;
+            border-collapse: separate !important;
+            border-spacing: 0 !important;
+            overflow: visible !important;
+            box-shadow: none !important;
+        }
+
+        .pdf-body-content-presencial table.investment-table thead th:first-child,
+        .pdf-body-content-presencial table.payments-table thead th:first-child,
+        .pdf-body-content-asincronica table.investment-table thead th:first-child,
+        .pdf-body-content-asincronica table.payments-table thead th:first-child {
+            border-top-left-radius: 11px !important;
+        }
+
+        .pdf-body-content-presencial table.investment-table thead th:last-child,
+        .pdf-body-content-presencial table.payments-table thead th:last-child,
+        .pdf-body-content-asincronica table.investment-table thead th:last-child,
+        .pdf-body-content-asincronica table.payments-table thead th:last-child {
+            border-top-right-radius: 11px !important;
+        }
+
+        .pdf-body-content-presencial table.investment-table tbody tr:last-child td:first-child,
+        .pdf-body-content-presencial table.payments-table tbody tr:last-child td:first-child,
+        .pdf-body-content-asincronica table.investment-table tbody tr:last-child td:first-child,
+        .pdf-body-content-asincronica table.payments-table tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 11px !important;
+        }
+
+        .pdf-body-content-presencial table.investment-table tbody tr:last-child td:last-child,
+        .pdf-body-content-presencial table.payments-table tbody tr:last-child td:last-child,
+        .pdf-body-content-asincronica table.investment-table tbody tr:last-child td:last-child,
+        .pdf-body-content-asincronica table.payments-table tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 11px !important;
+        }
+        @endif
     </style>
 </head>
 

@@ -34,50 +34,11 @@
         box-sizing: border-box;
     }
 
-    .pdf-body-content-presencial .investment-curso > .investment-table-wrap,
     .pdf-body-content-presencial .investment-curso > .investment-footnote,
-    .pdf-body-content-presencial .payments > .payments-intro,
-    .pdf-body-content-presencial .payments > .payments-table-wrap {
+    .pdf-body-content-presencial .payments > .payments-intro {
         padding-left: 58px;
         padding-right: 58px;
         box-sizing: border-box;
-    }
-
-    /*
-     * Tablas con bordes redondeados (DomPDF: separate + radios en celdas esquina).
-     */
-    .pdf-body-content-presencial .investment-curso table.investment-table,
-    .pdf-body-content-presencial .payments table.payments-table {
-        border-collapse: separate !important;
-        border-spacing: 0 !important;
-        border-radius: 10px !important;
-        overflow: hidden !important;
-        border: 1px solid #d1d5db !important;
-    }
-
-    .pdf-body-content-presencial .investment-curso table.investment-table thead th:first-child,
-    .pdf-body-content-presencial .payments table.payments-table thead th:first-child {
-        border-top-left-radius: 10px;
-    }
-
-    .pdf-body-content-presencial .investment-curso table.investment-table thead th:last-child,
-    .pdf-body-content-presencial .payments table.payments-table thead th:last-child {
-        border-top-right-radius: 10px;
-    }
-
-    .pdf-body-content-presencial .investment-curso table.investment-table tbody tr:last-child td:first-child,
-    .pdf-body-content-presencial .payments table.payments-table tbody tr:last-child td:first-child {
-        border-bottom-left-radius: 10px;
-    }
-
-    .pdf-body-content-presencial .investment-curso table.investment-table tbody tr:last-child td:last-child,
-    .pdf-body-content-presencial .payments table.payments-table tbody tr:last-child td:last-child {
-        border-bottom-right-radius: 10px;
-    }
-
-    .pdf-body-content-presencial .payments-table-wrap {
-        border-radius: 10px;
-        overflow: hidden;
     }
 
     /*
@@ -102,12 +63,12 @@
         display: block;
         box-sizing: border-box;
         width: 48%;
-        margin: 22px 0 12px 0;
+        margin: 22px 40px 12px 40px;
         padding: 7px 16px 7px 14px;
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
-        border-top-right-radius: 6px;
-        border-bottom-right-radius: 6px;
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
         page-break-inside: avoid;
         page-break-after: avoid;
     }

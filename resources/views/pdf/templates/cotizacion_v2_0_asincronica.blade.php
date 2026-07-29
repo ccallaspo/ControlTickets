@@ -32,10 +32,8 @@
         box-sizing: border-box;
     }
 
-    .pdf-body-content-asincronica .investment-curso > .investment-table-wrap,
     .pdf-body-content-asincronica .investment-curso > .investment-footnote,
-    .pdf-body-content-asincronica .payments > .payments-intro,
-    .pdf-body-content-asincronica .payments > .payments-table-wrap {
+    .pdf-body-content-asincronica .payments > .payments-intro {
         padding-left: 58px;
         padding-right: 58px;
         box-sizing: border-box;
@@ -59,12 +57,12 @@
         display: block;
         box-sizing: border-box;
         width: 48%;
-        margin: 22px 0 12px 0;
+        margin: 22px 40px 12px 40px;
         padding: 7px 16px 7px 14px;
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
-        border-top-right-radius: 6px;
-        border-bottom-right-radius: 6px;
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
         page-break-inside: avoid;
         page-break-after: avoid;
     }
