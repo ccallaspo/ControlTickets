@@ -41,18 +41,21 @@
         page-break-inside: avoid;
     }
 
-    /* Contenedor: franjas al borde izquierdo de la hoja; texto con margen 58px */
+    /* Contenedor: franjas al borde izquierdo; márgenes laterales simétricos en el texto */
     .pdf-body-content-presencial {
         padding-left: 0 !important;
+        padding-right: 0 !important;
     }
 
     .pdf-body-content-presencial .inner-page-main > .investment-curso,
     .pdf-body-content-presencial .inner-page-main > .payments {
         padding-left: 0;
+        padding-right: 0;
     }
 
     .pdf-body-content-presencial .inner-page-main > .franquicia-sence {
         padding-left: 58px;
+        padding-right: 58px;
         box-sizing: border-box;
     }
 
@@ -105,16 +108,16 @@
         text-align: justify !important;
         line-height: 1.4;
         margin: 0 0 14px 0;
-        padding-left: 14px;
-        padding-right: 58px;
+        padding-left: 40px;
+        padding-right: 40px;
         box-sizing: border-box;
     }
 
     .description-curso-presencial ol,
     .description-curso-presencial ul {
         margin: 8px 0 16px 0;
-        padding-left: 38px;
-        padding-right: 58px;
+        padding-left: 64px;
+        padding-right: 40px;
         color: #000000;
         box-sizing: border-box;
         page-break-inside: avoid;
