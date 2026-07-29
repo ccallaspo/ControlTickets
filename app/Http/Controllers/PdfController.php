@@ -6,6 +6,7 @@ use App\Mail\SendCotizacion;
 use App\Models\AddCourse;
 use App\Models\Cotizacion;
 use App\Models\Course;
+use App\Services\CotizacionPdfV20TemplateResolver;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Notifications\Notification;
@@ -39,6 +40,11 @@ class PdfController extends Controller
             'addCourse' => $addCourse,
             'costs' => $costs,
         ];
+
+        if ($view === 'pdf.cotizacion_v2_0') {
+            $data['modalityTemplate'] = app(CotizacionPdfV20TemplateResolver::class)
+                ->resolveForCourse($course);
+        }
 
         $pdf = PDF::loadView($view, $data)->setPaper('letter');
 

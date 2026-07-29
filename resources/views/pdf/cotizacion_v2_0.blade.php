@@ -14,9 +14,22 @@
         - EDITABLE: .pdf-body-content (páginas entre la primera y la última)
     --}}
     <style>
+        @if(($modalityTemplate ?? null) === 'pdf.templates.cotizacion_v2_0_presencial')
+        @page {
+            margin-top: 28px;
+            margin-bottom: 28px;
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        @page:first {
+            margin: 0;
+        }
+        @else
         @page {
             margin: 0;
         }
+        @endif
 
         html,
         body {
@@ -283,6 +296,48 @@
             break-before: page;
             page-break-after: auto;
             break-after: auto;
+        }
+
+        /* Portada presencial (documento referencia) */
+        .pdf-page-cover-presencial .cover-course-info {
+            top: 36%;
+            left: 52px;
+            width: 62%;
+        }
+
+        .pdf-page-cover-presencial .cover-course-label {
+            color: #60acdf !important;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 13px;
+            font-weight: normal;
+            margin: 0 0 22px 0;
+        }
+
+        .pdf-page-cover-presencial .cover-course-title {
+            color: #ffffff !important;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 32px;
+            font-weight: bold;
+            text-transform: uppercase;
+            line-height: 1.12;
+            letter-spacing: 0.01em;
+            margin: 0 0 22px 0;
+        }
+
+        .pdf-page-cover-presencial .cover-course-sence {
+            color: #60acdf !important;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+            font-weight: normal;
+        }
+
+        .pdf-page-cover-presencial .cover-footer-presencial-deco {
+            height: 165px;
+            padding-bottom: 0;
+        }
+
+        .pdf-page-cover-presencial .cover-footer-presencial-deco .cover-footer-bg {
+            object-fit: cover;
         }
 
         .closing-page-contact {
@@ -901,8 +956,11 @@
 </head>
 
 <body>
-    {{-- PROTEGIDO: página 1 (portada) — no modificar --}}
-    <div class="pdf-page-cover">
+    @php
+        $isPresencialPdfCover = ($modalityTemplate ?? null) === 'pdf.templates.cotizacion_v2_0_presencial';
+    @endphp
+    {{-- Página 1 (portada) — layout presencial alineado al documento referencia --}}
+    <div class="pdf-page-cover @if($isPresencialPdfCover) pdf-page-cover-presencial @endif">
         <div class="first-page-background">
             <img src="{{ public_path('img/cotizacion_v2/portada_v2.jpg') }}" alt="">
         </div>
@@ -914,10 +972,12 @@
                 . strtoupper($fechaPortada->translatedFormat('F Y'));
         @endphp
 
+        @unless($isPresencialPdfCover)
         <div class="cover-header-meta">
             <p class="cotizacion-codigo">COTIZACIÓN {{ $cotizacion->name }}</p>
             <p class="cotizacion-fecha">{{ $fechaPortadaTexto }}</p>
         </div>
+        @endunless
 
         <div class="cover-course-info">
             <p class="cover-course-label">
@@ -931,10 +991,11 @@
             <h2 class="cover-course-title">{{ $course->name }}</h2>
 
             @if($cotizacion->type === 'Con Franquicia')
-                <p class="cover-course-sence">Código SENCE N°{{ $course->cod_sence }}</p>
+                <p class="cover-course-sence">Código SENCE N° {{ $course->cod_sence }}</p>
             @endif
         </div>
 
+        @unless($isPresencialPdfCover)
         <div class="cover-footer">
             @if(file_exists(public_path('img/cotizacion_v2/pie_portada_v2.png')))
                 <img src="{{ public_path('img/cotizacion_v2/pie_portada_v2.png') }}" alt="" class="cover-footer-bg">
@@ -946,15 +1007,26 @@
                 <p class="cover-footer-line">NCh 2728:2015</p>
             </div>
         </div>
+        @else
+        @if(file_exists(public_path('img/cotizacion_v2/pie_portada_v2.png')))
+        <div class="cover-footer cover-footer-presencial-deco">
+            <img src="{{ public_path('img/cotizacion_v2/pie_portada_v2.png') }}" alt="" class="cover-footer-bg">
+        </div>
+        @endif
+        @endunless
     </div>
 
     {{-- EDITABLE: páginas interiores (entre portada y página final) --}}
-    <div class="pdf-body-content">
+    @php
+        $isPresencialPdf = ($modalityTemplate ?? null) === 'pdf.templates.cotizacion_v2_0_presencial';
+    @endphp
+    <div class="pdf-body-content @if($isPresencialPdf) pdf-body-content-presencial @endif">
         @php
             $barraSuperiorPath = public_path('img/cotizacion_v2/barra_superior_v2.png');
             $logoInnerPath = public_path('img/cotizacion_v2/icono_logo.png');
         @endphp
 
+        @unless($isPresencialPdf)
         <header class="inner-page-header-fixed">
             <div class="inner-page-top-bar">
                 @if(file_exists($barraSuperiorPath))
@@ -977,9 +1049,10 @@
                 </table>
             </div>
         </header>
+        @endunless
 
         <div class="inner-page-main">
-        <div class="content-section description-curso">
+        <div class="content-section description-curso @if($isPresencialPdf) description-curso-presencial @endif">
             @php
             $content = $cotizacion->content;
 
@@ -990,11 +1063,29 @@
             // Evita duplicar el título fijo "Alcances del Curso"
             $content = preg_replace('/<h1[^>]*>\s*Alcances\s+del\s+Curso\s*<\/h1>\s*/iu', '', $content, 1);
 
+            $modalityTemplate = $modalityTemplate ?? null;
+
+            $contentBeforeTemario = $content;
+            $contentTemario = '';
+            if (preg_match('/(<h[1-6][^>]*>\s*TEMARIO\s*<\/h[1-6]>)/iu', (string) $content, $temarioMatch, PREG_OFFSET_CAPTURE)) {
+                $temarioOffset = $temarioMatch[0][1];
+                $contentBeforeTemario = substr((string) $content, 0, $temarioOffset);
+                $contentTemario = substr((string) $content, $temarioOffset);
+            }
+
             @endphp
 
+            @unless($isPresencialPdf)
             <h1 class="pdf-section-title">Alcances del Curso</h1>
+            @endunless
 
-            {!! $content !!}
+            {!! $contentBeforeTemario !!}
+
+            @if($modalityTemplate)
+                @include($modalityTemplate)
+            @endif
+
+            {!! $contentTemario !!}
         </div>
 
         <div class="investment-curso page-break-before inner-pages-margin">
