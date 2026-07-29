@@ -31,12 +31,8 @@ class CotizacionPdfV20TemplateResolver
         }
 
         // Asincrónica antes que sincrónica: "asincronica" contiene "sincron".
-        // Maestro actual: "E-Learning" = asincrónica (Word Cotizacion curso asincrónico).
-        if (
-            str_contains($modalityNorm, 'asincron')
-            || str_contains($modalityNorm, 'e-learning')
-            || str_contains($modalityNorm, 'elearning')
-        ) {
+        // Maestro: "E-learning Asincrónico" (también textos que contengan "asincron").
+        if (str_contains($modalityNorm, 'asincron')) {
             return self::VIEW_ASINCRONICA;
         }
 
@@ -44,7 +40,7 @@ class CotizacionPdfV20TemplateResolver
             return self::VIEW_PRESENCIAL;
         }
 
-        // Maestro actual: "A-Distancia" ≈ sincrónica remota.
+        // Sincrónica / remota en vivo.
         if (
             str_contains($modalityNorm, 'sincron')
             || str_contains($modalityNorm, 'a-distancia')
