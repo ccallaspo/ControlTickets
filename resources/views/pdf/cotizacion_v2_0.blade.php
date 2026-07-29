@@ -14,7 +14,13 @@
         - EDITABLE: .pdf-body-content (páginas entre la primera y la última)
     --}}
     <style>
-        @if(($modalityTemplate ?? null) === 'pdf.templates.cotizacion_v2_0_presencial')
+        @php
+            $isBannerPdf = in_array($modalityTemplate ?? null, [
+                'pdf.templates.cotizacion_v2_0_presencial',
+                'pdf.templates.cotizacion_v2_0_asincronica',
+            ], true);
+        @endphp
+        @if($isBannerPdf)
         @page {
             margin-top: 5mm;
             margin-bottom: 14mm;
@@ -297,7 +303,7 @@
             break-after: auto;
         }
 
-        @if(($modalityTemplate ?? null) === 'pdf.templates.cotizacion_v2_0_presencial')
+        @if(!empty($isBannerPdf))
         /* Compensa márgenes de páginas interiores para que el cierre quede full-bleed */
         .pdf-page-cover.pdf-page-closing {
             margin-top: -5mm;
@@ -796,11 +802,11 @@
         }
 
         .investment-curso table.investment-table thead {
-            background-color: #14284b;
+            background-color: #fc4c01;
         }
 
         .investment-curso table.investment-table thead th {
-            background-color: #14284b !important;
+            background-color: #fc4c01 !important;
             color: #ffffff !important;
             font-weight: bold;
             font-style: normal;
@@ -889,11 +895,11 @@
         }
 
         .payments table.payments-table thead {
-            background-color: #14284b;
+            background-color: #fc4c01;
         }
 
         .payments table.payments-table thead th {
-            background-color: #14284b !important;
+            background-color: #fc4c01 !important;
             color: #ffffff !important;
             font-weight: bold;
             font-style: normal;
@@ -967,10 +973,21 @@
 
 <body>
     @php
-        $isPresencialPdfCover = ($modalityTemplate ?? null) === 'pdf.templates.cotizacion_v2_0_presencial';
+        $isBannerPdf = in_array($modalityTemplate ?? null, [
+            'pdf.templates.cotizacion_v2_0_presencial',
+            'pdf.templates.cotizacion_v2_0_asincronica',
+        ], true);
+        $isPresencialPdf = ($modalityTemplate ?? null) === 'pdf.templates.cotizacion_v2_0_presencial';
+        $isAsincronicaPdf = ($modalityTemplate ?? null) === 'pdf.templates.cotizacion_v2_0_asincronica';
+        $bannerBodyClass = $isPresencialPdf
+            ? 'pdf-body-content-presencial'
+            : ($isAsincronicaPdf ? 'pdf-body-content-asincronica' : '');
+        $bannerDescClass = $isPresencialPdf
+            ? 'description-curso-presencial'
+            : ($isAsincronicaPdf ? 'description-curso-asincronica' : '');
     @endphp
-    {{-- Página 1 (portada) — layout presencial alineado al documento referencia --}}
-    <div class="pdf-page-cover @if($isPresencialPdfCover) pdf-page-cover-presencial @endif">
+    {{-- Página 1 (portada) — layout franja (presencial / asincrónica) --}}
+    <div class="pdf-page-cover @if($isBannerPdf) pdf-page-cover-presencial @endif">
         <div class="first-page-background">
             <img src="{{ public_path('img/cotizacion_v2/portada_v2.jpg') }}" alt="">
         </div>
@@ -982,7 +999,7 @@
                 . strtoupper($fechaPortada->translatedFormat('F Y'));
         @endphp
 
-        @unless($isPresencialPdfCover)
+        @unless($isBannerPdf)
         <div class="cover-header-meta">
             <p class="cotizacion-codigo">COTIZACIÓN {{ $cotizacion->name }}</p>
             <p class="cotizacion-fecha">{{ $fechaPortadaTexto }}</p>
@@ -1005,7 +1022,7 @@
             @endif
         </div>
 
-        @unless($isPresencialPdfCover)
+        @unless($isBannerPdf)
         <div class="cover-footer">
             @if(file_exists(public_path('img/cotizacion_v2/pie_portada_v2.png')))
                 <img src="{{ public_path('img/cotizacion_v2/pie_portada_v2.png') }}" alt="" class="cover-footer-bg">
@@ -1027,16 +1044,13 @@
     </div>
 
     {{-- EDITABLE: páginas interiores (entre portada y página final) --}}
-    @php
-        $isPresencialPdf = ($modalityTemplate ?? null) === 'pdf.templates.cotizacion_v2_0_presencial';
-    @endphp
-    <div class="pdf-body-content @if($isPresencialPdf) pdf-body-content-presencial @endif">
+    <div class="pdf-body-content @if($bannerBodyClass) {{ $bannerBodyClass }} @endif">
         @php
             $barraSuperiorPath = public_path('img/cotizacion_v2/barra_superior_v2.png');
             $logoInnerPath = public_path('img/cotizacion_v2/icono_logo.png');
         @endphp
 
-        @unless($isPresencialPdf)
+        @unless($isBannerPdf)
         <header class="inner-page-header-fixed">
             <div class="inner-page-top-bar">
                 @if(file_exists($barraSuperiorPath))
@@ -1062,7 +1076,7 @@
         @endunless
 
         <div class="inner-page-main">
-        <div class="content-section description-curso @if($isPresencialPdf) description-curso-presencial @endif">
+        <div class="content-section description-curso @if($bannerDescClass) {{ $bannerDescClass }} @endif">
             @php
             $content = $cotizacion->content;
 
@@ -1085,7 +1099,7 @@
 
             @endphp
 
-            @unless($isPresencialPdf)
+            @unless($isBannerPdf)
             <h1 class="pdf-section-title">Alcances del Curso</h1>
             @endunless
 
@@ -1136,6 +1150,7 @@
             }
             @endphp
 
+            <div class="investment-table-wrap">
             <table class="investment-table">
                 <thead>
                     <tr>
@@ -1162,6 +1177,7 @@
                     @endforeach
                 </tbody>
             </table>
+            </div>
             <p class="investment-footnote"><span class="investment-footnote-asterisk">*</span> Para mantener valores ofertados se debe considerar el mínimo de participantes informados en esta cotización.</p>
         </div>
 

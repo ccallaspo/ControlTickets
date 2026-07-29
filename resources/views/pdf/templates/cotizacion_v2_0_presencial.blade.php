@@ -1,27 +1,7 @@
-{{-- Plantilla PDF cotización v2.0 — modalidad presencial --}}
-<div class="cotizacion-v2-presencial">
-    <h2>Metodología</h2>
-    <p>La capacitación se desarrollará en modalidad presencial, en las dependencias acordadas con la empresa, conforme al calendario, horarios y número de participantes definidos en esta cotización.</p>
-    <p>Las sesiones presenciales combinan exposición guiada, ejercicios prácticos y talleres, favoreciendo la participación activa y el aprendizaje aplicado en el aula.</p>
-
-    <h2>Evaluación</h2>
-    <ol>
-        <li>Evaluación diagnóstica</li>
-        <li>Evaluación final al término del curso</li>
-    </ol>
-    <p>La nota mínima de aprobación es 4, en la escala de 1 a 7 y con un 75% de participación como mínimo.</p>
-
-    <div class="presencial-block-keep">
-        <h2>Entregables</h2>
-        <p>Una vez finalizada la capacitación, se le enviará al cliente:</p>
-        <ul>
-            <li>Informe de capacitación</li>
-            <li>Resultados encuesta de satisfacción del participante</li>
-            <li>Certificados de aprobación, los que podrán ser validados a través de nuestra página WEB: https://otecproyecta.cl/</li>
-        </ul>
-    </div>
-</div>
-
+{{--
+  Plantilla PDF cotización v2.0 — modalidad presencial.
+  Solo estilos: el texto (Metodología, Evaluación, Entregables, etc.) viene del content de la plataforma.
+--}}
 <style>
     /* Presencial: sin header interior (logo / COTIZACIÓN); aire superior vía márgenes de hoja */
     .pdf-body-content-presencial .inner-page-main {
@@ -34,11 +14,6 @@
 
     .pdf-body-content-presencial .inner-page-main > .investment-curso.page-break-before {
         padding-top: 0;
-    }
-
-    /* Evita dejar la lista de entregables huérfana al inicio de página */
-    .description-curso-presencial .presencial-block-keep {
-        page-break-inside: avoid;
     }
 
     /* Contenedor: franjas al borde izquierdo; márgenes laterales simétricos en el texto */
@@ -59,7 +34,7 @@
         box-sizing: border-box;
     }
 
-    .pdf-body-content-presencial .investment-curso > .investment-table,
+    .pdf-body-content-presencial .investment-curso > .investment-table-wrap,
     .pdf-body-content-presencial .investment-curso > .investment-footnote,
     .pdf-body-content-presencial .payments > .payments-intro,
     .pdf-body-content-presencial .payments > .payments-table-wrap {
@@ -69,7 +44,45 @@
     }
 
     /*
-     * Franjas título (referencia PDF presencial): ~48% ancho, borde izq. recto, azul #14284b.
+     * Tablas con bordes redondeados (DomPDF: separate + radios en celdas esquina).
+     */
+    .pdf-body-content-presencial .investment-curso table.investment-table,
+    .pdf-body-content-presencial .payments table.payments-table {
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+        border-radius: 10px !important;
+        overflow: hidden !important;
+        border: 1px solid #d1d5db !important;
+    }
+
+    .pdf-body-content-presencial .investment-curso table.investment-table thead th:first-child,
+    .pdf-body-content-presencial .payments table.payments-table thead th:first-child {
+        border-top-left-radius: 10px;
+    }
+
+    .pdf-body-content-presencial .investment-curso table.investment-table thead th:last-child,
+    .pdf-body-content-presencial .payments table.payments-table thead th:last-child {
+        border-top-right-radius: 10px;
+    }
+
+    .pdf-body-content-presencial .investment-curso table.investment-table tbody tr:last-child td:first-child,
+    .pdf-body-content-presencial .payments table.payments-table tbody tr:last-child td:first-child {
+        border-bottom-left-radius: 10px;
+    }
+
+    .pdf-body-content-presencial .investment-curso table.investment-table tbody tr:last-child td:last-child,
+    .pdf-body-content-presencial .payments table.payments-table tbody tr:last-child td:last-child {
+        border-bottom-right-radius: 10px;
+    }
+
+    .pdf-body-content-presencial .payments-table-wrap {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    /*
+     * Franjas título: aplican a los h1–h4 del content de plataforma
+     * + Inversión / Medios de pago del shell.
      */
     .description-curso-presencial h1:not(.pdf-section-title),
     .description-curso-presencial h2,
@@ -134,7 +147,6 @@
         margin-bottom: 10px;
     }
 
-    /* Párrafos de Inversión / Medios de pago / Franquicia (mismo estilo) */
     .pdf-body-content-presencial .investment-curso .investment-footnote,
     .pdf-body-content-presencial .payments .payments-intro,
     .pdf-body-content-presencial .franquicia-sence .franquicia-text {
