@@ -344,6 +344,29 @@
             font-weight: normal;
         }
 
+        .pdf-page-cover-presencial .cover-header-meta-presencial {
+            position: absolute;
+            top: 42px;
+            right: 48px;
+            z-index: 10;
+            text-align: right;
+            color: #ffffff;
+            font-family: Arial, Helvetica, sans-serif;
+            text-transform: none;
+        }
+
+        .pdf-page-cover-presencial .cover-header-meta-presencial .cotizacion-codigo,
+        .pdf-page-cover-presencial .cover-header-meta-presencial .cotizacion-fecha {
+            margin: 0;
+            padding: 0;
+            color: #ffffff !important;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+            font-weight: normal;
+            letter-spacing: 0;
+            line-height: 1.4;
+        }
+
         .pdf-page-cover-presencial .cover-footer-presencial-deco {
             height: 165px;
             padding-bottom: 0;
@@ -1072,14 +1095,20 @@
             $fechaPortadaTexto = strtoupper($fechaPortada->translatedFormat('D j'))
                 . ' DE '
                 . strtoupper($fechaPortada->translatedFormat('F Y'));
+            $fechaPortadaCorta = $cotizacion->created_at->format('d/m/Y');
         @endphp
 
-        @unless($isBannerPdf)
+        @if($isBannerPdf)
+        <div class="cover-header-meta-presencial">
+            <p class="cotizacion-codigo">Cotización: {{ $cotizacion->name }}</p>
+            <p class="cotizacion-fecha">Fecha: {{ $fechaPortadaCorta }}</p>
+        </div>
+        @else
         <div class="cover-header-meta">
             <p class="cotizacion-codigo">COTIZACIÓN {{ $cotizacion->name }}</p>
             <p class="cotizacion-fecha">{{ $fechaPortadaTexto }}</p>
         </div>
-        @endunless
+        @endif
 
         <div class="cover-course-info">
             <p class="cover-course-label">
