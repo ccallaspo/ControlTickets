@@ -985,7 +985,11 @@
             padding: 0 !important;
         }
 
-        .pdf-body-content-presencial .investment-table-wrap,
+        .pdf-body-content-presencial .investment-table-wrap {
+            margin: 0 68px 14px 68px !important;
+            width: auto !important;
+        }
+
         .pdf-body-content-asincronica .investment-table-wrap {
             margin: 0 58px 14px 58px !important;
             width: auto !important;
