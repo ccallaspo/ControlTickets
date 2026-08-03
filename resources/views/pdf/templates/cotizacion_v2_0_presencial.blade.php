@@ -81,7 +81,7 @@
         font-weight: normal !important;
         font-style: italic !important;
         color: #000000 !important;
-        text-align: left !important;
+        text-align: justify !important;
         line-height: 1.45;
         margin: 0 0 12px 0;
         padding-left: 80px;
@@ -105,7 +105,7 @@
         font-weight: normal !important;
         font-style: italic !important;
         color: #000000 !important;
-        text-align: left !important;
+        text-align: justify !important;
         line-height: 1.45;
         margin-bottom: 8px;
     }
@@ -118,7 +118,7 @@
         font-weight: normal !important;
         font-style: italic !important;
         color: #000000 !important;
-        text-align: left !important;
+        text-align: justify !important;
         line-height: 1.45;
     }
 </style>
