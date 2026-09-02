@@ -57,7 +57,7 @@
         display: block;
         box-sizing: border-box;
         width: 48%;
-        margin: 22px 40px 12px 40px;
+        margin: 0 40px 12px 40px;
         padding: 7px 16px 7px 14px;
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
@@ -65,6 +65,13 @@
         border-bottom-right-radius: 20px;
         page-break-inside: avoid;
         page-break-after: avoid;
+    }
+
+    .description-curso.description-curso-asincronica h1 + h2,
+    .description-curso.description-curso-asincronica h1 + h3,
+    .description-curso.description-curso-asincronica h2 + h3,
+    .description-curso.description-curso-asincronica h2 + h4 {
+        margin-top: 0;
     }
 
     .description-curso-asincronica p {

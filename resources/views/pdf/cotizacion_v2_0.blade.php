@@ -22,7 +22,7 @@
         @endphp
         @if($isBannerPdf)
         @page {
-            margin-top: 5mm;
+            margin-top: 10mm;
             margin-bottom: 14mm;
             margin-left: 0;
             margin-right: 0;
@@ -306,7 +306,7 @@
         @if(!empty($isBannerPdf))
         /* Compensa márgenes de páginas interiores para que el cierre quede full-bleed */
         .pdf-page-cover.pdf-page-closing {
-            margin-top: -5mm;
+            margin-top: -10mm;
             margin-bottom: -14mm;
         }
         @endif
