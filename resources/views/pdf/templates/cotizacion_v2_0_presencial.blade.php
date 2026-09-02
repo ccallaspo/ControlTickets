@@ -109,6 +109,44 @@
         page-break-inside: avoid;
     }
 
+    /*
+     * El editor (Filament) guarda la sangría como <blockquote>, no como
+     * lista anidada. Sin esta regla, el blockquote usa el margen por
+     * defecto (~40px) y queda a la izquierda del párrafo (80px).
+     */
+    .description-curso-presencial blockquote {
+        margin: 2px 68px 12px 0;
+        padding-left: 152px;
+        padding-right: 68px;
+        border: none;
+        box-sizing: border-box;
+        font-family: Arial, Helvetica, sans-serif !important;
+        font-size: 15px !important;
+        font-weight: normal !important;
+        font-style: italic !important;
+        color: #000000 !important;
+        text-align: justify !important;
+        line-height: 1.45;
+    }
+
+    .description-curso-presencial li ul,
+    .description-curso-presencial li ol,
+    .description-curso-presencial ul ul,
+    .description-curso-presencial ol ul,
+    .description-curso-presencial ul ol,
+    .description-curso-presencial ol ol {
+        margin: 4px 0 8px 0;
+        padding-left: 36px;
+        padding-right: 0;
+    }
+
+    .description-curso-presencial li p,
+    .description-curso-presencial blockquote p {
+        padding-left: 0;
+        padding-right: 0;
+        margin-bottom: 4px;
+    }
+
     .description-curso-presencial li {
         font-family: Arial, Helvetica, sans-serif !important;
         font-size: 15px !important;

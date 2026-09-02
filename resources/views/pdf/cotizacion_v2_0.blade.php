@@ -722,6 +722,13 @@
             color: #2C3E50;
         }
 
+        .description-curso blockquote {
+            margin: 8px 0 16px 48px;
+            padding: 0;
+            border: none;
+            color: #2C3E50;
+        }
+
         .description-curso ul li,
         .description-curso ol li {
             font-size: 16px;

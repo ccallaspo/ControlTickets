@@ -98,6 +98,39 @@
         page-break-inside: avoid;
     }
 
+    .description-curso-asincronica blockquote {
+        margin: 2px 40px 14px 0;
+        padding-left: 112px;
+        padding-right: 40px;
+        border: none;
+        box-sizing: border-box;
+        font-family: Arial, Helvetica, sans-serif !important;
+        font-size: 14px !important;
+        font-weight: normal !important;
+        font-style: italic !important;
+        color: #000000 !important;
+        text-align: justify !important;
+        line-height: 1.4;
+    }
+
+    .description-curso-asincronica li ul,
+    .description-curso-asincronica li ol,
+    .description-curso-asincronica ul ul,
+    .description-curso-asincronica ol ul,
+    .description-curso-asincronica ul ol,
+    .description-curso-asincronica ol ol {
+        margin: 4px 0 8px 0;
+        padding-left: 36px;
+        padding-right: 0;
+    }
+
+    .description-curso-asincronica li p,
+    .description-curso-asincronica blockquote p {
+        padding-left: 0;
+        padding-right: 0;
+        margin-bottom: 4px;
+    }
+
     .description-curso-asincronica li {
         font-family: Arial, Helvetica, sans-serif !important;
         font-size: 14px !important;
