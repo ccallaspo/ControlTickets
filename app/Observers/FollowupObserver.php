@@ -62,6 +62,7 @@ class FollowupObserver
         $followup->loadMissing('ejecutivo');
         $assignedExecutive = $followup->ejecutivo;
         $assignedExecutiveEmail = $assignedExecutive?->email;
+        $actorEmail = $myuser->email ?? '';
 
         $isMatricularCurso = $event->name == 'Matricular Curso';
         $isCotizacionAprobada = $event->name == 'Cotización Aprobada';
@@ -70,7 +71,7 @@ class FollowupObserver
             return;
         }
 
-        $ccRecipients = $this->buildCcRecipients($assignedExecutiveEmail, $myuser->email);
+        $ccRecipients = $this->buildCcRecipients($assignedExecutiveEmail, $actorEmail);
 
         $notificationRecipients = collect([$assignedExecutive, $myuser])
             ->filter()
@@ -86,12 +87,11 @@ class FollowupObserver
                 ->sendToDatabase($notificationRecipients);
         }
 
-
-        if ($event->name == 'Cotización Aprobada') {
+        if ($isCotizacionAprobada) {
             $aprobadaTo = (string) config('mail.cotizacion_aprobada_to');
 
             if (filled($aprobadaTo)) {
-                $aprobadaCc = $this->buildCcRecipients($aprobadaTo, $myuser->email);
+                $aprobadaCc = $this->buildCcRecipients($aprobadaTo, $actorEmail);
 
                 Mail::to($aprobadaTo)
                     ->cc($aprobadaCc)
@@ -99,22 +99,19 @@ class FollowupObserver
             }
         }
 
-        if ($event->name == 'Cotización actualizada') {
+        if ($event->name == 'Cotización actualizada' && filled($assignedExecutiveEmail)) {
             Mail::to($assignedExecutiveEmail)
                 ->cc($ccRecipients)
                 ->send(new CursoActualizacionMail($data, $myuser));
         }
 
-
-
-        if ($event->name == 'Coordinar Curso') {
+        if ($event->name == 'Coordinar Curso' && filled($assignedExecutiveEmail)) {
             Mail::to($assignedExecutiveEmail)
                 ->cc($ccRecipients)
                 ->send(new CursoCoordinarMail($data, $myuser));
         }
 
-
-        if ($event->name == 'Matricular Curso') {
+        if ($isMatricularCurso) {
             $supportEmails = User::query()
                 ->whereHas('roles', function ($query) {
                     $query->where('name', 'Soporte');
@@ -129,33 +126,32 @@ class FollowupObserver
                 return;
             }
 
-            $matricularCc = $this->buildCcRecipientsFromMany($supportEmails, $myuser->email);
+            $matricularCc = $this->buildCcRecipientsFromMany($supportEmails, $actorEmail);
 
             Mail::to($supportEmails)
                 ->cc($matricularCc)
                 ->send(new CursoMatriculadoMail($data, $myuser));
         }
 
-        if ($event->name == 'Curso en Proceso') {
+        if ($event->name == 'Curso en Proceso' && filled($assignedExecutiveEmail)) {
             Mail::to($assignedExecutiveEmail)
                 ->cc($ccRecipients)
                 ->send(new CursoEnProcesoMail($data, $myuser));
         }
 
-        if ($event->name == 'Curso Finalizado') {
+        if ($event->name == 'Curso Finalizado' && filled($assignedExecutiveEmail)) {
             Mail::to($assignedExecutiveEmail)
                 ->cc($ccRecipients)
                 ->send(new CursoFinalizadoMail($data, $myuser));
         }
 
-        if ($event->name == 'Generar DJ') {
+        if ($event->name == 'Generar DJ' && filled($assignedExecutiveEmail)) {
             Mail::to($assignedExecutiveEmail)
                 ->cc($ccRecipients)
                 ->send(new DjOtecMail($data, $myuser));
         }
 
-
-        if ($event->name == 'Por Facturar') {
+        if ($event->name == 'Por Facturar' && filled($assignedExecutiveEmail)) {
             Mail::to($assignedExecutiveEmail)
                 ->cc($ccRecipients)
                 ->send(new PorFacturarMail($data, $myuser));
@@ -203,10 +199,10 @@ class FollowupObserver
     /**
      * Agrega en copia al usuario que actualiza, evitando duplicados.
      */
-    private function buildCcRecipients(string $primaryEmail, string $actorEmail): array
+    private function buildCcRecipients(?string $primaryEmail, ?string $actorEmail): array
     {
         return collect([$actorEmail])
-            ->filter(fn(string $email) => !empty($primaryEmail) ? $email !== $primaryEmail : true)
+            ->filter(fn (?string $email) => filled($email) && (! filled($primaryEmail) || $email !== $primaryEmail))
             ->unique()
             ->values()
             ->all();
@@ -215,10 +211,10 @@ class FollowupObserver
     /**
      * Agrega en copia al usuario que actualiza si no está entre destinatarios.
      */
-    private function buildCcRecipientsFromMany(array $primaryEmails, string $actorEmail): array
+    private function buildCcRecipientsFromMany(array $primaryEmails, ?string $actorEmail): array
     {
         return collect([$actorEmail])
-            ->filter(fn(string $email) => !in_array($email, $primaryEmails, true))
+            ->filter(fn (?string $email) => filled($email) && ! in_array($email, $primaryEmails, true))
             ->unique()
             ->values()
             ->all();
