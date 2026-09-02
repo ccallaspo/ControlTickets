@@ -5,43 +5,36 @@ namespace App\Filament\Widgets;
 use App\Filament\Resources\FollowupResource;
 use App\Filament\Widgets\Concerns\HasFollowupTicketTable;
 use App\Models\Followup;
-use Carbon\Carbon;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 
-class CoursesToEnd extends BaseWidget
+class CoursesStalled extends BaseWidget
 {
     use HasFollowupTicketTable;
 
-    protected static ?int $sort = 4;
+    protected static ?int $sort = 6;
 
-    protected static ?string $heading = 'Cursos por Finalizar';
+    protected static ?string $heading = 'Tickets estancados';
 
     protected int | string | array $columnSpan = 'full';
 
     public function table(Table $table): Table
     {
-        $startDate = Carbon::now()->toDateString();
-        $endDate = Carbon::now()->addDays(5)->toDateString();
-
         return $table
             ->query(
                 FollowupResource::getEloquentQuery()
                     ->with(['ejecutivo', 'event', 'cotizacion.customer', 'customer'])
-                    ->endingBetween($startDate, $endDate)
-                    ->orderByRaw(
-                        'LEAST(
-                            COALESCE(DATE(f_end), \'9999-12-31\'),
-                            COALESCE(CASE WHEN has_execution_data = 1 THEN DATE(exec_f_end) END, \'9999-12-31\')
-                        ) ASC'
-                    )
+                    ->stalled(7)
+                    ->orderBy('updated_at')
             )
+            ->description('Sin actualización hace 7 días o más, desde Cotización Aprobada hasta Por Facturar.')
             ->defaultPaginationPageOption(5)
             ->striped()
             ->columns($this->followupUpcomingCoursesColumns(
-                $startDate,
-                $endDate,
-                fn (Followup $record) => $record->coursesEndingBetween($startDate, $endDate)
+                '',
+                '',
+                fn (Followup $record) => $record->displayCourses(),
+                showLastUpdate: true
             ))
             ->filters($this->followupTicketFilters())
             ->actions($this->followupTicketActions());

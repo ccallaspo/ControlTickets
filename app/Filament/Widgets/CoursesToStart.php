@@ -2,50 +2,48 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Resources\FollowupResource;
+use App\Filament\Widgets\Concerns\HasFollowupTicketTable;
 use App\Models\Followup;
 use Carbon\Carbon;
-use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use Illuminate\Database\Eloquent\Model;
 
 class CoursesToStart extends BaseWidget
 {
-    protected static ?int $sort = 4;
-    protected static ?string $heading = 'Cursos por Iniciar'; 
-    protected int | string | array $columnSpan = 'full';
-    
+    use HasFollowupTicketTable;
 
+    protected static ?int $sort = 3;
+
+    protected static ?string $heading = 'Cursos por Iniciar';
+
+    protected int | string | array $columnSpan = 'full';
 
     public function table(Table $table): Table
     {
-        $startDate = Carbon::now()->toDateString(); // Fecha actual (YYYY-MM-DD)
-        $endDate = Carbon::now()->addDays(5)->toDateString(); // Fecha 5 días después (YYYY-MM-DD)
+        $startDate = Carbon::now()->toDateString();
+        $endDate = Carbon::now()->addDays(5)->toDateString();
 
         return $table
             ->query(
-                Followup::query()
-                    ->whereRaw('DATE(f_star) BETWEEN ? AND ?', [$startDate, $endDate])
-                   
+                FollowupResource::getEloquentQuery()
+                    ->with(['ejecutivo', 'event', 'cotizacion.customer', 'customer'])
+                    ->startingBetween($startDate, $endDate)
+                    ->orderByRaw(
+                        'LEAST(
+                            COALESCE(DATE(f_star), \'9999-12-31\'),
+                            COALESCE(CASE WHEN has_execution_data = 1 THEN DATE(exec_f_star) END, \'9999-12-31\')
+                        ) ASC'
+                    )
             )
-            ->columns([
-                Tables\Columns\TextColumn::make('f_star')
-                ->label('F. Inicio')
-                ->date('d/m/Y')
-                ->sortable(),
-                Tables\Columns\TextColumn::make('referent')
-                    ->label('Cotización')
-                    ->sortable()
-                    ->searchable(),
-               
-                Tables\Columns\TextColumn::make('name_course')
-                    ->label('Nombre del Curso')
-                    ->sortable(),
-            ])
-            ->defaultSort('f_star', 'asc')
-            ->recordUrl(
-                fn (Followup $record): string => url('admin/followups/' . $record->id . '/edit'), // Usando la ruta que funciona
-                )
-            ->defaultPaginationPageOption(5);
+            ->defaultPaginationPageOption(5)
+            ->striped()
+            ->columns($this->followupUpcomingCoursesColumns(
+                $startDate,
+                $endDate,
+                fn (Followup $record) => $record->coursesStartingBetween($startDate, $endDate)
+            ))
+            ->filters($this->followupTicketFilters())
+            ->actions($this->followupTicketActions());
     }
 }

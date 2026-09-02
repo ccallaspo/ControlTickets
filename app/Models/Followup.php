@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -216,6 +218,227 @@ class Followup extends Model
         ];
     }
 
+    public function allFinanciamientos(): array
+    {
+        $items = $this->financiamientos;
+
+        if (is_array($items) && $items !== []) {
+            return array_values(array_filter($items, 'is_array'));
+        }
+
+        return [$this->primaryFinanciamiento()];
+    }
+
+    public function coursesStartingBetween(string $startDate, string $endDate): array
+    {
+        return $this->coursesWithDateBetween($startDate, $endDate, 'f_star', 'exec_f_star');
+    }
+
+    public function coursesEndingBetween(string $startDate, string $endDate): array
+    {
+        return $this->coursesWithDateBetween($startDate, $endDate, 'f_end', 'exec_f_end');
+    }
+
+    public function coursesWithDateBetween(string $startDate, string $endDate, string $dateField, string $execDateField): array
+    {
+        $inRange = function (mixed $date) use ($startDate, $endDate): bool {
+            if (blank($date)) {
+                return false;
+            }
+
+            try {
+                $day = Carbon::parse($date)->toDateString();
+            } catch (\Throwable) {
+                return false;
+            }
+
+            return $day >= $startDate && $day <= $endDate;
+        };
+
+        $courses = [];
+
+        foreach ($this->allFinanciamientos() as $item) {
+            if (! $inRange($item[$dateField] ?? null)) {
+                continue;
+            }
+
+            $courses[] = [
+                'source' => 'Financiamiento',
+                'name_course' => $item['name_course'] ?? null,
+                'modalily' => $item['modalily'] ?? null,
+                'f_star' => $item['f_star'] ?? null,
+                'f_end' => $item['f_end'] ?? null,
+            ];
+        }
+
+        if ($this->has_execution_data && $inRange($this->{$execDateField})) {
+            $courses[] = [
+                'source' => 'Ejecución',
+                'name_course' => $this->exec_name_course,
+                'modalily' => $this->exec_modalily,
+                'f_star' => $this->exec_f_star,
+                'f_end' => $this->exec_f_end,
+            ];
+        }
+
+        return $courses;
+    }
+
+    public function coursesEndedBefore(string $beforeDate): array
+    {
+        $isBefore = function (mixed $date) use ($beforeDate): bool {
+            if (blank($date)) {
+                return false;
+            }
+
+            try {
+                return Carbon::parse($date)->toDateString() < $beforeDate;
+            } catch (\Throwable) {
+                return false;
+            }
+        };
+
+        $courses = [];
+
+        foreach ($this->allFinanciamientos() as $item) {
+            if (! $isBefore($item['f_end'] ?? null)) {
+                continue;
+            }
+
+            $courses[] = [
+                'source' => 'Financiamiento',
+                'name_course' => $item['name_course'] ?? null,
+                'modalily' => $item['modalily'] ?? null,
+                'f_star' => $item['f_star'] ?? null,
+                'f_end' => $item['f_end'] ?? null,
+            ];
+        }
+
+        if ($this->has_execution_data && $isBefore($this->exec_f_end)) {
+            $courses[] = [
+                'source' => 'Ejecución',
+                'name_course' => $this->exec_name_course,
+                'modalily' => $this->exec_modalily,
+                'f_star' => $this->exec_f_star,
+                'f_end' => $this->exec_f_end,
+            ];
+        }
+
+        return $courses;
+    }
+
+    public function displayCourses(): array
+    {
+        $courses = [];
+
+        foreach ($this->allFinanciamientos() as $item) {
+            $courses[] = [
+                'source' => 'Financiamiento',
+                'name_course' => $item['name_course'] ?? null,
+                'modalily' => $item['modalily'] ?? null,
+                'f_star' => $item['f_star'] ?? null,
+                'f_end' => $item['f_end'] ?? null,
+            ];
+        }
+
+        if ($this->has_execution_data) {
+            $courses[] = [
+                'source' => 'Ejecución',
+                'name_course' => $this->exec_name_course,
+                'modalily' => $this->exec_modalily,
+                'f_star' => $this->exec_f_star,
+                'f_end' => $this->exec_f_end,
+            ];
+        }
+
+        return $courses;
+    }
+
+    public function eventStatusBadgeHtml(): string
+    {
+        $label = $this->event?->name ?: '—';
+        $color = $this->event?->description;
+
+        if (! is_string($color) || ! preg_match('/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $color)) {
+            $color = '#6b7280';
+        }
+
+        return '<span style="display:inline-flex;align-items:center;max-width:100%;background:'.$color.';color:#fff;font-size:11px;font-weight:600;line-height:1.2;padding:2px 8px;border-radius:9999px;white-space:nowrap;">'
+            .e($label)
+            .'</span>';
+    }
+
+    public function scopeStartingBetween(Builder $query, string $startDate, string $endDate): Builder
+    {
+        return $query->withCourseDateBetween($startDate, $endDate, 'f_star', 'exec_f_star');
+    }
+
+    public function scopeEndingBetween(Builder $query, string $startDate, string $endDate): Builder
+    {
+        return $query->withCourseDateBetween($startDate, $endDate, 'f_end', 'exec_f_end');
+    }
+
+    public function scopeWithCourseDateBetween(
+        Builder $query,
+        string $startDate,
+        string $endDate,
+        string $column,
+        string $execColumn
+    ): Builder {
+        return $query->where(function (Builder $q) use ($startDate, $endDate, $column, $execColumn) {
+            $q->whereRaw("DATE({$column}) BETWEEN ? AND ?", [$startDate, $endDate])
+                ->orWhere(function (Builder $q) use ($startDate, $endDate, $execColumn) {
+                    $q->where('has_execution_data', 1)
+                        ->whereNotNull($execColumn)
+                        ->whereRaw("DATE({$execColumn}) BETWEEN ? AND ?", [$startDate, $endDate]);
+                });
+
+            $cursor = Carbon::parse($startDate)->startOfDay();
+            $end = Carbon::parse($endDate)->startOfDay();
+
+            $q->orWhere(function (Builder $q) use ($cursor, $end, $column) {
+                while ($cursor->lte($end)) {
+                    $day = $cursor->toDateString();
+                    $q->orWhere('financiamientos', 'like', '%"'.$column.'":"'.$day.'%')
+                        ->orWhere('financiamientos', 'like', '%"'.$column.'": "'.$day.'%');
+                    $cursor->addDay();
+                }
+            });
+        });
+    }
+
+    public function scopeDjOverdue(Builder $query, string $beforeDate): Builder
+    {
+        return $query
+            ->whereHas('event', function (Builder $q) {
+                $q->whereIn('name', ['Curso Finalizado', 'Generar DJ']);
+            })
+            ->where(function (Builder $q) use ($beforeDate) {
+                $q->whereRaw('DATE(f_end) < ?', [$beforeDate])
+                    ->orWhere(function (Builder $q) use ($beforeDate) {
+                        $q->where('has_execution_data', 1)
+                            ->whereNotNull('exec_f_end')
+                            ->whereRaw('DATE(exec_f_end) < ?', [$beforeDate]);
+                    });
+            });
+    }
+
+    public function scopeStalled(Builder $query, int $days = 7): Builder
+    {
+        return $query
+            ->whereHas('event', function (Builder $q) {
+                $q->whereIn('name', [
+                    'Cotización Aprobada',
+                    'Coordinar Curso',
+                    'Matricular Curso',
+                    'Curso en Proceso',
+                    'Curso Finalizado',
+                    'Generar DJ',
+                    'Por Facturar',
+                ]);
+            })
+            ->where('updated_at', '<=', now()->subDays($days));
+    }
 
     public function scopeRestrictedForSupportUser($query)
     {

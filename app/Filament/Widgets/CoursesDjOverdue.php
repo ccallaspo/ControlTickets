@@ -9,26 +9,25 @@ use Carbon\Carbon;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 
-class CoursesToEnd extends BaseWidget
+class CoursesDjOverdue extends BaseWidget
 {
     use HasFollowupTicketTable;
 
-    protected static ?int $sort = 4;
+    protected static ?int $sort = 5;
 
-    protected static ?string $heading = 'Cursos por Finalizar';
+    protected static ?string $heading = 'Generar DJ vencidos';
 
     protected int | string | array $columnSpan = 'full';
 
     public function table(Table $table): Table
     {
-        $startDate = Carbon::now()->toDateString();
-        $endDate = Carbon::now()->addDays(5)->toDateString();
+        $today = Carbon::now()->toDateString();
 
         return $table
             ->query(
                 FollowupResource::getEloquentQuery()
                     ->with(['ejecutivo', 'event', 'cotizacion.customer', 'customer'])
-                    ->endingBetween($startDate, $endDate)
+                    ->djOverdue($today)
                     ->orderByRaw(
                         'LEAST(
                             COALESCE(DATE(f_end), \'9999-12-31\'),
@@ -36,12 +35,13 @@ class CoursesToEnd extends BaseWidget
                         ) ASC'
                     )
             )
+            ->description('Cursos con fecha de término vencida, en estado Curso Finalizado o Generar DJ.')
             ->defaultPaginationPageOption(5)
             ->striped()
             ->columns($this->followupUpcomingCoursesColumns(
-                $startDate,
-                $endDate,
-                fn (Followup $record) => $record->coursesEndingBetween($startDate, $endDate)
+                $today,
+                $today,
+                fn (Followup $record) => $record->coursesEndedBefore($today)
             ))
             ->filters($this->followupTicketFilters())
             ->actions($this->followupTicketActions());

@@ -32,7 +32,7 @@ class CotizacionAprobadaMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Notificación - Cotización Aprobada',
+            subject: 'Cotización Aprobada',
         );
     }
 

@@ -25,6 +25,7 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -651,50 +652,12 @@ class FollowupResource extends Resource
 
                 Tables\Columns\TextColumn::make('event.name')
                     ->label('Estado')
-                    ->size('sm')
-                    //    ->badge()
                     ->searchable()
                     ->sortable()
-                    ->width('100px')
-                    ->icon(
-                        fn(Followup $record): ?string =>
-                        !empty($record->event->icono) ? $record->event->icono : null
-                    )
-                    ->formatStateUsing(fn(string $state): string => match ($state) {
-                        'Cotización Enviada' => 'Cotización Enviada',
-                        'Coordinar Curso' => 'Coordinar Curso',
-                        'Matricular Curso' => 'Matricular Curso',
-                        'Curso en Proceso' => 'Curso en Proceso',
-                        'Curso Finalizado' => 'Curso Finalizado',
-                        'Generar DJ' => 'Generar DJ',
-                        'Por Facturar' => 'Por Facturar',
-                        default => $state,
-                    })
-                    ->color('white')
-                    ->extraAttributes(function (Followup $record) {
-                        $color = $record->event?->description;
-                        if (!$color) {
-                            return [];
-                        }
-                        return [
-                            'style' => "
-                                background-color: {$color} !important;
-                                border-color: {$color} !important;
-                                color: #ffffff !important;
-                                padding: 0.375rem 0.75rem !important;
-                                border-radius: 0.375rem !important;
-                                font-weight: 500 !important;
-                                display: inline-flex !important;
-                                align-items: center !important;
-                                justify-content: center !important;
-                                gap: 0.375rem !important;
-                                white-space: nowrap !important;
-                                text-align: center !important;
-                                min-width: fit-content !important;
-                            ",
-                            'class' => 'custom-badge-colored'
-                        ];
-                    }),
+                    ->html()
+                    ->getStateUsing(fn (Followup $record): HtmlString => new HtmlString(
+                        $record->eventStatusBadgeHtml()
+                    )),
 
                 Tables\Columns\TextColumn::make('name_course')
                     ->label('Curso')
