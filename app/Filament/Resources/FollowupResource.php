@@ -27,6 +27,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 
 
@@ -268,7 +269,7 @@ class FollowupResource extends Resource
                                 Forms\Components\Repeater::make('exec_id_sence')
                                     ->label('Código ID (Ejecución)')
                                     ->simple(
-                                        Forms\Components\TextInput::make('id')
+                                        Forms\Components\TextInput::make('code')
                                             ->label('Código ID')
                                             ->maxLength(255)
                                     )
@@ -276,12 +277,8 @@ class FollowupResource extends Resource
                                     ->defaultItems(0)
                                     ->reorderable()
                                     ->columnSpan(1)
-                                    ->afterStateHydrated(function (Forms\Components\Repeater $component, $state) {
-                                        if (is_array($state)) {
-                                            return;
-                                        }
-
-                                        $component->state(Followup::normalizeCodeList($state));
+                                    ->afterStateHydrated(function (Repeater $component, $state) {
+                                        static::hydrateSimpleCodeRepeater($component, $state);
                                     }),
 
                                 Forms\Components\Select::make('exec_modalily')
@@ -466,7 +463,7 @@ class FollowupResource extends Resource
             Forms\Components\Repeater::make('id_sence')
                 ->label('Código ID')
                 ->simple(
-                    Forms\Components\TextInput::make('id')
+                    Forms\Components\TextInput::make('code')
                         ->label('Código ID')
                         ->maxLength(255)
                 )
@@ -474,12 +471,8 @@ class FollowupResource extends Resource
                 ->defaultItems(0)
                 ->reorderable()
                 ->columnSpan(1)
-                ->afterStateHydrated(function (Forms\Components\Repeater $component, $state) {
-                    if (is_array($state)) {
-                        return;
-                    }
-
-                    $component->state(Followup::normalizeCodeList($state));
+                ->afterStateHydrated(function (Repeater $component, $state) {
+                    static::hydrateSimpleCodeRepeater($component, $state);
                 }),
 
             Forms\Components\Select::make('modalily')
@@ -504,6 +497,17 @@ class FollowupResource extends Resource
                 ])
                 ->columns(3),
         ];
+    }
+
+    public static function hydrateSimpleCodeRepeater(Repeater $component, mixed $state): void
+    {
+        $items = [];
+
+        foreach (Followup::normalizeCodeList($state) as $code) {
+            $items[(string) Str::uuid()] = ['code' => $code];
+        }
+
+        $component->state($items);
     }
 
     public static function fillAdditionalFinanciamientos(array $data): array
