@@ -651,6 +651,14 @@
             line-height: 1.5;
         }
 
+        /* Solo imágenes del contenido del editor: no salirse del margen */
+        .description-curso img {
+            max-width: 100% !important;
+            width: auto !important;
+            height: auto !important;
+            display: block;
+        }
+
         .description-curso h1:not(.pdf-section-title) {
             color: #000000 !important;
             font-size: 26px !important;
@@ -1190,6 +1198,8 @@
 
             // Evita duplicar el título fijo "Alcances del Curso"
             $content = preg_replace('/<h1[^>]*>\s*Alcances\s+del\s+Curso\s*<\/h1>\s*/iu', '', $content, 1);
+
+            $content = \App\Services\CotizacionPdfV20TemplateResolver::constrainContentImages($content);
 
             $modalityTemplate = $modalityTemplate ?? null;
 

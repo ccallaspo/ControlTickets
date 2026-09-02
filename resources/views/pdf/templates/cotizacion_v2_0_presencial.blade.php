@@ -121,4 +121,18 @@
         text-align: justify !important;
         line-height: 1.45;
     }
+
+    /* Imágenes del editor: caben en el mismo margen que los párrafos */
+    .description-curso-presencial img {
+        max-width: 100% !important;
+        width: auto !important;
+        height: auto !important;
+        display: block;
+        box-sizing: border-box;
+    }
+
+    .description-curso-presencial > img {
+        margin: 8px 68px 12px 80px;
+        max-width: 660px !important;
+    }
 </style>

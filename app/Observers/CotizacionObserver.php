@@ -54,6 +54,15 @@ class CotizacionObserver
                 'cotizacion_id' => $cotizacion->id,
                 'cod_sence_course' => $course->cod_sence,
                 'name_course' => $course->name,
+                'financiamientos' => [[
+                    'cod_sence_course' => $course->cod_sence,
+                    'name_course' => $course->name,
+                    'id_sence' => [],
+                    'modalily' => $course->modality,
+                    'f_star' => null,
+                    'f_end' => null,
+                    'n_hours' => null,
+                ]],
 
             ]);
         

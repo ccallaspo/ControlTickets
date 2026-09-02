@@ -192,7 +192,7 @@
                         @foreach($coursesStartingToday as $course)
                         <tr>
                             <td>{{ $course->referent }}</td>
-                            <td>{{ $course->id_sence }}</td>
+                            <td>{{ $course->formatted_id_sence }}</td>
                             <td>{{ $course->name_course }}</td>
                             <td class="status-proceso">Curso en Proceso</td>
                         </tr>
@@ -220,7 +220,7 @@
                         @foreach($coursesEndingToday as $course)
                         <tr>
                             <td>{{ $course->referent }}</td>
-                            <td>{{ $course->id_sence }}</td>
+                            <td>{{ $course->formatted_id_sence }}</td>
                             <td>{{ $course->name_course }}</td>
                             <td><a href="https://controlproyecta.cl/admin/followups/{{ $course->id }}" class="status-generar">Generar DJ</a></td>
                         </tr>

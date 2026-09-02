@@ -64,8 +64,9 @@ class FollowupObserver
         $assignedExecutiveEmail = $assignedExecutive?->email;
 
         $isMatricularCurso = $event->name == 'Matricular Curso';
+        $isCotizacionAprobada = $event->name == 'Cotización Aprobada';
 
-        if (!$isMatricularCurso && empty($assignedExecutiveEmail)) {
+        if (!$isMatricularCurso && !$isCotizacionAprobada && empty($assignedExecutiveEmail)) {
             return;
         }
 
@@ -85,6 +86,18 @@ class FollowupObserver
                 ->sendToDatabase($notificationRecipients);
         }
 
+
+        if ($event->name == 'Cotización Aprobada') {
+            $aprobadaTo = (string) config('mail.cotizacion_aprobada_to');
+
+            if (filled($aprobadaTo)) {
+                $aprobadaCc = $this->buildCcRecipients($aprobadaTo, $myuser->email);
+
+                Mail::to($aprobadaTo)
+                    ->cc($aprobadaCc)
+                    ->send(new CotizacionAprobadaMail($data, $myuser));
+            }
+        }
 
         if ($event->name == 'Cotización actualizada') {
             Mail::to($assignedExecutiveEmail)

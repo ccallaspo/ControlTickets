@@ -168,51 +168,37 @@ class FollowupResource extends Resource
                 // ...
                 Section::make('Financiamiento')
                     ->description('Información del curso y participantes.')
-                    ->schema([
-                        Forms\Components\TextInput::make('cod_sence_course')
-                            ->label('Código Sence')
-                            ->maxLength(255),
-
-                        Forms\Components\TextInput::make('name_course')
-                            ->label('Nombre de curso')
-                            ->maxLength(255),
-
-                        Forms\Components\TextInput::make('id_sence')
-                            ->label('Código ID')
-                            ->maxLength(255),
-
-                        Forms\Components\Select::make('modalily')
-                            ->label('Modalidad')
-                            ->options(function () {
-                                return \App\Models\Modalidades::orderBy('name', 'asc')->pluck('name', 'name');
-                            }),
-
-                        // --- Grupo para Fechas y Horas (3 columnas forzadas) ---
-                        Forms\Components\Group::make()
-                            // Esto asegura que el grupo ocupe todo el ancho disponible si la sección padre tiene más de una columna
-                            ->columnSpanFull()
-                            ->schema([
-                                Forms\Components\DatePicker::make('f_star')
-                                    ->label('Fecha Inicio'),
-
-                                Forms\Components\DatePicker::make('f_end')
-                                    ->label('Fecha Termino'),
-
-                                Forms\Components\TextInput::make('n_hours')
-                                    ->label('N° Horas')
-                                    ->numeric()
-                                    ->maxLength(255),
-                            ])
-                            ->columns(3),
-
-                    ])
-                    // La sección padre sigue en 2 columnas (por ejemplo, Codigo Sence y Nombre de curso)
+                    ->schema(static::financiamientoCourseSchema())
                     ->columns(2),
+
+                Forms\Components\Repeater::make('financiamientos_adicionales')
+                    ->hiddenLabel()
+                    ->addActionLabel('Añadir a financiamiento')
+                    ->defaultItems(1)
+                    ->reorderable()
+                    ->deletable()
+                    ->columns(2)
+                    ->columnSpanFull()
+                    ->dehydrated(false)
+                    ->afterStateHydrated(function (Forms\Components\Repeater $component, $state, $record) {
+                        if (filled($state) || ! $record instanceof Followup) {
+                            return;
+                        }
+
+                        $items = $record->financiamientos ?? [];
+
+                        if (! is_array($items) || count($items) < 2) {
+                            return;
+                        }
+
+                        $component->state(array_values(array_slice(array_values($items), 1)));
+                    })
+                    ->schema(static::financiamientoCourseSchema()),
 
                 Forms\Components\Group::make()
     ->schema([
         Forms\Components\Section::make('Datos de Ejecución (Operaciones)')
-            ->description('Active esta opción para generar los datos operativos.')
+            ->description('Un solo curso en ejecución, financiado por uno o más cursos de la sección Financiamiento.')
 
             // --- AQUÍ AGREGAMOS EL BOTÓN DE LIMPIAR ---
             ->headerActions([
@@ -253,14 +239,13 @@ class FollowupResource extends Resource
                     ->live()
                     ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
                         if ($state) {
-                            // Copia los datos si se activa
                             $set('exec_cod_sence_course', $get('cod_sence_course'));
                             $set('exec_name_course', $get('name_course'));
                             $set('exec_id_sence', $get('id_sence'));
                             $set('exec_modalily', $get('modalily'));
                             $set('exec_f_star', $get('f_star'));
                             $set('exec_f_end', $get('f_end'));
-                            $set('exec_n_hours', $get('n_hours')); 
+                            $set('exec_n_hours', $get('n_hours'));
                         }
                     }),
 
@@ -280,9 +265,24 @@ class FollowupResource extends Resource
                                     ->required(fn(Forms\Get $get) => $get('has_execution_data'))
                                     ->maxLength(255),
 
-                                Forms\Components\TextInput::make('exec_id_sence')
+                                Forms\Components\Repeater::make('exec_id_sence')
                                     ->label('Código ID (Ejecución)')
-                                    ->maxLength(255),
+                                    ->simple(
+                                        Forms\Components\TextInput::make('id')
+                                            ->label('Código ID')
+                                            ->maxLength(255)
+                                    )
+                                    ->addActionLabel('Agregar ID')
+                                    ->defaultItems(0)
+                                    ->reorderable()
+                                    ->columnSpan(1)
+                                    ->afterStateHydrated(function (Forms\Components\Repeater $component, $state) {
+                                        if (is_array($state)) {
+                                            return;
+                                        }
+
+                                        $component->state(Followup::normalizeCodeList($state));
+                                    }),
 
                                 Forms\Components\Select::make('exec_modalily')
                                     ->label('Modalidad (Ejecución)')
@@ -435,7 +435,12 @@ class FollowupResource extends Resource
                             ])
                             ->columns(3)
                             ->label('Horario.')
-                            ->columnSpan(2),
+                            ->columnSpan(2)
+                            ->afterStateHydrated(function (Repeater $component, $state) {
+                                if (! is_array($state)) {
+                                    $component->state([]);
+                                }
+                            }),
 
                     ])
                     ->columns(1),
@@ -446,6 +451,131 @@ class FollowupResource extends Resource
             ])->columns(2);
     }
 
+    public static function financiamientoCourseSchema(): array
+    {
+        return [
+            Forms\Components\TextInput::make('cod_sence_course')
+                ->label('Código Sence')
+                ->maxLength(255),
+
+            Forms\Components\TextInput::make('name_course')
+                ->label('Nombre de curso')
+                ->maxLength(255)
+                ->live(onBlur: true),
+
+            Forms\Components\Repeater::make('id_sence')
+                ->label('Código ID')
+                ->simple(
+                    Forms\Components\TextInput::make('id')
+                        ->label('Código ID')
+                        ->maxLength(255)
+                )
+                ->addActionLabel('Agregar ID')
+                ->defaultItems(0)
+                ->reorderable()
+                ->columnSpan(1)
+                ->afterStateHydrated(function (Forms\Components\Repeater $component, $state) {
+                    if (is_array($state)) {
+                        return;
+                    }
+
+                    $component->state(Followup::normalizeCodeList($state));
+                }),
+
+            Forms\Components\Select::make('modalily')
+                ->label('Modalidad')
+                ->options(function () {
+                    return \App\Models\Modalidades::orderBy('name', 'asc')->pluck('name', 'name');
+                }),
+
+            Forms\Components\Group::make()
+                ->columnSpanFull()
+                ->schema([
+                    Forms\Components\DatePicker::make('f_star')
+                        ->label('Fecha Inicio'),
+
+                    Forms\Components\DatePicker::make('f_end')
+                        ->label('Fecha Termino'),
+
+                    Forms\Components\TextInput::make('n_hours')
+                        ->label('N° Horas')
+                        ->numeric()
+                        ->maxLength(255),
+                ])
+                ->columns(3),
+        ];
+    }
+
+    public static function fillAdditionalFinanciamientos(array $data): array
+    {
+        $data['id_sence'] = Followup::normalizeCodeList($data['id_sence'] ?? null);
+        $data['exec_id_sence'] = Followup::normalizeCodeList($data['exec_id_sence'] ?? null);
+
+        if (! is_array($data['week'] ?? null)) {
+            $data['week'] = [];
+        }
+
+        $items = $data['financiamientos'] ?? [];
+
+        if (! is_array($items) || count($items) < 2) {
+            return $data;
+        }
+
+        $data['financiamientos_adicionales'] = collect(array_slice(array_values($items), 1))
+            ->map(function ($item) {
+                if (! is_array($item)) {
+                    return $item;
+                }
+
+                $item['id_sence'] = Followup::normalizeCodeList($item['id_sence'] ?? null);
+
+                return $item;
+            })
+            ->all();
+
+        return $data;
+    }
+
+    public static function mergeFinanciamientosFromForm(array $data, array $raw = []): array
+    {
+        $source = $raw !== [] ? $raw : $data;
+
+        $primary = [
+            'cod_sence_course' => $source['cod_sence_course'] ?? null,
+            'name_course' => $source['name_course'] ?? null,
+            'id_sence' => Followup::normalizeCodeList($source['id_sence'] ?? []),
+            'modalily' => $source['modalily'] ?? null,
+            'f_star' => $source['f_star'] ?? null,
+            'f_end' => $source['f_end'] ?? null,
+            'n_hours' => $source['n_hours'] ?? null,
+        ];
+
+        $adicionales = collect($source['financiamientos_adicionales'] ?? [])
+            ->filter(fn ($item) => is_array($item) && static::financiamientoHasContent($item))
+            ->map(function (array $item) {
+                $item['id_sence'] = Followup::normalizeCodeList($item['id_sence'] ?? []);
+
+                return $item;
+            })
+            ->values()
+            ->all();
+
+        $data['financiamientos'] = array_merge([$primary], $adicionales);
+        unset($data['financiamientos_adicionales']);
+
+        return $data;
+    }
+
+    public static function financiamientoHasContent(array $item): bool
+    {
+        return filled($item['cod_sence_course'] ?? null)
+            || filled($item['name_course'] ?? null)
+            || filled($item['modalily'] ?? null)
+            || filled($item['f_star'] ?? null)
+            || filled($item['f_end'] ?? null)
+            || filled($item['n_hours'] ?? null)
+            || Followup::normalizeCodeList($item['id_sence'] ?? null) !== [];
+    }
 
     public static function table(Table $table): Table
     {
@@ -463,9 +593,11 @@ class FollowupResource extends Resource
                 Tables\Columns\TextColumn::make('id_sence')
                     ->label('Código ID')
                     ->size('sm')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false)
-                    ->searchable(),
+                    ->getStateUsing(fn (Followup $record): string => Followup::formatCodeList($record->id_sence) ?: '-')
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->where('id_sence', 'like', "%{$search}%");
+                    }),
 
                 // Tables\Columns\TextColumn::make('cotizacion_id')
                 //     ->label('Cotización')

@@ -30,4 +30,14 @@ class EditFollowup extends EditRecord
     {
         return 'Editar Ticket';
     }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        return FollowupResource::fillAdditionalFinanciamientos($data);
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        return FollowupResource::mergeFinanciamientosFromForm($data, $this->form->getRawState());
+    }
 }

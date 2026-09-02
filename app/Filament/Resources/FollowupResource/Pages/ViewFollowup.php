@@ -24,4 +24,9 @@ class ViewFollowup extends ViewRecord
     {
         return 'Ver Ticket ';
     }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        return FollowupResource::fillAdditionalFinanciamientos($data);
+    }
 }

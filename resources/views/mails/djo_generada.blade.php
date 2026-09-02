@@ -229,7 +229,7 @@
                 <ul>
                     <li><strong>Cotización:</strong> {{ $data->referent ?? 'N/A' }}</li>
                     <li><strong>Curso:</strong> {{ $data->name_course ?? 'N/A' }}</li>
-                    <li><strong>Código ID:</strong> {{ $data->id_sence ?? 'N/A' }}</li>
+                    <li><strong>Código ID:</strong> {{ $data->formatted_id_sence ?: 'N/A' }}</li>
                 </ul>
             </div>
 

@@ -180,7 +180,7 @@
                                 <td>{{ $course->referent }}</td>
                                 
                                 <td>
-                                    {{ $course->has_execution_data ? $course->exec_id_sence : $course->id_sence }}
+                                    {{ $course->has_execution_data ? ($course->formatted_exec_id_sence ?: 'N/A') : ($course->formatted_id_sence ?: 'N/A') }}
                                 </td>
 
                                 <td>
@@ -221,7 +221,7 @@
                                 <td>{{ $course->referent }}</td>
                                 
                                 <td>
-                                    {{ $course->has_execution_data ? $course->exec_id_sence : $course->id_sence }}
+                                    {{ $course->has_execution_data ? ($course->formatted_exec_id_sence ?: 'N/A') : ($course->formatted_id_sence ?: 'N/A') }}
                                 </td>
 
                                 <td>

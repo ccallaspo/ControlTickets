@@ -13,12 +13,16 @@ class CursoEnProcesoMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $data;
+    public $myuser;
+
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($data, $myuser)
     {
-        //
+        $this->data = $data;
+        $this->myuser = $myuser;
     }
 
     /**
@@ -27,7 +31,7 @@ class CursoEnProcesoMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Curso En Proceso Mail',
+            subject: 'Curso en Proceso',
         );
     }
 
@@ -37,7 +41,11 @@ class CursoEnProcesoMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'mails.curso_proceso',
+            with: [
+                'data' => $this->data,
+                'myuser' => $this->myuser,
+            ],
         );
     }
 
