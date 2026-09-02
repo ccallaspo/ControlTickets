@@ -124,6 +124,12 @@ trait HasFollowupTicketTable
                 ->label('Estados')
                 ->indicator('Estado')
                 ->relationship('event', 'name'),
+            Tables\Filters\SelectFilter::make('ejecutivo_id')
+                ->label('Coordinadora')
+                ->indicator('Coordinadora')
+                ->relationship('ejecutivo', 'name')
+                ->searchable()
+                ->preload(),
         ];
     }
 
