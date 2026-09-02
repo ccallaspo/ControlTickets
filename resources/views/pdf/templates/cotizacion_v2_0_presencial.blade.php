@@ -116,7 +116,7 @@
      */
     .description-curso-presencial blockquote {
         margin: 2px 68px 12px 0;
-        padding-left: 152px;
+        padding-left: 112px;
         padding-right: 68px;
         border: none;
         box-sizing: border-box;

@@ -100,7 +100,7 @@
 
     .description-curso-asincronica blockquote {
         margin: 2px 40px 14px 0;
-        padding-left: 112px;
+        padding-left: 72px;
         padding-right: 40px;
         border: none;
         box-sizing: border-box;
