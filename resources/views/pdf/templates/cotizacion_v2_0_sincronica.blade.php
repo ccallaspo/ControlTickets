@@ -1,4 +1,5 @@
-{{-- Plantilla PDF cotización v2.0 — modalidad sincrónica --}}
+{{-- Plantilla PDF cotización v2.0 — modalidad sincrónica (A-Distancia).
+     Los estilos de presencial se cargan en el <head> del blade principal. --}}
 
 <h2 class="pdf-section-title">Metodología</h2>
 <p>La capacitación se desarrollará en modalidad sincrónica, con clases en vivo a través de la plataforma de aula virtual de OTEC PROYECTA, en los días y horarios acordados con el cliente. El participante accederá con un usuario y contraseña que se le enviará días previos al inicio del curso.</p>

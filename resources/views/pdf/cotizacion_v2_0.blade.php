@@ -18,6 +18,7 @@
             $isBannerPdf = in_array($modalityTemplate ?? null, [
                 'pdf.templates.cotizacion_v2_0_presencial',
                 'pdf.templates.cotizacion_v2_0_asincronica',
+                'pdf.templates.cotizacion_v2_0_sincronica',
             ], true);
         @endphp
         @if($isBannerPdf)
@@ -1081,7 +1082,17 @@
             border-bottom-right-radius: 11px !important;
         }
         @endif
+
     </style>
+
+    @if($isBannerPdf)
+        @if(($modalityTemplate ?? null) === 'pdf.templates.cotizacion_v2_0_asincronica')
+            @include('pdf.templates.cotizacion_v2_0_asincronica')
+        @else
+            {{-- Presencial y sincrónica comparten los mismos estilos --}}
+            @include('pdf.templates.cotizacion_v2_0_presencial')
+        @endif
+    @endif
 </head>
 
 <body>
@@ -1089,8 +1100,12 @@
         $isBannerPdf = in_array($modalityTemplate ?? null, [
             'pdf.templates.cotizacion_v2_0_presencial',
             'pdf.templates.cotizacion_v2_0_asincronica',
+            'pdf.templates.cotizacion_v2_0_sincronica',
         ], true);
-        $isPresencialPdf = ($modalityTemplate ?? null) === 'pdf.templates.cotizacion_v2_0_presencial';
+        $isPresencialPdf = in_array($modalityTemplate ?? null, [
+            'pdf.templates.cotizacion_v2_0_presencial',
+            'pdf.templates.cotizacion_v2_0_sincronica',
+        ], true);
         $isAsincronicaPdf = ($modalityTemplate ?? null) === 'pdf.templates.cotizacion_v2_0_asincronica';
         $bannerBodyClass = $isPresencialPdf
             ? 'pdf-body-content-presencial'
