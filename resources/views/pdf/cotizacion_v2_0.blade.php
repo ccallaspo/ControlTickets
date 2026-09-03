@@ -841,12 +841,12 @@
         }
 
         .investment-curso table.investment-table thead {
-            background-color: #fc4c01;
+            background-color: #98c9e9;
         }
 
         .investment-curso table.investment-table thead th {
-            background-color: #fc4c01 !important;
-            color: #ffffff !important;
+            background-color: #98c9e9 !important;
+            color: #000000 !important;
             font-weight: bold;
             font-style: normal;
             text-transform: uppercase;
@@ -934,12 +934,12 @@
         }
 
         .payments table.payments-table thead {
-            background-color: #fc4c01;
+            background-color: #98c9e9;
         }
 
         .payments table.payments-table thead th {
-            background-color: #fc4c01 !important;
-            color: #ffffff !important;
+            background-color: #98c9e9 !important;
+            color: #000000 !important;
             font-weight: bold;
             font-style: normal;
             text-transform: uppercase;
