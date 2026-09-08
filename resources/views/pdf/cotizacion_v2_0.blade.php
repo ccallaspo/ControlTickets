@@ -1149,7 +1149,7 @@
                 @endif
             </p>
 
-            <h2 class="cover-course-title">{{ $course->name }}</h2>
+            <h2 class="cover-course-title">{!! \App\Services\CotizacionPdfV20TemplateResolver::pdfSafePlainText($course->name) !!}</h2>
 
             @if($cotizacion->type === 'Con Franquicia')
                 <p class="cover-course-sence">Código SENCE N° {{ $course->cod_sence }}</p>

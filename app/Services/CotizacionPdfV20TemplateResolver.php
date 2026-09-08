@@ -53,12 +53,70 @@ class CotizacionPdfV20TemplateResolver
     }
 
     /**
+     * Texto plano seguro para DomPDF: escapa HTML y convierte subíndices
+     * Unicode (p. ej. NH₃ → NH<sub>3</sub>) que Arial/Helvetica no dibujan.
+     */
+    public static function pdfSafePlainText(?string $text): string
+    {
+        return self::normalizeUnicodeScripts(htmlspecialchars((string) $text, ENT_QUOTES, 'UTF-8'));
+    }
+
+    /**
+     * Convierte subíndices/superíndices Unicode a <sub>/<sup>.
+     * Arial, Helvetica y Times de DomPDF no tienen glifos como U+2083 (₃)
+     * y los sustituyen por "?".
+     */
+    public static function normalizeUnicodeScripts(?string $text): string
+    {
+        $text = (string) $text;
+
+        if ($text === '') {
+            return $text;
+        }
+
+        $text = preg_replace_callback('/&#(x)?([0-9a-f]+);/i', function (array $match): string {
+            $code = strtolower((string) ($match[1] ?? '')) === 'x'
+                ? hexdec($match[2])
+                : (int) $match[2];
+
+            if ($code < 1 || $code > 0x10FFFF) {
+                return $match[0];
+            }
+
+            return mb_chr($code, 'UTF-8') ?: $match[0];
+        }, $text) ?? $text;
+
+        $subMap = [
+            '₀' => '0', '₁' => '1', '₂' => '2', '₃' => '3', '₄' => '4',
+            '₅' => '5', '₆' => '6', '₇' => '7', '₈' => '8', '₉' => '9',
+            '₊' => '+', '₋' => '-', '₌' => '=', '₍' => '(', '₎' => ')',
+        ];
+
+        $supMap = [
+            '⁰' => '0', '¹' => '1', '²' => '2', '³' => '3', '⁴' => '4',
+            '⁵' => '5', '⁶' => '6', '⁷' => '7', '⁸' => '8', '⁹' => '9',
+            '⁺' => '+', '⁻' => '-', '⁼' => '=', '⁽' => '(', '⁾' => ')',
+            'ⁿ' => 'n',
+        ];
+
+        $text = preg_replace_callback('/[₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎]+/u', function (array $match) use ($subMap): string {
+            return '<sub>' . strtr($match[0], $subMap) . '</sub>';
+        }, $text) ?? $text;
+
+        $text = preg_replace_callback('/[⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ⁿ]+/u', function (array $match) use ($supMap): string {
+            return '<sup>' . strtr($match[0], $supMap) . '</sup>';
+        }, $text) ?? $text;
+
+        return $text;
+    }
+
+    /**
      * Quita width/height fijos de <img> del editor para que DomPDF respete max-width.
      * No altera el resto del HTML.
      */
     public static function constrainContentImages(?string $html): string
     {
-        $html = (string) $html;
+        $html = self::normalizeUnicodeScripts((string) $html);
 
         if ($html === '') {
             return $html;
