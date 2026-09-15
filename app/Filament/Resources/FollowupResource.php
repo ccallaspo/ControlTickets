@@ -502,6 +502,14 @@ class FollowupResource extends Resource
 
     public static function hydrateSimpleCodeRepeater(Repeater $component, mixed $state): void
     {
+        if (is_array($state) && $state !== []) {
+            $first = reset($state);
+
+            if (is_array($first) && array_key_exists('code', $first)) {
+                return;
+            }
+        }
+
         $items = [];
 
         foreach (Followup::normalizeCodeList($state) as $code) {
@@ -582,14 +590,16 @@ class FollowupResource extends Resource
             || Followup::normalizeCodeList($item['id_sence'] ?? null) !== [];
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->restrictedForSupportUser()
+            ->with(['ejecutivo', 'event', 'cotizacion.customer', 'customer']);
+    }
+
     public static function table(Table $table): Table
     {
         return $table
-            ->query(
-                Followup::query()
-                    ->restrictedForSupportUser()
-                    ->with(['ejecutivo', 'event', 'cotizacion.customer'])
-            )
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->sortable()
@@ -654,7 +664,6 @@ class FollowupResource extends Resource
                     ->label('Estado')
                     ->searchable()
                     ->sortable()
-                    ->html()
                     ->getStateUsing(fn (Followup $record): HtmlString => new HtmlString(
                         $record->eventStatusBadgeHtml()
                     )),
@@ -726,10 +735,10 @@ class FollowupResource extends Resource
                         ->color('primary')
                         ->icon('heroicon-o-document-plus')
                         ->modalHeading('Cargar Documentos')
-                        ->form(fn(\Filament\Forms\Form $form, \Illuminate\Database\Eloquent\Model $record): \Filament\Forms\Form => $form->schema(
+                        ->form(fn(\Filament\Forms\Form $form, Followup $record): \Filament\Forms\Form => $form->schema(
                             static::getDocumentosFormSchemaForModal($record)
                         ))
-                        ->action(function (array $data, \Illuminate\Database\Eloquent\Model $record): void {
+                        ->action(function (array $data, Followup $record): void {
                             // Procesar cada documento del repeater y agregarlo al followup
                             if (isset($data['documents']) && is_array($data['documents'])) {
                                 $documentsCreated = 0;
@@ -872,7 +881,7 @@ class FollowupResource extends Resource
         ];
     }
 
-    protected static function getDocumentosFormSchemaForModal($record): array
+    protected static function getDocumentosFormSchemaForModal(Followup $record): array
     {
         return [
             Forms\Components\Repeater::make('documents')

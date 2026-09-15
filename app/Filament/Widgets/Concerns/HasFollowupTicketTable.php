@@ -45,14 +45,12 @@ trait HasFollowupTicketTable
                 ->label('Estado')
                 ->searchable()
                 ->sortable()
-                ->html()
                 ->getStateUsing(fn (Followup $record): HtmlString => new HtmlString(
                     $record->eventStatusBadgeHtml()
                 )),
 
             Tables\Columns\TextColumn::make('schedule')
                 ->label('Programación')
-                ->html()
                 ->getStateUsing(fn (Followup $record): HtmlString => new HtmlString(
                     self::formatScheduleCell($record)
                 ))
@@ -169,7 +167,6 @@ trait HasFollowupTicketTable
             if ($name === 'schedule') {
                 $columns[] = Tables\Columns\TextColumn::make('upcoming_courses')
                     ->label('Cursos')
-                    ->html()
                     ->searchable(query: function (Builder $query, string $search): Builder {
                         return $query->where(function (Builder $query) use ($search) {
                             $query->where('name_course', 'like', "%{$search}%")
