@@ -108,7 +108,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'cotizacion_aprobada_to' => env('MAIL_COTIZACION_APROBADA_TO', 'daniela.bozo@otecproyecta.cl'),
+    'cotizacion_aprobada_to' => env('MAIL_COTIZACION_APROBADA_TO', 'doris.baptista@otecproyecta.cl'),
 
     /*
     |--------------------------------------------------------------------------
