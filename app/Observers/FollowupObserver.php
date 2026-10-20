@@ -3,21 +3,17 @@
 namespace App\Observers;
 
 use App\Mail\CotizacionAprobadaMail;
-use App\Mail\CursoActualizacionMail;
-use App\Mail\CursoAgendadoMail;
 use App\Mail\CursoCoordinarMail;
 use App\Mail\CursoEnProcesoMail;
 use App\Mail\CursoFinalizadoMail;
 use App\Mail\CursoMatriculadoMail;
 use App\Mail\DjOtecMail;
-use App\Mail\DjParticipanteMail;
 use App\Mail\PorFacturarMail;
 use App\Models\Event;
 use App\Models\Followup;
-use App\Models\Task;
 use App\Models\User;
+use App\Services\TicketUpdateNotifier;
 use Filament\Notifications\Notification;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 
 class FollowupObserver
@@ -45,7 +41,6 @@ class FollowupObserver
         $changes = $followup->getDirty();
         $relevantChanges = array_diff_key($changes, array_flip(['updated_at']));
 
-        // La asignación de coordinadora se manejará con notificaciones propias más adelante.
         if (!$this->hasMailTriggeringChanges($relevantChanges)) {
             return;
         }
@@ -59,19 +54,15 @@ class FollowupObserver
             return;
         }
 
-        $followup->loadMissing('ejecutivo');
+        $followup->load('ejecutivo');
         $assignedExecutive = $followup->ejecutivo;
         $assignedExecutiveEmail = $assignedExecutive?->email;
         $actorEmail = $myuser->email ?? '';
 
+        $followup->setRelation('event', $event);
+
         $isMatricularCurso = $event->name == 'Matricular Curso';
         $isCotizacionAprobada = $event->name == 'Cotización Aprobada';
-
-        if (!$isMatricularCurso && !$isCotizacionAprobada && empty($assignedExecutiveEmail)) {
-            return;
-        }
-
-        $ccRecipients = $this->buildCcRecipients($assignedExecutiveEmail, $actorEmail);
 
         $notificationRecipients = collect([$assignedExecutive, $myuser])
             ->filter()
@@ -87,72 +78,67 @@ class FollowupObserver
                 ->sendToDatabase($notificationRecipients);
         }
 
+        // Las ediciones conservando el estado usan el correo de actualización.
+        if (! $followup->isDirty('event_id')) {
+            app(TicketUpdateNotifier::class)->schedule($followup, $relevantChanges);
+            return;
+        }
+
+        $responsibleEmails = $this->responsibleEmails($followup);
+        $ccRecipients = $this->copyRecipients($followup, $actorEmail, $responsibleEmails);
+
         if ($isCotizacionAprobada) {
             $aprobadaTo = (string) config('mail.cotizacion_aprobada_to');
 
             if (filled($aprobadaTo)) {
-                $aprobadaCc = $this->buildCcRecipients($aprobadaTo, $actorEmail);
-
-                Mail::to($aprobadaTo)
-                    ->cc($aprobadaCc)
+                Mail::to($responsibleEmails)
+                    ->cc($ccRecipients)
                     ->send(new CotizacionAprobadaMail($data, $myuser));
             }
         }
 
         if ($event->name == 'Cotización actualizada' && filled($assignedExecutiveEmail)) {
-            Mail::to($assignedExecutiveEmail)
-                ->cc($ccRecipients)
-                ->send(new CursoActualizacionMail($data, $myuser));
+            app(TicketUpdateNotifier::class)->schedule($followup, $relevantChanges);
         }
 
         if ($event->name == 'Coordinar Curso' && filled($assignedExecutiveEmail)) {
-            Mail::to($assignedExecutiveEmail)
+            Mail::to($responsibleEmails)
                 ->cc($ccRecipients)
                 ->send(new CursoCoordinarMail($data, $myuser));
         }
 
         if ($isMatricularCurso) {
-            $supportEmails = User::query()
-                ->whereHas('roles', function ($query) {
-                    $query->where('name', 'Soporte');
-                })
-                ->whereNotNull('email')
-                ->pluck('email')
-                ->unique()
-                ->values()
-                ->all();
+            $supportEmails = $responsibleEmails;
 
             if (empty($supportEmails)) {
                 return;
             }
 
-            $matricularCc = $this->buildCcRecipientsFromMany($supportEmails, $actorEmail);
-
             Mail::to($supportEmails)
-                ->cc($matricularCc)
+                ->cc($ccRecipients)
                 ->send(new CursoMatriculadoMail($data, $myuser));
         }
 
         if ($event->name == 'Curso en Proceso' && filled($assignedExecutiveEmail)) {
-            Mail::to($assignedExecutiveEmail)
+            Mail::to($responsibleEmails)
                 ->cc($ccRecipients)
                 ->send(new CursoEnProcesoMail($data, $myuser));
         }
 
         if ($event->name == 'Curso Finalizado' && filled($assignedExecutiveEmail)) {
-            Mail::to($assignedExecutiveEmail)
+            Mail::to($responsibleEmails)
                 ->cc($ccRecipients)
                 ->send(new CursoFinalizadoMail($data, $myuser));
         }
 
         if ($event->name == 'Generar DJ' && filled($assignedExecutiveEmail)) {
-            Mail::to($assignedExecutiveEmail)
+            Mail::to($responsibleEmails)
                 ->cc($ccRecipients)
                 ->send(new DjOtecMail($data, $myuser));
         }
 
         if ($event->name == 'Por Facturar' && filled($assignedExecutiveEmail)) {
-            Mail::to($assignedExecutiveEmail)
+            Mail::to($responsibleEmails)
                 ->cc($ccRecipients)
                 ->send(new PorFacturarMail($data, $myuser));
         }
@@ -184,39 +170,43 @@ class FollowupObserver
 
     /**
      * Determina si los cambios del ticket deben disparar los correos automáticos por estado.
-     * Excluye ejecutivo_id (coordinadora), reservado para notificaciones personalizadas.
      */
     private function hasMailTriggeringChanges(array $relevantChanges): bool
     {
-        $mailTriggeringChanges = array_diff_key(
-            $relevantChanges,
-            array_flip(['ejecutivo_id'])
-        );
-
-        return !empty($mailTriggeringChanges);
+        return !empty($relevantChanges);
     }
 
     /**
-     * Agrega en copia al usuario que actualiza, evitando duplicados.
+     * Responsables originales de los correos por estado. Las actualizaciones y
+     * los documentos reutilizan esta misma regla, agregando actor y coordinadora.
      */
-    private function buildCcRecipients(?string $primaryEmail, ?string $actorEmail): array
+    public function responsibleEmails(Followup $followup): array
     {
-        return collect([$actorEmail])
-            ->filter(fn (?string $email) => filled($email) && (! filled($primaryEmail) || $email !== $primaryEmail))
-            ->unique()
-            ->values()
-            ->all();
+        $emails = match ($followup->event?->name) {
+            'Matricular Curso' => User::whereHas('roles', fn ($query) => $query->where('name', 'Soporte'))
+                ->whereNotNull('email')->pluck('email')->all(),
+            'Cotización Aprobada' => [config('mail.cotizacion_aprobada_to')],
+            'Cotización actualizada', 'Coordinar Curso', 'Curso en Proceso',
+            'Curso Finalizado', 'Generar DJ', 'Por Facturar' => [$followup->ejecutivo?->email],
+            default => [],
+        };
+
+        return collect($emails)
+            ->filter(fn ($email) => is_string($email) && filled(trim($email)))
+            ->map(fn ($email) => trim($email))
+            ->unique(fn ($email) => strtolower($email))
+            ->values()->all();
     }
 
-    /**
-     * Agrega en copia al usuario que actualiza si no está entre destinatarios.
-     */
-    private function buildCcRecipientsFromMany(array $primaryEmails, ?string $actorEmail): array
+    private function copyRecipients(Followup $followup, ?string $actorEmail, array $primaryEmails): array
     {
-        return collect([$actorEmail])
-            ->filter(fn (?string $email) => filled($email) && ! in_array($email, $primaryEmails, true))
-            ->unique()
-            ->values()
-            ->all();
+        $primaryEmails = array_map('strtolower', $primaryEmails);
+
+        return collect([$actorEmail, $followup->ejecutivo?->email])
+            ->filter(fn ($email) => is_string($email) && filled(trim($email)))
+            ->map(fn ($email) => trim($email))
+            ->unique(fn ($email) => strtolower($email))
+            ->reject(fn ($email) => in_array(strtolower($email), $primaryEmails, true))
+            ->values()->all();
     }
 }

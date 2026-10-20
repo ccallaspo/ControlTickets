@@ -15,15 +15,23 @@ class CursoActualizacionMail extends Mailable
 
     public $data;
     public $myuser;
+    public array $updateRows;
+    public $ticketNotes;
 
 
     /**
      * Create a new message instance.
      */
-    public function __construct($data, $myuser)
+    public function __construct($data, $myuser, array $originals = [], array $documents = [])
     {
         $this->data = $data;
         $this->myuser = $myuser;
+        $this->updateRows = \App\Services\TicketUpdateDetails::rows($data, $data->changes ?? [], $originals, $documents);
+        if ($data->exists) {
+            $data->loadMissing('note');
+        }
+        $this->ticketNotes = ($data->relationLoaded('note') ? $data->note : collect())
+            ->sortByDesc('created_at')->values();
     }
 
     /**
@@ -46,6 +54,8 @@ class CursoActualizacionMail extends Mailable
             with: [
                 'data' => $this->data,
                 'myuser' => $this->myuser,
+                'updateRows' => $this->updateRows,
+                'ticketNotes' => $this->ticketNotes,
             ],
         );
     }

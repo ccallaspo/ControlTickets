@@ -217,7 +217,7 @@
     <div class="container">
         <div class="header">
             <img src="https://controlproyecta.cl/img/cotizacion_v2/logo_proyecta_v2.png" alt="Logo OTEC Proyecta">
-            <h1>⚠️ Ticket Actualizado y en Revisión ⚠️</h1>
+            <h1>Ticket actualizado</h1>
             <p>Se ha realizado una actualización en el curso. Por favor, revise los detalles.</p>
         </div>
         <div class="content">
@@ -226,6 +226,10 @@
             
             <div class="service-details">
                 <ul>
+                    <li><strong>Ticket:</strong> {{ $data->name ?? $data->id }}</li>
+                    <li><strong>Actualizado por:</strong> {{ $myuser->name }} ({{ $myuser->email }})</li>
+                    <li><strong>Estado actual:</strong> {{ $data->event?->name ?? 'N/A' }}</li>
+                    <li><strong>Coordinadora:</strong> {{ $data->ejecutivo?->name ?? 'Sin asignar' }}</li>
                     <li><strong>Cotización:</strong> {{ $data->referent ?? 'N/A' }}</li>
                     <li><strong>Curso:</strong> {{ $data->name_course ?? 'N/A' }}</li>
                     <li><strong>Código ID:</strong> {{ $data->formatted_id_sence ?: 'N/A' }}</li>
@@ -233,12 +237,46 @@
             </div>
 
             <div class="timeline-container">
-                <span>
-                    <p>
-                        {{ json_encode($data->changes, JSON_PRETTY_PRINT) }}
-                    </p>
-                </span>
+                <h3 style="padding: 0 20px;">Datos actualizados</h3>
+                <table width="100%" cellpadding="12" cellspacing="0" style="border-collapse: collapse; table-layout: fixed; overflow-wrap: anywhere; font-size: 14px; color: #495057;">
+                    <thead>
+                        <tr style="background: #f7f9fc; color: #1a3e6a;">
+                            <th scope="col" align="left" style="width: 34%;">Cambio</th>
+                            <th scope="col" align="left">Detalle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach ($updateRows as $row)
+                        <tr>
+                            <th scope="row" align="left" style="border-bottom: 1px solid #e9ecef; vertical-align: top;">{{ $row['label'] }}</th>
+                            <td style="border-bottom: 1px solid #e9ecef; vertical-align: top;">
+                                @if (array_key_exists('file', $row))
+                                    <strong>{{ $row['type'] }}</strong><br>{{ $row['file'] }}
+                                @else
+                                    <span style="color: #6c757d;">Anterior:</span> {{ $row['before'] }}<br>
+                                    <strong style="color: #1a3e6a;">Nuevo:</strong> {{ $row['after'] }}
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
                 
+            </div>
+
+            <div class="timeline-container" style="padding: 0; margin-top: 24px;">
+                <h3 style="padding: 20px 20px 0; margin: 0 0 16px; color: #1a3e6a;">Notas</h3>
+                @forelse ($ticketNotes as $note)
+                    <div style="padding: 0 20px 18px; margin-top: 18px; border-bottom: 1px solid #e9ecef; overflow-wrap: anywhere;">
+                        <p style="font-size: 14px; margin: 0 0 8px; line-height: 1.5;">
+                            <strong style="color: #1a3e6a;">{{ $note->author ?: 'Sin autor' }}</strong><br>
+                            <span style="color: #6c757d; font-size: 12px;">{{ $note->created_at?->format('d/m/Y · H:i') }}</span>
+                        </p>
+                        <div style="font-size: 14px; line-height: 1.6; white-space: pre-line;">{{ html_entity_decode(strip_tags(preg_replace('/<\s*(?:br\s*\/?|\/p|\/div|\/li)\s*>/i', "\n", $note->note ?? '')), ENT_QUOTES | ENT_HTML5, 'UTF-8') }}</div>
+                    </div>
+                @empty
+                    <p style="padding: 0 20px 18px; font-size: 14px;">Este ticket no tiene notas.</p>
+                @endforelse
             </div>
 
 
