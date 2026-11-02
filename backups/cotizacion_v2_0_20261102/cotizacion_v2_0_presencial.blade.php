@@ -1,0 +1,186 @@
+{{--
+  Plantilla PDF cotización v2.0 — modalidad presencial.
+  Solo estilos: el texto (Metodología, Evaluación, Entregables, etc.) viene del content de la plataforma.
+--}}
+<style>
+    /*
+     * Márgenes laterales simétricos (~10–12% por lado en carta).
+     * Tipografía alineada al documento referencia presencial.
+     */
+    .pdf-body-content-presencial .inner-page-main {
+        padding-top: 0;
+    }
+
+    .pdf-body-content-presencial .inner-page-main > .description-curso {
+        padding-top: 0;
+    }
+
+    .pdf-body-content-presencial .inner-page-main > .investment-curso.page-break-before {
+        padding-top: 0;
+    }
+
+    .pdf-body-content-presencial {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .pdf-body-content-presencial .inner-page-main > .investment-curso,
+    .pdf-body-content-presencial .inner-page-main > .payments {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .pdf-body-content-presencial .inner-page-main > .franquicia-sence {
+        padding-left: 68px;
+        padding-right: 68px;
+        box-sizing: border-box;
+    }
+
+    .pdf-body-content-presencial .investment-curso > .investment-footnote,
+    .pdf-body-content-presencial .payments > .payments-intro {
+        padding-left: 68px;
+        padding-right: 68px;
+        box-sizing: border-box;
+    }
+
+        /*
+         * Franjas título: aplican a los h1–h4 del content de plataforma
+         * + Inversión / Medios de pago del shell.
+         * margin-top: 0 — DomPDF no colapsa el margen al saltar de página;
+         * si hay margin-top, OBJETIVO/TEMARIO al inicio de hoja queda más
+         * abajo que un párrafo que continúa. El espacio de hoja lo da @page.
+         */
+        .description-curso-presencial h1:not(.pdf-section-title),
+        .description-curso-presencial h2,
+        .description-curso-presencial h3,
+        .description-curso-presencial h4,
+        .pdf-body-content-presencial .investment-curso > h2.pdf-section-title,
+        .pdf-body-content-presencial .payments > h2.pdf-section-title {
+            background-color: #14284b !important;
+            color: #ffffff !important;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 16px !important;
+            font-weight: bold;
+            font-style: normal;
+            text-transform: uppercase;
+            text-align: left;
+            letter-spacing: 0.02em;
+            display: block;
+            box-sizing: border-box;
+            width: 48%;
+            margin: 0 68px 10px 68px;
+            padding: 6px 14px 6px 12px;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            border-top-right-radius: 16px;
+            border-bottom-right-radius: 16px;
+            page-break-inside: avoid;
+            page-break-after: avoid;
+        }
+
+        .description-curso.description-curso-presencial h1 + h2,
+        .description-curso.description-curso-presencial h1 + h3,
+        .description-curso.description-curso-presencial h2 + h3,
+        .description-curso.description-curso-presencial h2 + h4 {
+            margin-top: 0;
+        }
+
+    .description-curso-presencial p {
+        font-family: Arial, Helvetica, sans-serif !important;
+        font-size: 15px !important;
+        font-weight: normal !important;
+        font-style: italic !important;
+        color: #000000 !important;
+        text-align: justify !important;
+        line-height: 1.45;
+        margin: 0 0 12px 0;
+        padding-left: 80px;
+        padding-right: 68px;
+        box-sizing: border-box;
+    }
+
+    .description-curso-presencial ol,
+    .description-curso-presencial ul {
+        margin: 6px 0 14px 0;
+        padding-left: 98px;
+        padding-right: 68px;
+        color: #000000;
+        box-sizing: border-box;
+        page-break-inside: avoid;
+    }
+
+    /*
+     * El editor (Filament) guarda la sangría como <blockquote>, no como
+     * lista anidada. Sin esta regla, el blockquote usa el margen por
+     * defecto (~40px) y queda a la izquierda del párrafo (80px).
+     */
+    .description-curso-presencial blockquote {
+        margin: 2px 68px 12px 0;
+        padding-left: 112px;
+        padding-right: 68px;
+        border: none;
+        box-sizing: border-box;
+        font-family: Arial, Helvetica, sans-serif !important;
+        font-size: 15px !important;
+        font-weight: normal !important;
+        font-style: italic !important;
+        color: #000000 !important;
+        text-align: justify !important;
+        line-height: 1.45;
+    }
+
+    .description-curso-presencial li ul,
+    .description-curso-presencial li ol,
+    .description-curso-presencial ul ul,
+    .description-curso-presencial ol ul,
+    .description-curso-presencial ul ol,
+    .description-curso-presencial ol ol {
+        margin: 4px 0 8px 0;
+        padding-left: 36px;
+        padding-right: 0;
+    }
+
+    .description-curso-presencial li p,
+    .description-curso-presencial blockquote p {
+        padding-left: 0;
+        padding-right: 0;
+        margin-bottom: 4px;
+    }
+
+    .description-curso-presencial li {
+        font-family: Arial, Helvetica, sans-serif !important;
+        font-size: 15px !important;
+        font-weight: normal !important;
+        font-style: italic !important;
+        color: #000000 !important;
+        text-align: justify !important;
+        line-height: 1.45;
+        margin-bottom: 8px;
+    }
+
+    .pdf-body-content-presencial .investment-curso .investment-footnote,
+    .pdf-body-content-presencial .payments .payments-intro,
+    .pdf-body-content-presencial .franquicia-sence .franquicia-text {
+        font-family: Arial, Helvetica, sans-serif !important;
+        font-size: 15px !important;
+        font-weight: normal !important;
+        font-style: italic !important;
+        color: #000000 !important;
+        text-align: justify !important;
+        line-height: 1.45;
+    }
+
+    /* Imágenes del editor: caben en el mismo margen que los párrafos */
+    .description-curso-presencial img {
+        max-width: 100% !important;
+        width: auto !important;
+        height: auto !important;
+        display: block;
+        box-sizing: border-box;
+    }
+
+    .description-curso-presencial > img {
+        margin: 8px 68px 12px 80px;
+        max-width: 660px !important;
+    }
+</style>

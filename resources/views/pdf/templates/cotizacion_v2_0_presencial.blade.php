@@ -86,8 +86,8 @@
         }
 
     .description-curso-presencial p {
-        font-family: Arial, Helvetica, sans-serif !important;
-        font-size: 15px !important;
+        font-family: 'Calibri', sans-serif !important;
+        font-size: 16px !important;
         font-weight: normal !important;
         font-style: italic !important;
         color: #000000 !important;
@@ -120,8 +120,8 @@
         padding-right: 68px;
         border: none;
         box-sizing: border-box;
-        font-family: Arial, Helvetica, sans-serif !important;
-        font-size: 15px !important;
+        font-family: 'Calibri', sans-serif !important;
+        font-size: 16px !important;
         font-weight: normal !important;
         font-style: italic !important;
         color: #000000 !important;
@@ -148,8 +148,8 @@
     }
 
     .description-curso-presencial li {
-        font-family: Arial, Helvetica, sans-serif !important;
-        font-size: 15px !important;
+        font-family: 'Calibri', sans-serif !important;
+        font-size: 16px !important;
         font-weight: normal !important;
         font-style: italic !important;
         color: #000000 !important;
@@ -161,8 +161,8 @@
     .pdf-body-content-presencial .investment-curso .investment-footnote,
     .pdf-body-content-presencial .payments .payments-intro,
     .pdf-body-content-presencial .franquicia-sence .franquicia-text {
-        font-family: Arial, Helvetica, sans-serif !important;
-        font-size: 15px !important;
+        font-family: 'Calibri', sans-serif !important;
+        font-size: 16px !important;
         font-weight: normal !important;
         font-style: italic !important;
         color: #000000 !important;

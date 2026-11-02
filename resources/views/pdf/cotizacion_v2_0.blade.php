@@ -1086,12 +1086,8 @@
     </style>
 
     @if($isBannerPdf)
-        @if(($modalityTemplate ?? null) === 'pdf.templates.cotizacion_v2_0_asincronica')
-            @include('pdf.templates.cotizacion_v2_0_asincronica')
-        @else
-            {{-- Presencial y sincrónica comparten los mismos estilos --}}
-            @include('pdf.templates.cotizacion_v2_0_presencial')
-        @endif
+        {{-- Diseño presencial común para todas las modalidades. --}}
+        @include('pdf.templates.cotizacion_v2_0_presencial')
     @endif
 </head>
 
@@ -1102,17 +1098,8 @@
             'pdf.templates.cotizacion_v2_0_asincronica',
             'pdf.templates.cotizacion_v2_0_sincronica',
         ], true);
-        $isPresencialPdf = in_array($modalityTemplate ?? null, [
-            'pdf.templates.cotizacion_v2_0_presencial',
-            'pdf.templates.cotizacion_v2_0_sincronica',
-        ], true);
-        $isAsincronicaPdf = ($modalityTemplate ?? null) === 'pdf.templates.cotizacion_v2_0_asincronica';
-        $bannerBodyClass = $isPresencialPdf
-            ? 'pdf-body-content-presencial'
-            : ($isAsincronicaPdf ? 'pdf-body-content-asincronica' : '');
-        $bannerDescClass = $isPresencialPdf
-            ? 'description-curso-presencial'
-            : ($isAsincronicaPdf ? 'description-curso-asincronica' : '');
+        $bannerBodyClass = $isBannerPdf ? 'pdf-body-content-presencial' : '';
+        $bannerDescClass = $isBannerPdf ? 'description-curso-presencial' : '';
     @endphp
     {{-- Página 1 (portada) — layout franja (presencial / asincrónica) --}}
     <div class="pdf-page-cover @if($isBannerPdf) pdf-page-cover-presencial @endif">
@@ -1241,8 +1228,10 @@
 
             {!! $contentBeforeTemario !!}
 
-            @if($modalityTemplate)
-                @include($modalityTemplate)
+            {{-- Presencial y asincrónica usan el texto del editor.
+                 Sincrónica conserva sus secciones específicas. --}}
+            @if($modalityTemplate === 'pdf.templates.cotizacion_v2_0_sincronica')
+                @include('pdf.templates.cotizacion_v2_0_sincronica')
             @endif
 
             {!! $contentTemario !!}
