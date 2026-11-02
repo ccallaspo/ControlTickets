@@ -101,11 +101,46 @@
 
     .description-curso-presencial ol,
     .description-curso-presencial ul {
-        margin: 6px 0 14px 0;
-        padding-left: 98px;
-        padding-right: 68px;
+        margin: 6px 68px 12px 80px;
+        padding-left: 24px;
+        padding-right: 0;
+        list-style-position: outside;
+        font-family: 'Calibri', sans-serif;
+        font-size: 16px;
         color: #000000;
         box-sizing: border-box;
+        page-break-inside: auto;
+    }
+
+    .description-curso-presencial ul {
+        list-style-type: disc;
+    }
+
+    .description-curso-presencial ol {
+        list-style-type: decimal;
+    }
+
+    .description-curso-presencial ul ul {
+        list-style-type: circle;
+    }
+
+    .description-curso-presencial ul ul ul {
+        list-style-type: square;
+    }
+
+    .description-curso-presencial blockquote > ul,
+    .description-curso-presencial blockquote > ol {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    /* El texto continúa alineado después del marcador, sin viñetas manuales. */
+    .description-curso-presencial ul > li,
+    .description-curso-presencial ol > li {
+        padding-left: 4px;
+        margin-bottom: 6px;
+        text-align: left !important;
+        line-height: 1.45;
         page-break-inside: avoid;
     }
 
@@ -136,7 +171,7 @@
     .description-curso-presencial ul ol,
     .description-curso-presencial ol ol {
         margin: 4px 0 8px 0;
-        padding-left: 36px;
+        padding-left: 24px;
         padding-right: 0;
     }
 
