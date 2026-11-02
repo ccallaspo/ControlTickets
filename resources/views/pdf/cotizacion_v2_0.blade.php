@@ -15,11 +15,9 @@
     --}}
     <style>
         @php
-            $isBannerPdf = in_array($modalityTemplate ?? null, [
-                'pdf.templates.cotizacion_v2_0_presencial',
-                'pdf.templates.cotizacion_v2_0_asincronica',
-                'pdf.templates.cotizacion_v2_0_sincronica',
-            ], true);
+            // El diseño base se aplica incluso a modalidades nuevas o sin nombre.
+            // modalityTemplate solo determina el contenido específico de modalidad.
+            $isBannerPdf = true;
         @endphp
         @if($isBannerPdf)
         @page {
@@ -1093,11 +1091,7 @@
 
 <body>
     @php
-        $isBannerPdf = in_array($modalityTemplate ?? null, [
-            'pdf.templates.cotizacion_v2_0_presencial',
-            'pdf.templates.cotizacion_v2_0_asincronica',
-            'pdf.templates.cotizacion_v2_0_sincronica',
-        ], true);
+        $isBannerPdf = true;
         $bannerBodyClass = $isBannerPdf ? 'pdf-body-content-presencial' : '';
         $bannerDescClass = $isBannerPdf ? 'description-curso-presencial' : '';
     @endphp
