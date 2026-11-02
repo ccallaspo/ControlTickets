@@ -19,7 +19,7 @@ class FollowupExporter extends Exporter
 
     public static function getColumns(): array
     {
-        return [
+        return array_map(fn (ExportColumn $column): ExportColumn => $column->enabledByDefault(false), [
             // Campos directos de la tabla 'followups'
             ExportColumn::make('id')->label('ID Ticket'),
             ExportColumn::make('active')->label('Activo'), // Nuevo campo
@@ -94,7 +94,7 @@ class FollowupExporter extends Exporter
             // Metadatos
             ExportColumn::make('created_at')->label('Fecha Creación')->formatStateUsing(fn ($state) => $state?->format('d/m/Y H:i')),
             ExportColumn::make('updated_at')->label('Última Actualización')->formatStateUsing(fn ($state) => $state?->format('d/m/Y H:i')),
-        ];
+        ]);
     }
 
     public static function getCompletedNotificationBody(Export $export): string
@@ -111,4 +111,4 @@ class FollowupExporter extends Exporter
 
         return $body;
     }
-}   
+}

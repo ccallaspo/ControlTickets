@@ -23,6 +23,7 @@ class ListFollowups extends ListRecords
             // Usa la nueva clase de exportador
             ExportAction::make()
                 ->label('Exportar Tickets')
+                ->modalHeading('Exportar Tickets')
                 ->color('danger')
                 ->icon('heroicon-o-arrow-down-tray')
                 ->exporter(FollowupExporter::class),
