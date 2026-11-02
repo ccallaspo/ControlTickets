@@ -205,11 +205,26 @@
         line-height: 1.45;
     }
 
+    /* Listas numéricas compactas, con el número al margen del contenido. */
+    .description-curso-presencial ol {
+        padding-left: 18px;
+    }
+
+    .description-curso-presencial ol > li {
+        padding-left: 0;
+        margin-bottom: 0;
+    }
+
+    .description-curso-presencial ol > li > p {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
     /* Entregables: viñeta compacta alineada al margen del temario. */
     .description-curso-presencial ul.deliverables-list {
         margin: 0 68px 12px 80px;
-        padding-left: 10px;
-        list-style-type: disc;
+        padding-left: 0;
+        list-style-type: none;
     }
 
     .description-curso-presencial ul.deliverables-list > li {
@@ -217,6 +232,13 @@
         padding-left: 0;
         margin-bottom: 0;
         line-height: 1.45;
+    }
+
+    .description-curso-presencial ul.deliverables-list > li:before {
+        content: "\2022";
+        font-size: 12px;
+        font-style: normal;
+        margin-right: 4px;
     }
 
     /* Imágenes del editor: caben en el mismo margen que los párrafos */
