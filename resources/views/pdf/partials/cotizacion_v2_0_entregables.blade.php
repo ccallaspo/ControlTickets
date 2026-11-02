@@ -1,5 +1,5 @@
 <h2 class="pdf-section-title">Entregables</h2>
-<p>Una vez finalizada la capacitación, se le enviará al cliente:</p>
+<p class="deliverables-intro">Una vez finalizada la capacitación, se le enviará al cliente:</p>
 <ul class="deliverables-list">
     <li>Informe de capacitación</li>
     <li>Resultados encuesta de satisfacción del participante</li>

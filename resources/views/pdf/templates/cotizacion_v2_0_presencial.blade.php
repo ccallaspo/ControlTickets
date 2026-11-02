@@ -208,11 +208,13 @@
     /* Listas numéricas compactas, con el número al margen del contenido. */
     .description-curso-presencial ol {
         padding-left: 18px;
+        color: #000000 !important;
     }
 
     .description-curso-presencial ol > li {
         padding-left: 0;
         margin-bottom: 0;
+        color: #000000 !important;
     }
 
     .description-curso-presencial ol > li > p {
@@ -221,6 +223,10 @@
     }
 
     /* Entregables: viñeta compacta alineada al margen del temario. */
+    .description-curso-presencial p.deliverables-intro {
+        margin-bottom: 0;
+    }
+
     .description-curso-presencial ul.deliverables-list {
         margin: 0 68px 12px 80px;
         padding-left: 0;
