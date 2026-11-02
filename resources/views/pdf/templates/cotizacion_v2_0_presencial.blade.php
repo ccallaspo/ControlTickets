@@ -205,6 +205,20 @@
         line-height: 1.45;
     }
 
+    /* Entregables: viñeta compacta alineada al margen del temario. */
+    .description-curso-presencial ul.deliverables-list {
+        margin: 0 68px 12px 80px;
+        padding-left: 10px;
+        list-style-type: disc;
+    }
+
+    .description-curso-presencial ul.deliverables-list > li {
+        color: #000000 !important;
+        padding-left: 0;
+        margin-bottom: 0;
+        line-height: 1.45;
+    }
+
     /* Imágenes del editor: caben en el mismo margen que los párrafos */
     .description-curso-presencial img {
         max-width: 100% !important;
