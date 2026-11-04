@@ -1298,7 +1298,7 @@
             </table>
             </div>
             <p class="investment-footnote"><span class="investment-footnote-asterisk">*</span> Para mantener valores ofertados se debe considerar el mínimo de participantes informados en esta cotización.</p>
-            <p class="investment-footnote">Los valores indicados en el cuadro de inversión se encuentran exentos de IVA.</p>
+            <p class="investment-footnote"><span class="investment-footnote-asterisk">*</span> Los valores indicados en el cuadro de inversión se encuentran exentos de IVA.</p>
         </div>
 
         <div class="payments inner-pages-margin">
