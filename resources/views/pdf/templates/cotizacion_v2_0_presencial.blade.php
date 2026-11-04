@@ -31,13 +31,14 @@
     }
 
     .pdf-body-content-presencial .inner-page-main > .franquicia-sence {
-        padding-left: 68px;
-        padding-right: 68px;
+        padding-left: 0;
+        padding-right: 0;
         box-sizing: border-box;
     }
 
     .pdf-body-content-presencial .investment-curso > .investment-footnote,
-    .pdf-body-content-presencial .payments > .payments-intro {
+    .pdf-body-content-presencial .payments > .payments-intro,
+    .pdf-body-content-presencial .franquicia-sence > .franquicia-text {
         padding-left: 68px;
         padding-right: 68px;
         box-sizing: border-box;
@@ -55,7 +56,8 @@
         .description-curso-presencial h3,
         .description-curso-presencial h4,
         .pdf-body-content-presencial .investment-curso > h2.pdf-section-title,
-        .pdf-body-content-presencial .payments > h2.pdf-section-title {
+        .pdf-body-content-presencial .payments > h2.pdf-section-title,
+        .pdf-body-content-presencial .franquicia-sence > h2.pdf-section-title {
             background-color: #14284b !important;
             color: #ffffff !important;
             font-family: Arial, Helvetica, sans-serif;
