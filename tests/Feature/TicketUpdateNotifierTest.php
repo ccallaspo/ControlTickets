@@ -67,27 +67,27 @@ class TicketUpdateNotifierTest extends TestCase
         ]);
 
         $this->assertSame([
-            'actor@example.com', 'coordinadora@example.com', 'soporte@example.com',
+            'actor@example.com', 'coordinadora@example.com', 'soporte@example.com', 'notificaciones@otecproyecta.cl',
         ], app(TicketUpdateNotifier::class)->recipients($this->ticket('Matricular Curso'), 'actor@example.com'));
     }
 
     public function test_approved_includes_configured_responsible_and_removes_duplicates(): void
     {
         config(['mail.cotizacion_aprobada_to' => 'responsable@example.com']);
-        $this->assertSame(['actor@example.com', 'responsable@example.com'],
+        $this->assertSame(['actor@example.com', 'responsable@example.com', 'notificaciones@otecproyecta.cl'],
             app(TicketUpdateNotifier::class)->recipients($this->ticket('Cotización Aprobada', 'ACTOR@example.com'), 'actor@example.com'));
     }
 
     public function test_missing_coordinator_or_support_does_not_exclude_actor(): void
     {
-        $this->assertSame(['actor@example.com'],
+        $this->assertSame(['actor@example.com', 'notificaciones@otecproyecta.cl'],
             app(TicketUpdateNotifier::class)->recipients($this->ticket('Matricular Curso', null), 'actor@example.com'));
     }
 
     public function test_other_states_include_actor_and_coordinator_and_template_renders_changes(): void
     {
         $ticket = $this->ticket('Curso en Proceso');
-        $this->assertSame(['actor@example.com', 'coordinadora@example.com'],
+        $this->assertSame(['actor@example.com', 'coordinadora@example.com', 'notificaciones@otecproyecta.cl'],
             app(TicketUpdateNotifier::class)->recipients($ticket, 'actor@example.com'));
         $ticket->changes = ['documento' => 'participantes.xlsx', 'description' => '<script>test</script>'];
         $html = (new CursoActualizacionMail($ticket, new User(['name' => 'Actor', 'email' => 'actor@example.com'])))->render();

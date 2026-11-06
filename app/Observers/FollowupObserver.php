@@ -56,13 +56,10 @@ class FollowupObserver
 
         $followup->load('ejecutivo');
         $assignedExecutive = $followup->ejecutivo;
-        $assignedExecutiveEmail = $assignedExecutive?->email;
         $actorEmail = $myuser->email ?? '';
 
         $followup->setRelation('event', $event);
 
-        $isMatricularCurso = $event->name == 'Matricular Curso';
-        $isCotizacionAprobada = $event->name == 'Cotización Aprobada';
 
         $notificationRecipients = collect([$assignedExecutive, $myuser])
             ->filter()
@@ -84,64 +81,28 @@ class FollowupObserver
             return;
         }
 
-        $responsibleEmails = $this->responsibleEmails($followup);
-        $ccRecipients = $this->copyRecipients($followup, $actorEmail, $responsibleEmails);
+        $notifier = app(TicketUpdateNotifier::class);
+        $mailClass = match ($event->name) {
+            'Cotización Aprobada' => CotizacionAprobadaMail::class,
+            'Coordinar Curso' => CursoCoordinarMail::class,
+            'Matricular Curso' => CursoMatriculadoMail::class,
+            'Curso en Proceso' => CursoEnProcesoMail::class,
+            'Curso Finalizado' => CursoFinalizadoMail::class,
+            'Generar DJ' => DjOtecMail::class,
+            'Por Facturar' => PorFacturarMail::class,
+            default => null,
+        };
 
-        if ($isCotizacionAprobada) {
-            $aprobadaTo = (string) config('mail.cotizacion_aprobada_to');
-
-            if (filled($aprobadaTo)) {
-                Mail::to($responsibleEmails)
-                    ->cc($ccRecipients)
-                    ->send(new CotizacionAprobadaMail($data, $myuser));
-            }
+        if ($mailClass === null) {
+            $notifier->schedule($followup, $relevantChanges);
+            return;
         }
 
-        if ($event->name == 'Cotización actualizada' && filled($assignedExecutiveEmail)) {
-            app(TicketUpdateNotifier::class)->schedule($followup, $relevantChanges);
-        }
+        $primaryEmails = $notifier->deliveryRecipients($this->responsibleEmails($followup), $actorEmail);
+        $ccRecipients = $notifier->deliveryRecipients([$actorEmail, $assignedExecutive?->email], $actorEmail);
+        $ccRecipients = array_values(array_udiff($ccRecipients, $primaryEmails, 'strcasecmp'));
 
-        if ($event->name == 'Coordinar Curso' && filled($assignedExecutiveEmail)) {
-            Mail::to($responsibleEmails)
-                ->cc($ccRecipients)
-                ->send(new CursoCoordinarMail($data, $myuser));
-        }
-
-        if ($isMatricularCurso) {
-            $supportEmails = $responsibleEmails;
-
-            if (empty($supportEmails)) {
-                return;
-            }
-
-            Mail::to($supportEmails)
-                ->cc($ccRecipients)
-                ->send(new CursoMatriculadoMail($data, $myuser));
-        }
-
-        if ($event->name == 'Curso en Proceso' && filled($assignedExecutiveEmail)) {
-            Mail::to($responsibleEmails)
-                ->cc($ccRecipients)
-                ->send(new CursoEnProcesoMail($data, $myuser));
-        }
-
-        if ($event->name == 'Curso Finalizado' && filled($assignedExecutiveEmail)) {
-            Mail::to($responsibleEmails)
-                ->cc($ccRecipients)
-                ->send(new CursoFinalizadoMail($data, $myuser));
-        }
-
-        if ($event->name == 'Generar DJ' && filled($assignedExecutiveEmail)) {
-            Mail::to($responsibleEmails)
-                ->cc($ccRecipients)
-                ->send(new DjOtecMail($data, $myuser));
-        }
-
-        if ($event->name == 'Por Facturar' && filled($assignedExecutiveEmail)) {
-            Mail::to($responsibleEmails)
-                ->cc($ccRecipients)
-                ->send(new PorFacturarMail($data, $myuser));
-        }
+        Mail::to($primaryEmails)->cc($ccRecipients)->send(new $mailClass($data, $myuser));
     }
 
     /**
@@ -195,18 +156,6 @@ class FollowupObserver
             ->filter(fn ($email) => is_string($email) && filled(trim($email)))
             ->map(fn ($email) => trim($email))
             ->unique(fn ($email) => strtolower($email))
-            ->values()->all();
-    }
-
-    private function copyRecipients(Followup $followup, ?string $actorEmail, array $primaryEmails): array
-    {
-        $primaryEmails = array_map('strtolower', $primaryEmails);
-
-        return collect([$actorEmail, $followup->ejecutivo?->email])
-            ->filter(fn ($email) => is_string($email) && filled(trim($email)))
-            ->map(fn ($email) => trim($email))
-            ->unique(fn ($email) => strtolower($email))
-            ->reject(fn ($email) => in_array(strtolower($email), $primaryEmails, true))
             ->values()->all();
     }
 }

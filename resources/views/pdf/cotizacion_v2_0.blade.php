@@ -1225,7 +1225,16 @@
             {{-- Presencial y asincrónica usan el texto del editor.
                  Sincrónica conserva sus secciones específicas. --}}
             @if($modalityTemplate === 'pdf.templates.cotizacion_v2_0_sincronica')
-                @include('pdf.templates.cotizacion_v2_0_sincronica')
+                @php
+                    preg_match_all('/(?=<(h[1-6]|p|div)\b[^>]*>(.*?)<\/\1\s*>)/isu', $content, $sectionMatches);
+                    $existingSections = array_map(static function (string $heading): string {
+                        $heading = html_entity_decode(strip_tags($heading), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                        $heading = preg_replace('/\s+/u', ' ', $heading);
+
+                        return strtolower(\Illuminate\Support\Str::ascii(trim($heading, " :")));
+                    }, $sectionMatches[2]);
+                @endphp
+                @include('pdf.templates.cotizacion_v2_0_sincronica', ['existingSections' => $existingSections])
             @endif
 
             {!! $contentTemario !!}

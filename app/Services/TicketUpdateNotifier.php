@@ -10,6 +10,13 @@ use Illuminate\Support\Facades\Mail;
 
 class TicketUpdateNotifier
 {
+    private const DISTRIBUTION_EMAIL = 'notificaciones@otecproyecta.cl';
+
+    private const DISTRIBUTION_MEMBERS = [
+        'doris.baptista@otecproyecta.cl',
+        'contacto@otecproyecta.cl',
+    ];
+
     private array $pending = [];
 
     private bool $registered = false;
@@ -98,9 +105,19 @@ class TicketUpdateNotifier
     {
         $responsibleEmails = app(FollowupObserver::class)->responsibleEmails($ticket);
 
-        return collect([$actorEmail, $ticket->ejecutivo?->email, ...$responsibleEmails])
+        return $this->deliveryRecipients([$actorEmail, $ticket->ejecutivo?->email, ...$responsibleEmails], $actorEmail);
+    }
+
+    public function deliveryRecipients(array $emails, ?string $actorEmail): array
+    {
+        if (in_array(strtolower(trim($actorEmail ?? '')), self::DISTRIBUTION_MEMBERS, true)) {
+            return [self::DISTRIBUTION_EMAIL];
+        }
+
+        return collect([...$emails, self::DISTRIBUTION_EMAIL])
             ->filter(fn ($email) => is_string($email) && filled(trim($email)))
             ->map(fn ($email) => trim($email))
+            ->reject(fn ($email) => in_array(strtolower($email), self::DISTRIBUTION_MEMBERS, true))
             ->unique(fn ($email) => strtolower($email))
             ->values()
             ->all();
